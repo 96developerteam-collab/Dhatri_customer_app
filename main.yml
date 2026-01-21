@@ -1,0 +1,29 @@
+name: Deployment
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-code:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get changed files
+        id: changes
+        uses: tj-actions/changed-files@v41
+
+      - name: Deploy changed files via SFTP
+        if: steps.changes.outputs.all_changes != ''
+        uses: easingthemes/ssh-deploy@v4.1.8
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.HOST }}
+          REMOTE_USER: ${{ secrets.USER }}
+          SOURCE: .
+          TARGET: /home/youruser/public_html/
+          ARGS: "-rltgoDzvO  --exclude='.git*'"

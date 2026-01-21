@@ -1,0 +1,2 @@
+/Users/mazedul/Project/365_amazcart_flutter/amazcart_app/android/app/.cxx/Debug/1c5p553i/x86/CMakeFiles/edit_cache.dir
+/Users/mazedul/Project/365_amazcart_flutter/amazcart_app/android/app/.cxx/Debug/1c5p553i/x86/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,1 @@
+/Users/mazedul/Project/365_amazcart_flutter/amazcart_app/build/app/intermediates/cxx/RelWithDebInfo/3d4r65n6/obj/armeabi-v7a

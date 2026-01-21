@@ -1,0 +1,262 @@
+{
+
+  "packages": [
+    {
+      "id": 341,
+      "order_id": 339,
+      "carrier_order_id": null,
+      "seller_id": 1,
+      "package_code": "24040403554533",
+      "number_of_product": 1,
+      "shipping_cost": 15,
+      "shipping_date": "Est. Arrival Date: Apr 9-Apr 12",
+      "shipping_method": 2,
+      "carrier_id": "1",
+      "shipped_by": null,
+      "is_cancelled": 0,
+      "is_paid": 0,
+      "cancel_reason_id": null,
+      "is_reviewed": 0,
+      "delivery_status": 2,
+      "gst_claimed": 0,
+      "tax_amount": 0,
+      "created_at": "2024-04-04T09:45:55.000000Z",
+      "updated_at": "2024-04-04T09:45:55.000000Z",
+      "carrier_response": null,
+      "pickup_point_id": 1,
+      "weight": 0,
+      "length": 0,
+      "breadth": 0,
+      "height": 0,
+      "deliveryStateName": "Processing",
+      "totalGST": 0,
+      "processes": [
+        {
+          "id": 5,
+          "name": "Delivered",
+          "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s,",
+          "created_at": "2021-02-11T06:34:43.000000Z",
+          "updated_at": "2021-02-11T06:35:02.000000Z"
+        }
+      ],
+      "order": {
+        "id": 339,
+        "customer_id": 47,
+        "order_payment_id": 349,
+        "order_type": null,
+        "order_number": "20240404000336",
+        "payment_type": 2,
+        "is_paid": 1,
+        "is_confirmed": 1,
+        "is_completed": 1,
+        "is_cancelled": 0,
+        "cancel_reason_id": null,
+        "customer_email": "dsd@gmail.com",
+        "customer_phone": "43434",
+        "customer_shipping_address": 21,
+        "customer_billing_address": 21,
+        "number_of_package": 1,
+        "grand_total": 123.6,
+        "sub_total": 120,
+        "discount_total": 0,
+        "shipping_total": 0,
+        "number_of_item": 1,
+        "order_status": 0,
+        "club_point": "0",
+        "point_convert": "0",
+        "tax_amount": 3.6,
+        "note": null,
+        "delivery_type": "home_delivery",
+        "pickup_location_id": null,
+        "created_at": "2024-04-04T09:45:55.000000Z",
+        "updated_at": "2024-04-04T09:48:39.000000Z",
+        "is_received": 0,
+        "address": {
+          "id": 249,
+          "order_id": 339,
+          "customer_id": 47,
+          "shipping_name": "ew",
+          "shipping_email": "dsd@gmail.com",
+          "shipping_phone": "43434",
+          "shipping_address": "dsds",
+          "shipping_country_id": "1",
+          "shipping_state_id": "42",
+          "shipping_city_id": "48357",
+          "shipping_postcode": "3424",
+          "bill_to_same_address": 1,
+          "billing_name": "ew",
+          "billing_email": "dsd@gmail.com",
+          "billing_phone": "43434",
+          "billing_address": "dsds",
+          "billing_country_id": "1",
+          "billing_state_id": "42",
+          "billing_city_id": "48357",
+          "billing_postcode": "3424",
+          "created_at": "2024-04-04T09:45:55.000000Z",
+          "updated_at": "2024-04-04T09:45:55.000000Z",
+          "get_shipping_country": {
+            "id": 1,
+            "code": "AF",
+            "name": "Afghanistan",
+            "phonecode": "93",
+            "flag": "/flags/flag-of-Afghanistan.jpg",
+            "status": 1,
+            "continent_id": 1,
+            "created_at": null,
+            "updated_at": "2023-04-12T18:35:56.000000Z"
+          },
+          "get_shipping_state": {
+            "id": 42,
+            "name": "Badakhshan",
+            "country_id": 1,
+            "status": 1,
+            "created_at": null,
+            "updated_at": null
+          },
+          "get_shipping_city": {
+            "id": 48357,
+            "name": "Checking",
+            "state_id": 42,
+            "status": 1,
+            "created_at": "2021-11-22T16:05:07.000000Z",
+            "updated_at": "2021-11-22T16:05:07.000000Z"
+          },
+          "get_billing_country": {
+            "id": 1,
+            "code": "AF",
+            "name": "Afghanistan",
+            "phonecode": "93",
+            "flag": "/flags/flag-of-Afghanistan.jpg",
+            "status": 1,
+            "continent_id": 1,
+            "created_at": null,
+            "updated_at": "2023-04-12T18:35:56.000000Z"
+          },
+          "get_billing_state": {
+            "id": 42,
+            "name": "Badakhshan",
+            "country_id": 1,
+            "status": 1,
+            "created_at": null,
+            "updated_at": null
+          },
+          "get_billing_city": {
+            "id": 48357,
+            "name": "Checking",
+            "state_id": 42,
+            "status": 1,
+            "created_at": "2021-11-22T16:05:07.000000Z",
+            "updated_at": "2021-11-22T16:05:07.000000Z"
+          }
+        }
+      },
+      "seller": {
+        "id": 1,
+        "first_name": "Super",
+        "last_name": "admin",
+        "username": "0181",
+        "photo": null,
+        "role_id": 1,
+        "mobile_verified_at": null,
+        "email": "superadmin@gmail.com",
+        "is_verified": 1,
+        "verify_code": null,
+        "email_verified_at": null,
+        "notification_preference": "mail",
+        "is_active": 1,
+        "avatar": null,
+        "slug": "amaz-cart",
+        "phone": null,
+        "date_of_birth": null,
+        "description": null,
+        "secret_login": 0,
+        "lang_code": "en",
+        "currency_id": 2,
+        "currency_code": "USD",
+        "created_at": "2022-07-22T18:57:06.000000Z",
+        "updated_at": "2024-02-21T04:08:17.000000Z",
+        "others": null,
+        "affiliate_request": null,
+        "accept_affiliate_request": null,
+        "bkash_number": null,
+        "name": "Super admin"
+      },
+      "delivery_states": [],
+      "products": [
+        {
+          "id": 519,
+          "package_id": 341,
+          "type": "gift_card",
+          "product_sku_id": 11,
+          "qty": 1,
+          "price": 120,
+          "total_price": 120,
+          "tax_amount": 0,
+          "created_at": "2024-04-04T09:45:55.000000Z",
+          "updated_at": "2024-04-04T09:45:55.000000Z",
+          "seller_product_sku": null,
+          "gift_card": {
+            "id": 11,
+            "name": "Giftcard $100",
+            "sku": "giftcard-100",
+            "selling_price": 120,
+            "thumbnail_image": "uploads/images/25-10-2021/6176815e5814d.png",
+            "discount": 0,
+            "discount_type": 1,
+            "start_date": "2021-10-25",
+            "end_date": "2021-10-28",
+            "description": "<p>test</p>",
+            "status": 1,
+            "avg_rating": 2.5,
+            "created_by": 1,
+            "updated_by": 1,
+            "shipping_id": 1,
+            "created_at": "2021-10-25T12:05:18.000000Z",
+            "updated_at": "2021-11-28T22:37:27.000000Z",
+            "type": null,
+            "ActiveReviews": {
+              "current_page": 1,
+              "data": [],
+              "first_page_url": "https://amazcart.ischooll.com/api/order-to-ship?page=1",
+              "from": null,
+              "last_page": 1,
+              "last_page_url": "https://amazcart.ischooll.com/api/order-to-ship?page=1",
+              "links": [
+                {
+                  "url": null,
+                  "label": "&laquo; Previous",
+                  "active": false
+                },
+                {
+                  "url": "https://amazcart.ischooll.com/api/order-to-ship?page=1",
+                  "label": "1",
+                  "active": true
+                },
+                {
+                  "url": null,
+                  "label": "Next &raquo;",
+                  "active": false
+                }
+              ],
+              "next_page_url": null,
+              "path": "https://amazcart.ischooll.com/api/order-to-ship",
+              "per_page": 10,
+              "prev_page_url": null,
+              "to": null,
+              "total": 0
+            },
+            "ProductType": "gift_card"
+          }
+        }
+      ],
+      "gst_taxes": []
+    }
+  ],
+  "message": "success"
+
+}
+
+
+
+
+

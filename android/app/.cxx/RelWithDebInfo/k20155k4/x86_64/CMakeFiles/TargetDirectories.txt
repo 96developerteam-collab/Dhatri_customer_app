@@ -1,0 +1,2 @@
+/Users/lakshminareshak/FlutterProjects/amazkart/android/app/.cxx/RelWithDebInfo/k20155k4/x86_64/CMakeFiles/edit_cache.dir
+/Users/lakshminareshak/FlutterProjects/amazkart/android/app/.cxx/RelWithDebInfo/k20155k4/x86_64/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,66 @@
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:amazcart/config/config.dart';
+import 'package:amazcart/model/NewModel/Order/OrderListModel.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:http/http.dart' as http;
+
+import '../AppConfig/language/app_localizations.dart';
+
+class CancelledOrderController extends GetxController {
+  var isAllOrderLoading = false.obs;
+
+  var tokenKey = "token";
+  GetStorage userToken = GetStorage();
+
+  var cancelledOrderListModel = OrderListModel().obs;
+
+  Future<OrderListModel> getCancelled() async {
+    String token = await userToken.read(tokenKey);
+
+    Uri userData = Uri.parse(URLs.ALL_ORDER_CANCEL_LIST + '?lang=${AppLocalizations.getLanguageCode()}');
+
+    log("Url -> ${URLs.ALL_ORDER_CANCEL_LIST}");
+
+
+    var response = await http.get(
+      userData,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    log("Order cancel response ::: ${response.body}");
+    var jsonString = jsonDecode(response.body);
+
+    if (jsonString['message'] == 'success') {
+      return OrderListModel.fromJson(jsonString);
+    } else {
+      //show error message
+      return OrderListModel();
+    }
+  }
+
+  Future<OrderListModel> getCancelledOrders() async {
+    try {
+      isAllOrderLoading(true);
+      var products = await getCancelled();
+      if (products != null) {
+        cancelledOrderListModel.value = products;
+      }
+      return products;
+    } finally {
+      isAllOrderLoading(false);
+    }
+  }
+
+  @override
+  void onInit() {
+    getCancelledOrders();
+    super.onInit();
+  }
+}

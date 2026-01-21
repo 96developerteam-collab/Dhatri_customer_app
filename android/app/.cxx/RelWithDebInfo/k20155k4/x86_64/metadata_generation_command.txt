@@ -1,0 +1,20 @@
+                        -H/Users/lakshminareshak/development/flutter/packages/flutter_tools/gradle/src/main/groovy
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=21
+-DANDROID_PLATFORM=android-21
+-DANDROID_ABI=x86_64
+-DCMAKE_ANDROID_ARCH_ABI=x86_64
+-DANDROID_NDK=/Users/lakshminareshak/Library/Android/sdk/ndk/25.1.8937393
+-DCMAKE_ANDROID_NDK=/Users/lakshminareshak/Library/Android/sdk/ndk/25.1.8937393
+-DCMAKE_TOOLCHAIN_FILE=/Users/lakshminareshak/Library/Android/sdk/ndk/25.1.8937393/build/cmake/android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=/Users/lakshminareshak/Library/Android/sdk/cmake/3.22.1/bin/ninja
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/Users/lakshminareshak/FlutterProjects/amazkart/build/app/intermediates/cxx/RelWithDebInfo/k20155k4/obj/x86_64
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/Users/lakshminareshak/FlutterProjects/amazkart/build/app/intermediates/cxx/RelWithDebInfo/k20155k4/obj/x86_64
+-DCMAKE_BUILD_TYPE=RelWithDebInfo
+-B/Users/lakshminareshak/FlutterProjects/amazkart/android/app/.cxx/RelWithDebInfo/k20155k4/x86_64
+-GNinja
+-Wno-dev
+--no-warn-unused-cli
+                        Build command args: []
+                        Version: 2
