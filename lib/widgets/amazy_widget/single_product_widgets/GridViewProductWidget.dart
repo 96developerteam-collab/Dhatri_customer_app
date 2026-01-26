@@ -278,6 +278,21 @@ class _GridViewProductWidgetState extends State<GridViewProductWidget> {
                                 ),
                               ),
                               SizedBox(height: 5),
+                              if (widget.productModel?.mrp != null &&
+                                  widget.productModel!.mrp! > 0)
+                                Text(
+                                  currencyController.setCurrentSymbolPosition(
+                                      amount: (widget.productModel!.mrp! *
+                                              currencyController
+                                                  .conversionRate.value)
+                                          .toStringAsFixed(2)),
+                                  style: AppStyles.appFontBook.copyWith(
+                                    fontSize: 12.fontSize,
+                                    color: AppStyles.greyColorDark,
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                              SizedBox(height: 5),
                               widget.productModel!.hasDeal != null
                                   ? widget.productModel!.hasDeal!.discount! > 0
                                       ? Wrap(
@@ -297,9 +312,7 @@ class _GridViewProductWidgetState extends State<GridViewProductWidget> {
                                                 color: AppStyles.pinkColor,
                                               ),
                                             ),
-                                            SizedBox(
-                                              width: 3,
-                                            ),
+                                            SizedBox(width: 3, ),
                                             Text(
                                               '${currencyController.calculateMainPrice(widget.productModel!)}',
                                               overflow: TextOverflow.ellipsis,
@@ -352,16 +365,16 @@ class _GridViewProductWidgetState extends State<GridViewProductWidget> {
                                         SizedBox(
                                           width: 3,
                                         ),
-                                        Text(
-                                          '${currencyController.calculateMainPrice(widget.productModel!)}',
-                                          overflow: TextOverflow.ellipsis,
-                                          style: AppStyles.appFontBook.copyWith(
-                                            fontSize: 12.fontSize,
-                                            color: AppStyles.greyColorDark,
-                                            decoration:
-                                                TextDecoration.lineThrough,
-                                          ),
-                                        ),
+                                        // Text(
+                                        //   '${currencyController.calculateMainPrice(widget.productModel!)}',
+                                        //   overflow: TextOverflow.ellipsis,
+                                        //   style: AppStyles.appFontBook.copyWith(
+                                        //     fontSize: 12.fontSize,
+                                        //     color: AppStyles.greyColorDark,
+                                        //     decoration:
+                                        //         TextDecoration.lineThrough,
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                             ],

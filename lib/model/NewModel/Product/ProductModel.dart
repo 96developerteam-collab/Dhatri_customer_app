@@ -50,6 +50,7 @@ class ProductModel {
       this.giftCardSku,
       this.giftCardName,
       this.giftCardDescription,
+      this.mrp,
       this.giftCardGalleryImages});
 
   int? id;
@@ -73,6 +74,7 @@ class ProductModel {
   double? avgRating;
   double? maxSellingPrice;
   double? rating;
+  double? mrp;
   HasDeal? hasDeal;
   String? hasDiscount;
   Product? product;
@@ -124,6 +126,11 @@ class ProductModel {
       maxSellingPrice: json["MaxSellingPrice"] == null
           ? null
           : AppUtilities.convertToDouble(item: json["MaxSellingPrice"]),
+      mrp: json["mrp"] != null
+          ? AppUtilities.convertToDouble(item: json["mrp"])
+          : (json["product"] != null && json["product"] is Map && json["product"]["mrp"] != null
+              ? AppUtilities.convertToDouble(item: json["product"]["mrp"])
+              : null),
       hasDeal: json["hasDeal"] == null || json["hasDeal"] == 0
           ? null
           : HasDeal.fromJson(json["hasDeal"]),
@@ -181,6 +188,7 @@ class ProductModel {
         "avg_rating": avgRating,
         "MaxSellingPrice": maxSellingPrice,
         "rating": rating,
+        "mrp": mrp,
         "hasDiscount": hasDiscount,
         "hasDeal": hasDeal == null ? null : hasDeal?.toJson(),
         "flash_deal": flashDeal == null ? null : flashDeal?.toJson(),

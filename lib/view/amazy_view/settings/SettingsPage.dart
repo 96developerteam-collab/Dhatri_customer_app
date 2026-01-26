@@ -541,27 +541,27 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 /// Account Delete
                 loginController.loggedIn.value ? ListTile(
-                  onTap: () {
+                  // onTap: () {
 
-                    Get.dialog(
-                      AccountDeleteDialogue(
-                        onYesTap: () {
-                          currencyController.deleteAccount();
-                        },
-                      ),
-                      // backgroundColor: Colors.white,
-                    );
-                  },
-                  tileColor: Colors.white,
-                  trailing: Icon(Icons.warning_amber_rounded,size: 20.w,),
-                  title: Text(
-                    'Delete Account'.tr,
-                    style: AppStyles.appFont.copyWith(
-                      color: AppStyles.pinkColor,
-                      fontSize: 15.fontSize,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
+                  //   Get.dialog(
+                  //     AccountDeleteDialogue(
+                  //       onYesTap: () {
+                  //         currencyController.deleteAccount();
+                  //       },
+                  //     ),
+                  //     // backgroundColor: Colors.white,
+                  //   );
+                  // },
+                  // tileColor: Colors.white,
+                  // trailing: Icon(Icons.warning_amber_rounded,size: 20.w,),
+                  // title: Text(
+                  //   'Delete Account'.tr,
+                  //   style: AppStyles.appFont.copyWith(
+                  //     color: AppStyles.pinkColor,
+                  //     fontSize: 15.fontSize,
+                  //     fontWeight: FontWeight.w400,
+                  //   ),
+                  // ),
                 ) : SizedBox(),
                 Divider(
                   color: AppStyles.appBackgroundColor,

@@ -47,7 +47,7 @@ class Currency {
 
   factory Currency.fromJson(Map<String, dynamic> json) => Currency(
         id: json["id"],
-        name: json["name"],
+        name: json["name"] is Map ? json["name"]["en"] : json["name"],
         code: json["code"],
         status: json["status"],
         convertRate: json["convert_rate"].toDouble(),

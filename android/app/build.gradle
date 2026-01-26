@@ -39,7 +39,7 @@ keyStoreProperties.load(new FileInputStream(keyStorePropertiesFile))
 
 
 android {
-    compileSdkVersion 35
+    compileSdkVersion 36
 //    ndkVersion flutter.ndkVersion
     namespace "com.amazcart.store"
     compileOptions {
@@ -59,7 +59,7 @@ android {
     defaultConfig {
         applicationId "com.dhatri.store"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

@@ -521,7 +521,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                        child: Container(
                                          width: 45.w,
                                          decoration: BoxDecoration(
-                                           color: AppStyles.pinkColorAlt,
+                                           color: AppStyles.pinkColor.withOpacity(0.15),
                                            shape: BoxShape.circle,
                                          ),
                                          child: FloatingActionButton(
@@ -549,7 +549,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                        child: Container(
                                          width: 45.w,
                                          decoration: BoxDecoration(
-                                           color: AppStyles.pinkColorAlt,
+                                           color: AppStyles.pinkColor.withOpacity(0.15),
                                            shape: BoxShape.circle,
                                          ),
                                          child: FloatingActionButton(
@@ -664,7 +664,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                    height: 40.w,
                                    padding: EdgeInsets.all(5.w),
                                    decoration: BoxDecoration(
-                                     color: AppStyles.pinkColorAlt,
+                                     color: AppStyles.pinkColor.withOpacity(0.15),
                                      shape: BoxShape.circle,
                                    ),
                                    child: InkWell(
@@ -865,6 +865,23 @@ class _ProductDetailsState extends State<ProductDetails> {
                                        MainAxisAlignment.center,
                                        mainAxisSize: MainAxisSize.min,
                                        children: [
+                                          if (_productDetailsModel.data?.mrp != null &&
+                                              _productDetailsModel.data!.mrp! > 0)
+                                            Padding(
+                                              padding: EdgeInsets.only(bottom: 5.h),
+                                              child: Text(
+                                                _settingsController.setCurrentSymbolPosition(
+                                                    amount: (_productDetailsModel.data!.mrp! *
+                                                        _settingsController
+                                                            .conversionRate.value)
+                                                        .toStringAsFixed(2)),
+                                                style: AppStyles.appFontBook.copyWith(
+                                                  fontSize: 14.fontSize,
+                                                  color: AppStyles.greyColorDark,
+                                                  decoration: TextDecoration.lineThrough,
+                                                ),
+                                              ),
+                                            ),
                                          Obx(() {
                                            return Text(
                                              _settingsController.setCurrentSymbolPosition(amount: (controller.finalPrice.value * _settingsController.conversionRate.value).toStringAsFixed(2)),
@@ -931,7 +948,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                      padding: EdgeInsets.symmetric(
                                          horizontal: 8, vertical: 7),
                                      decoration: BoxDecoration(
-                                         color: AppStyles.pinkColorAlt,
+                                         color: AppStyles.pinkColor.withOpacity(0.15),
                                          shape: BoxShape.rectangle,
                                          borderRadius:
                                          BorderRadius.circular(7.r)),
@@ -1244,7 +1261,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                textColor: AppStyles.pinkColor,
                                                selectedTextColor: Colors.white,
                                                buttonColor:
-                                               AppStyles.pinkColorAlt,
+                                               AppStyles.pinkColor.withOpacity(0.15),
                                                selectedColor:
                                                AppStyles.pinkColor,
                                                elevation: 0,

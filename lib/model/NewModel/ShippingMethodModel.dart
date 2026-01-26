@@ -71,7 +71,7 @@ class Shipping {
 
   factory Shipping.fromJson(Map<String, dynamic> json) => Shipping(
         id: json["id"],
-        methodName: json["method_name"],
+        methodName: json["method_name"] is Map ? json["method_name"]["en"] : json["method_name"],
         carrierId: json["carrier_id"],
         costBasedOn: json["cost_based_on"],
         logo: json["logo"],

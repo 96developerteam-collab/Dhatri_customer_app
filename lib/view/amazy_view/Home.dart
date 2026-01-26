@@ -872,6 +872,46 @@ LinearGradient? selectColor(int position) {
                                                                     WrapCrossAlignment
                                                                         .center,
                                                                     children: [
+                                                                      if (_homeController
+                                                                              .homePageModel
+                                                                              .value
+                                                                              .newUserZone
+                                                                              ?.allProducts?[index]
+                                                                              .product
+                                                                              ?.mrp !=
+                                                                          null &&
+                                                                          _homeController
+                                                                                  .homePageModel
+                                                                                  .value
+                                                                                  .newUserZone!
+                                                                                  .allProducts![index]
+                                                                                  .product!
+                                                                                  .mrp! >
+                                                                              0)
+                                                                        Text(
+                                                                          '${_settingsController.setCurrentSymbolPosition(amount:  (_homeController.homePageModel.value.newUserZone!.allProducts![index].product!.mrp! * _settingsController.conversionRate.value).toStringAsFixed(2))}',
+                                                                          style: AppStyles.kFontGrey12w5.copyWith(
+                                                                            decoration: TextDecoration.lineThrough,
+                                                                            fontSize: 12.fontSize,
+                                                                          ),
+                                                                        ),
+                                                                      if (_homeController
+                                                                              .homePageModel
+                                                                              .value
+                                                                              .newUserZone
+                                                                              ?.allProducts?[index]
+                                                                              .product
+                                                                              ?.mrp !=
+                                                                          null &&
+                                                                          _homeController
+                                                                                  .homePageModel
+                                                                                  .value
+                                                                                  .newUserZone!
+                                                                                  .allProducts![index]
+                                                                                  .product!
+                                                                                  .mrp! >
+                                                                              0)
+                                                                        SizedBox(width: 5.w),
                                                                       Text(
                                                                         _settingsController.calculatePrice(_homeController
                                                                             .homePageModel

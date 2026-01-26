@@ -27,7 +27,7 @@ class AppConfig {
  static const String privacyPolicyUrl =
      'https://dhatri.store/terms-&-conditions%201';
 
- static bool googleLogin = true;
+ static bool googleLogin = false;
  static bool facebookLogin = false;
  static bool appleLogin = false;
 

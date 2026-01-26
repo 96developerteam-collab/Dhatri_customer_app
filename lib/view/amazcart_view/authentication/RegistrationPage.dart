@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'dart:developer';
 
 import 'package:amazcart/AppConfig/app_config.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:amazcart/controller/login_controller.dart';
 import 'package:amazcart/controller/otp_controller.dart';
 import 'package:amazcart/controller/settings_controller.dart';
@@ -111,6 +114,7 @@ class RegistrationPage extends GetView<LoginController> {
                               decoration: InputDecoration(
                                 hintText: 'First Name'.tr,
                                 hintStyle: AppStyles.kFontWhite14w5,
+                                prefixIcon: Icon(Icons.person, color: Colors.white, size: 20.w),
                                 border: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: AppStyles.textFieldFillColor,
@@ -157,6 +161,7 @@ class RegistrationPage extends GetView<LoginController> {
                               decoration: InputDecoration(
                                 hintText: 'Last Name'.tr,
                                 hintStyle: AppStyles.kFontWhite14w5,
+                                prefixIcon: Icon(Icons.person_outline, color: Colors.white, size: 20.w),
                                 border: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: AppStyles.textFieldFillColor,
@@ -205,6 +210,7 @@ class RegistrationPage extends GetView<LoginController> {
                       decoration: InputDecoration(
                         hintText: 'Email or Phone Number'.tr,
                         hintStyle: AppStyles.kFontWhite14w5,
+                        prefixIcon: Icon(Icons.email, color: Colors.white, size: 20.w),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
                             color: AppStyles.textFieldFillColor,
@@ -267,6 +273,7 @@ class RegistrationPage extends GetView<LoginController> {
                       decoration: InputDecoration(
                         hintText: 'Password'.tr,
                         hintStyle: AppStyles.kFontWhite14w5,
+                        prefixIcon: Icon(Icons.lock, color: Colors.white, size: 20.w),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
                             color: AppStyles.textFieldFillColor,
@@ -312,6 +319,7 @@ class RegistrationPage extends GetView<LoginController> {
                       decoration: InputDecoration(
                         hintText: 'Confirm Password'.tr,
                         hintStyle: AppStyles.kFontWhite14w5,
+                        prefixIcon: Icon(Icons.lock_outline, color: Colors.white, size: 20.w),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
                             color: AppStyles.textFieldFillColor,
@@ -358,6 +366,7 @@ class RegistrationPage extends GetView<LoginController> {
                       decoration: InputDecoration(
                         hintText: "${'Referral code'.tr} (${"Optional".tr})",
                         hintStyle: AppStyles.kFontWhite14w5,
+                        prefixIcon: Icon(Icons.card_giftcard, color: Colors.white, size: 20.w),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
                             color: AppStyles.textFieldFillColor,
@@ -391,6 +400,135 @@ class RegistrationPage extends GetView<LoginController> {
                       },
                     ),
                   ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                    child: TextFormField(
+                      controller: _accountController.storeName,
+                      decoration: InputDecoration(
+                        hintText: 'Store Name'.tr + " *",
+                        hintStyle: AppStyles.kFontWhite14w5,
+                        prefixIcon: Icon(Icons.store, color: Colors.white, size: 20.w),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: AppStyles.textFieldFillColor,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: AppStyles.textFieldFillColor,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        errorStyle: AppStyles.kFontWhite12w5.copyWith(
+                          color: Colors.white,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: AppStyles.textFieldFillColor,
+                          ),
+                        ),
+                      ),
+                      keyboardType: TextInputType.text,
+                      style: AppStyles.kFontWhite14w5
+                          .copyWith(fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      validator: (value) {
+                        if (value?.isEmpty ?? true) {
+                          return 'Please enter store name'.tr;
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  Obx(() => Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                    child: InkWell(
+                      onTap: () async {
+                        FilePickerResult? result = await FilePicker.platform.pickFiles(
+                          type: FileType.custom,
+                          allowedExtensions: ['pdf'],
+                        );
+                        if (result != null) {
+                          File file = File(result.files.single.path!);
+                          int sizeInBytes = file.lengthSync();
+                          double sizeInMb = sizeInBytes / (1024 * 1024);
+                          if (sizeInMb > 5) {
+                            SnackBars().snackBarWarning("File size should be less than 5MB".tr);
+                          } else {
+                            _accountController.pickedDocument.value = file;
+                          }
+                        }
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 15.h),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppStyles.textFieldFillColor),
+                          borderRadius: BorderRadius.circular(4.r),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.picture_as_pdf, color: Colors.white, size: 18.w),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: Text(
+                                _accountController.pickedDocument.value == null
+                                    ? 'Store Documents (GST, MSME, STORE DOCS, PAN)'.tr + " *"
+                                    : _accountController.pickedDocument.value!.path.split('/').last,
+                                style: AppStyles.kFontWhite14w5.copyWith(
+                                  fontSize: 14.fontSize,
+                                  color: _accountController.pickedDocument.value == null ? Colors.white.withOpacity(0.8) : Colors.white,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )),
+                  Obx(() => Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                    child: InkWell(
+                      onTap: () async {
+                        final ImagePicker _picker = ImagePicker();
+                        final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                        if (image != null) {
+                          _accountController.pickedShopImage.value = File(image.path);
+                        }
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 15.h),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppStyles.textFieldFillColor),
+                          borderRadius: BorderRadius.circular(4.r),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.image, color: Colors.white, size: 18.w),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: Text(
+                                _accountController.pickedShopImage.value == null
+                                    ? 'SHOP Image'.tr + " *"
+                                    : _accountController.pickedShopImage.value!.path.split('/').last,
+                                style: AppStyles.kFontWhite14w5.copyWith(
+                                  fontSize: 14.fontSize,
+                                  color: _accountController.pickedShopImage.value == null ? Colors.white.withOpacity(0.8) : Colors.white,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )),
                   AnimatedSwitcher(
                     duration: Duration(milliseconds: 500),
                     child: _accountController.isLoading.value
@@ -405,12 +543,13 @@ class RegistrationPage extends GetView<LoginController> {
                             child: InkWell(
                               onTap: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  Map registrationData = {
+                                  Map<String, dynamic> registrationData = {
                                     "first_name": controller.firstName.text,
                                     "last_name": controller.lastName.text,
                                     "login": controller.registerEmail.text,
                                     "referral_code":
                                         controller.referralCode.text,
+                                    "store_name": controller.storeName.text,
                                     "password":
                                         controller.registerPassword.text,
                                     "password_confirmation":
@@ -418,6 +557,15 @@ class RegistrationPage extends GetView<LoginController> {
                                     "user_type": "customer",
                                     "device_token" : AuthDatabase.instance.getDeviceUniqueId()
                                   };
+
+                                  if (controller.pickedDocument.value == null) {
+                                    SnackBars().snackBarWarning("Please upload Store Documents".tr);
+                                    return;
+                                  }
+                                  if (controller.pickedShopImage.value == null) {
+                                    SnackBars().snackBarWarning("Please upload Shop Image".tr);
+                                    return;
+                                  }
 
                                   log("_settingsController.otpOnCustomerRegistration.value ::: ${_settingsController.otpOnCustomerRegistration.value}");
                                   if (_settingsController.otpOnCustomerRegistration.value) {

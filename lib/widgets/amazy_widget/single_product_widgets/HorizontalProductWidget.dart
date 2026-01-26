@@ -289,6 +289,21 @@ class _HorizontalProductWidgetState extends State<HorizontalProductWidget> {
                                   ),
                                 ),
                                 SizedBox(height: 5.h),
+                                if (widget.productModel?.mrp != null &&
+                                    widget.productModel!.mrp! > 0)
+                                  Text(
+                                    currencyController.setCurrentSymbolPosition(
+                                        amount: (widget.productModel!.mrp! *
+                                                currencyController
+                                                    .conversionRate.value)
+                                            .toStringAsFixed(2)),
+                                    style: AppStyles.appFontBook.copyWith(
+                                      fontSize: 12.fontSize,
+                                      color: AppStyles.greyColorDark,
+                                      decoration: TextDecoration.lineThrough,
+                                    ),
+                                  ),
+                                SizedBox(height: 5.h),
                                 widget.productModel!.hasDeal != null
                                     ? widget.productModel!.hasDeal!.discount! >
                                     0
@@ -372,17 +387,17 @@ class _HorizontalProductWidgetState extends State<HorizontalProductWidget> {
                                     SizedBox(
                                       width: 3,
                                     ),
-                                    Text(
-                                      '${currencyController.calculateMainPrice(
-                                          widget.productModel!)}',
-                                      overflow: TextOverflow.ellipsis,
-                                      style: AppStyles.appFontBook.copyWith(
-                                        fontSize: 12.fontSize,
-                                        color: AppStyles.greyColorDark,
-                                        decoration:
-                                        TextDecoration.lineThrough,
-                                      ),
-                                    ),
+                                    // Text(
+                                    //   '${currencyController.calculateMainPrice(
+                                    //       widget.productModel!)}',
+                                    //   overflow: TextOverflow.ellipsis,
+                                    //   style: AppStyles.appFontBook.copyWith(
+                                    //     fontSize: 12.fontSize,
+                                    //     color: AppStyles.greyColorDark,
+                                    //     decoration:
+                                    //     TextDecoration.lineThrough,
+                                    //   ),
+                                    // ),
                                   ],
                                 ),
                               ],

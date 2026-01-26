@@ -369,203 +369,203 @@ class LoginPage extends GetView<LoginController> {
                     SizedBox(
                       height: 10,
                     ),
-                    Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 5),
-                      child: Text(
-                        '..${"Or continue with".tr}'.tr,
-                        style: AppStyles.appFontMedium.copyWith(
-                          fontSize: 14.fontSize,
-                          color: AppStyles.greyColorLight,
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   alignment: Alignment.center,
+                    //   padding: const EdgeInsets.symmetric(
+                    //       horizontal: 30, vertical: 5),
+                    //   child: Text(
+                    //     '..${"Or continue with".tr}'.tr,
+                    //     style: AppStyles.appFontMedium.copyWith(
+                    //       fontSize: 14.fontSize,
+                    //       color: AppStyles.greyColorLight,
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(
                       height: 20,
                     ),
 
-                    Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          AppConfig.facebookLogin
-                              ? InkWell(
-                            onTap: () async {
-                              final LoginResult result =
-                              await FacebookAuth.instance
-                                  .login(); // by default we request the email and the public profile
-                              if (result.status ==
-                                  LoginStatus.success) {
-                                _accessToken = result.accessToken;
-                                _printCredentials();
+                    // Container(
+                    //   alignment: Alignment.center,
+                    //   padding: const EdgeInsets.symmetric(
+                    //       horizontal: 20, vertical: 5),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.center,
+                    //     crossAxisAlignment: CrossAxisAlignment.center,
+                    //     children: [
+                    //       AppConfig.facebookLogin
+                    //           ? InkWell(
+                    //         onTap: () async {
+                    //           final LoginResult result =
+                    //           await FacebookAuth.instance
+                    //               .login(); // by default we request the email and the public profile
+                    //           if (result.status ==
+                    //               LoginStatus.success) {
+                    //             _accessToken = result.accessToken;
+                    //             _printCredentials();
 
-                                final userData = await FacebookAuth
-                                    .instance
-                                    .getUserData();
-                                _userData = userData;
+                    //             final userData = await FacebookAuth
+                    //                 .instance
+                    //                 .getUserData();
+                    //             _userData = userData;
 
-                                final _getToken =
-                                FacebookResponse.fromJson(
-                                    _accessToken!.toJson());
+                    //             final _getToken =
+                    //             FacebookResponse.fromJson(
+                    //                 _accessToken!.toJson());
 
-                                final _getUser =
-                                FacebookUser.fromJson(userData);
+                    //             final _getUser =
+                    //             FacebookUser.fromJson(userData);
 
-                                Map data = {
-                                  "provider_id": _getUser.id,
-                                  "provider_name": "facebook",
-                                  "name": _getUser.name,
-                                  "email": _getUser.email,
-                                  "token":
-                                  _getToken.token.toString(),
-                                };
+                    //             Map data = {
+                    //               "provider_id": _getUser.id,
+                    //               "provider_name": "facebook",
+                    //               "name": _getUser.name,
+                    //               "email": _getUser.email,
+                    //               "token":
+                    //               _getToken.token.toString(),
+                    //             };
 
-                                print(data);
+                    //             print(data);
 
-                                await _loginController
-                                    .socialLogin(data)
-                                    .then((value) async {
-                                  if (value == true) {
-                                    Get.back();
-                                  } else {
-                                    await FacebookAuth.instance
-                                        .logOut();
-                                  }
-                                });
-                              } else {
-                                print(result.status);
-                                print(result.message);
-                              }
-                            },
-                            child: Container(
-                              width: Get.width/2 - 60,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 1,
-                                  color: Color(0xff969599),
-                                ),
-                                borderRadius:
-                                BorderRadius.circular(5.r),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 8),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    width: 30.w,
-                                    height: 30.w,
-                                    child: Image.asset(
-                                      'assets/images/facebook_logo.png',
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      'Facebook'.tr,
-                                      style: AppStyles.appFontBold
-                                          .copyWith(
-                                        fontSize: 13.fontSize,
-                                        color: AppStyles
-                                            .greyColorLight,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                              : SizedBox.shrink(),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          AppConfig.googleLogin
-                              ? InkWell(
-                            onTap: () async {
-                              GoogleSignInAccount?
-                              googleSignInAccount =
-                              await _googleSignIn.signIn();
+                    //             await _loginController
+                    //                 .socialLogin(data)
+                    //                 .then((value) async {
+                    //               if (value == true) {
+                    //                 Get.back();
+                    //               } else {
+                    //                 await FacebookAuth.instance
+                    //                     .logOut();
+                    //               }
+                    //             });
+                    //           } else {
+                    //             print(result.status);
+                    //             print(result.message);
+                    //           }
+                    //         },
+                    //         child: Container(
+                    //           width: Get.width/2 - 60,
+                    //           decoration: BoxDecoration(
+                    //             border: Border.all(
+                    //               width: 1,
+                    //               color: Color(0xff969599),
+                    //             ),
+                    //             borderRadius:
+                    //             BorderRadius.circular(5.r),
+                    //           ),
+                    //           padding: EdgeInsets.symmetric(
+                    //               horizontal: 8, vertical: 8),
+                    //           child: Row(
+                    //             mainAxisAlignment:
+                    //             MainAxisAlignment.center,
+                    //             children: [
+                    //               Container(
+                    //                 width: 30.w,
+                    //                 height: 30.w,
+                    //                 child: Image.asset(
+                    //                   'assets/images/facebook_logo.png',
+                    //                 ),
+                    //               ),
+                    //               SizedBox(
+                    //                 width: 10,
+                    //               ),
+                    //               Expanded(
+                    //                 child: Text(
+                    //                   'Facebook'.tr,
+                    //                   style: AppStyles.appFontBold
+                    //                       .copyWith(
+                    //                     fontSize: 13.fontSize,
+                    //                     color: AppStyles
+                    //                         .greyColorLight,
+                    //                   ),
+                    //                 ),
+                    //               ),
+                    //             ],
+                    //           ),
+                    //         ),
+                    //       )
+                    //           : SizedBox.shrink(),
+                    //       SizedBox(
+                    //         width: 10,
+                    //       ),
+                    //       AppConfig.googleLogin
+                    //           ? InkWell(
+                    //         onTap: () async {
+                    //           GoogleSignInAccount?
+                    //           googleSignInAccount =
+                    //           await _googleSignIn.signIn();
 
-                              await googleSignInAccount!
-                                  .authentication
-                                  .then((value) async {
-                                log(value.idToken.toString());
+                    //           await googleSignInAccount!
+                    //               .authentication
+                    //               .then((value) async {
+                    //             log(value.idToken.toString());
 
-                                Map data = {
-                                  "provider_id":
-                                  googleSignInAccount.id,
-                                  "provider_name": "google",
-                                  "name": googleSignInAccount
-                                      .displayName,
-                                  "email":
-                                  googleSignInAccount.email,
-                                  "token": value.idToken.toString(),
-                                };
+                    //             Map data = {
+                    //               "provider_id":
+                    //               googleSignInAccount.id,
+                    //               "provider_name": "google",
+                    //               "name": googleSignInAccount
+                    //                   .displayName,
+                    //               "email":
+                    //               googleSignInAccount.email,
+                    //               "token": value.idToken.toString(),
+                    //             };
 
-                                await _loginController
-                                    .socialLogin(data)
-                                    .then((value) {
-                                  if (value == true) {
-                                    Get.back();
-                                  } else {
-                                    _googleSignIn.signOut();
-                                  }
-                                });
-                              });
-                            },
-                            child: Container(
-                              width: Get.width/2 - 60,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 1,
-                                  color: Color(0xff969599),
-                                ),
-                                borderRadius:
-                                BorderRadius.circular(5.r),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 8),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    width: 30.w,
-                                    height: 30.w,
-                                    child: Image.asset(
-                                      'assets/images/google_logo.png',
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      'Google'.tr,
-                                      style: AppStyles.appFontBold
-                                          .copyWith(
-                                        fontSize: 13.fontSize,
-                                        color:
-                                        AppStyles.greyColorLight,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                              : SizedBox.shrink(),
-                        ],
-                      ),
-                    ),
+                    //             await _loginController
+                    //                 .socialLogin(data)
+                    //                 .then((value) {
+                    //               if (value == true) {
+                    //                 Get.back();
+                    //               } else {
+                    //                 _googleSignIn.signOut();
+                    //               }
+                    //             });
+                    //           });
+                    //         },
+                    //         child: Container(
+                    //           width: Get.width/2 - 60,
+                    //           decoration: BoxDecoration(
+                    //             border: Border.all(
+                    //               width: 1,
+                    //               color: Color(0xff969599),
+                    //             ),
+                    //             borderRadius:
+                    //             BorderRadius.circular(5.r),
+                    //           ),
+                    //           padding: EdgeInsets.symmetric(
+                    //               vertical: 8, horizontal: 8),
+                    //           child: Row(
+                    //             mainAxisAlignment:
+                    //             MainAxisAlignment.center,
+                    //             children: [
+                    //               Container(
+                    //                 width: 30.w,
+                    //                 height: 30.w,
+                    //                 child: Image.asset(
+                    //                   'assets/images/google_logo.png',
+                    //                 ),
+                    //               ),
+                    //               SizedBox(
+                    //                 width: 10,
+                    //               ),
+                    //               Expanded(
+                    //                 child: Text(
+                    //                   'Google'.tr,
+                    //                   style: AppStyles.appFontBold
+                    //                       .copyWith(
+                    //                     fontSize: 13.fontSize,
+                    //                     color:
+                    //                     AppStyles.greyColorLight,
+                    //                   ),
+                    //                 ),
+                    //               ),
+                    //             ],
+                    //           ),
+                    //         ),
+                    //       )
+                    //           : SizedBox.shrink(),
+                    //     ],
+                    //   ),
+                    // ),
                     SizedBox(
                       height: 20,
                     ),

@@ -19,420 +19,264 @@ class OrderAllToPayListDataWidget extends StatelessWidget {
   OrderAllToPayListDataWidget({this.order});
   final OrderData? order;
 
-  final GeneralSettingsController currencyController =
-  Get.put(GeneralSettingsController());
+  final GeneralSettingsController currencyController = Get.find<GeneralSettingsController>();
 
   String deliverStateName(Package package) {
-    var deliveryStatus = 'Pending';
+    var deliveryStatus = 'Pending'.tr;
     package.processes?.forEach((element) {
       if (package.deliveryStatus == element.id) {
         deliveryStatus = element.name ?? "Pending";
       } else if (package.deliveryStatus == 0) {
-        deliveryStatus = "";
+        deliveryStatus = "Pending".tr;
       }
     });
     return deliveryStatus;
   }
 
   String orderStatusGet(OrderData order) {
-    var orderStatus;
+    var orderStatus = 'Pending'.tr;
 
-    if (order.isCancelled == 0 &&
-        order.isCompleted == 0 &&
-        order.isConfirmed == 0 &&
-        order.isPaid == 0) {
-      orderStatus = 'Pending'.tr;
-    } else {
-      if (order.isCancelled == 1) {
-        orderStatus = "Cancelled".tr;
-      }
-      if (order.isCompleted == 1) {
-        orderStatus = 'Completed'.tr;
-      }
-      if (order.isConfirmed == 1) {
-        orderStatus = 'Confirmed'.tr;
-      }
-      if (order.isPaid == 1) {
-        orderStatus = 'Paid'.tr;
-      }
+    if (order.isCancelled == 1) {
+      orderStatus = "Cancelled".tr;
+    } else if (order.isCompleted == 1) {
+      orderStatus = 'Completed'.tr;
+    } else if (order.isConfirmed == 1) {
+      orderStatus = 'Confirmed'.tr;
+    } else if (order.isPaid == 1) {
+      orderStatus = 'Paid'.tr;
     }
     return orderStatus;
   }
 
+  Color getStatusColor(String status) {
+    status = status.toLowerCase();
+    if (status.contains('pending')) return Colors.orange;
+    if (status.contains('cancelled')) return Colors.red;
+    if (status.contains('completed') || status.contains('paid') || status.contains('delivered') || status.contains('confirmed')) return Colors.green;
+    return AppStyles.pinkColor;
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (order == null) return const SizedBox.shrink();
+    final status = orderStatusGet(order!);
+    final statusColor = getStatusColor(status);
+
     return InkWell(
       onTap: () {
-
         log("OrderDetails ::::: ${order?.toJson()}");
-        Get.to(() => OrderDetails(
-          order: order,
-        ));
-
+        Get.to(() => OrderDetails(order: order));
       },
       child: Container(
-        color: context.theme.cardColor,
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.w),
+        margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: context.theme.cardColor,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
+          border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        ),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          order?.orderNumber?.capitalizeFirst ?? '',
-                          style: AppStyles.kFontBlack15w4,
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          size: 15.w,
-                          color: AppStyles.blackColor,
-                        ),
-                      ],
+            // Order Header
+            Container(
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: Colors.grey.withOpacity(0.1))),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            order?.orderNumber?.toUpperCase() ?? '',
+                            style: AppStyles.appFontBold.copyWith(fontSize: 15.sp),
+                          ),
+                          SizedBox(width: 4.w),
+                          Icon(Icons.arrow_forward_ios, size: 12.sp, color: Colors.grey),
+                        ],
+                      ),
+                      SizedBox(height: 4.h),
+                      Text(
+                        'Placed on'.tr + ': ' + CustomDate().formattedDateTime(order?.createdAt),
+                        style: AppStyles.appFontBook.copyWith(fontSize: 12.sp, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      color: statusColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20.r),
+                      border: Border.all(color: statusColor.withOpacity(0.3)),
                     ),
-                    SizedBox(
-                      height: 5.2,
+                    child: Text(
+                      status,
+                      style: AppStyles.appFontMedium.copyWith(fontSize: 12.sp, color: statusColor),
                     ),
-                    Text(
-                      'Placed on'.tr +
-                          ': ' +
-                          CustomDate().formattedDateTime(order?.createdAt),
-                      style: AppStyles.kFontBlack12w4,
-                    ),
-                    SizedBox(
-                      height: 5.2.h,
-                    ),
-                  ],
-                ),
-                Expanded(child: Container()),
-                // Text(
-                //   '${orderStatusGet(order!)}',
-                //   style: AppStyles.kFontBlack12w4,
-                // ),
-              ],
+                  ),
+                ],
+              ),
             ),
-            SizedBox(
-              height: 10.h,
-            ),
+
+            // Packages
             ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: order?.packages?.length,
-                itemBuilder: (context, packageIndex) {
-                  return Container(
-                    padding: EdgeInsets.symmetric(vertical: 10.h),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/icon_delivery-parcel.png',
-                                        width: 17.w,
-                                        height: 17.w,
-                                      ),
-                                      SizedBox(
-                                        width: 8.w,
-                                      ),
-                                      Text(
-                                        order?.packages?[packageIndex].packageCode ?? '',
-                                        style: AppStyles.kFontBlack14w5,
-                                      ),
-                                    ],
-                                  ),
-                                  currencyController.vendorType.value ==
-                                      "single"
-                                      ? SizedBox.shrink()
-                                      : Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 26.0.w, top: 5.h),
-                                    child: Text('Sold by'.tr + ': ' + '${order?.packages?[packageIndex].seller?.firstName}',
-                                      style: AppStyles.kFontBlack14w5,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                    EdgeInsets.only(left: 26.0.w, top: 5.h),
-                                    child: Text(
-                                      order?.packages?[packageIndex].shippingDate ?? '',
-                                      style: AppStyles.kFontBlack12w4,
-                                    ),
-                                  ),
-                                ],
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: order?.packages?.length ?? 0,
+              itemBuilder: (context, packageIndex) {
+                final package = order!.packages![packageIndex];
+                final pStatus = deliverStateName(package);
+                final pStatusColor = getStatusColor(pStatus);
+
+                return Container(
+                  padding: EdgeInsets.all(16.w),
+                  decoration: BoxDecoration(
+                    border: Border(bottom: BorderSide(color: Colors.grey.withOpacity(0.05))),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Image.asset(
+                                'assets/images/icon_delivery-parcel.png',
+                                width: 16.w,
+                                height: 16.w,
                               ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                package.packageCode ?? '',
+                                style: AppStyles.appFontBold.copyWith(fontSize: 13.sp),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            pStatus,
+                            style: AppStyles.appFontMedium.copyWith(
+                              fontSize: 12.sp,
+                              color: pStatusColor,
+                              fontStyle: FontStyle.italic,
                             ),
-                            // Text(
-                            //   deliverStateName(order!.packages![packageIndex]),
-                            //   textAlign: TextAlign.center,
-                            //   style: AppStyles.kFontDarkBlue12w5
-                            //       .copyWith(fontStyle: FontStyle.italic),
-                            // ),
-                          ],
+                          ),
+                        ],
+                      ),
+                      if (currencyController.vendorType.value != "single")
+                        Padding(
+                          padding: EdgeInsets.only(left: 24.w, top: 4.h),
+                          child: Text(
+                            'Sold by'.tr + ': ' + '${package.seller?.firstName}',
+                            style: AppStyles.appFontMedium.copyWith(fontSize: 12.sp, color: Colors.grey[700]),
+                          ),
                         ),
-                        SizedBox(
-                          height: 15.h,
+                      
+                      SizedBox(height: 12.h),
+
+                      // Products
+                      ListView.separated(
+                        separatorBuilder: (context, index) => SizedBox(height: 12.h),
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: package.products?.length ?? 0,
+                        itemBuilder: (context, productIndex) {
+                          final product = package.products![productIndex];
+                          final isGiftCard = product.type == ProductType.GIFT_CARD;
+
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8.r),
+                                child: Container(
+                                  height: 60.w,
+                                  width: 60.w,
+                                  child: FancyShimmerImage(
+                                    imageUrl: isGiftCard
+                                        ? AppConfig.assetPath + '/' + '${product.giftCard?.thumbnailImage}'
+                                        : (product.sellerProductSku?.sku?.variantImage != null
+                                            ? '${AppConfig.assetPath}/${product.sellerProductSku?.sku?.variantImage}'
+                                            : '${AppConfig.assetPath}/${product.sellerProductSku?.product?.product?.thumbnailImageSource}'),
+                                    boxFit: BoxFit.cover,
+                                    errorWidget: Image.asset("assets/images/placeholder.png", fit: BoxFit.cover),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      isGiftCard ? (product.giftCard?.name ?? '') : (product.sellerProductSku?.product?.productName ?? ''),
+                                      style: AppStyles.appFontMedium.copyWith(fontSize: 13.sp),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    if (!isGiftCard)
+                                      ...(product.sellerProductSku?.productVariations ?? []).map((v) => Padding(
+                                        padding: EdgeInsets.only(top: 2.h),
+                                        child: Text(
+                                          '${v.attribute?.name}: ${v.attributeValue?.name ?? v.attributeValue?.value ?? ''}',
+                                          style: AppStyles.appFontBook.copyWith(fontSize: 11.sp, color: Colors.grey),
+                                        ),
+                                      )).toList(),
+                                    SizedBox(height: 4.h),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          '${currencyController.setCurrentSymbolPosition(amount: ((product.price ?? 0) * currencyController.conversionRate.value).toStringAsFixed(2))} x ${product.qty}',
+                                          style: AppStyles.appFontBold.copyWith(fontSize: 13.sp, color: AppStyles.pinkColor),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+
+            // Footer
+            Padding(
+              padding: EdgeInsets.all(16.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text.rich(
+                    TextSpan(
+                      text: '${order?.packages?.length} ' + 'Package'.tr + ', ' + 'Total'.tr + ': ',
+                      style: AppStyles.appFontBook.copyWith(fontSize: 13.sp),
+                      children: [
+                        TextSpan(
+                          text: currencyController.setCurrentSymbolPosition(
+                            amount: ((order?.grandTotal ?? 0) * currencyController.conversionRate.value).toStringAsFixed(2),
+                          ),
+                          style: AppStyles.appFontBold.copyWith(fontSize: 15.sp, color: AppStyles.pinkColor),
                         ),
-                        ListView.separated(
-                            separatorBuilder: (context, index) {
-                              return Divider(
-                                color: AppStyles.appBackgroundColor,
-                                height: 2.h,
-                                thickness: 2,
-                              );
-                            },
-                            shrinkWrap: true,
-                            padding: EdgeInsets.only(left: 26.0.w),
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: order?.packages?[packageIndex].products?.length ?? 0,
-                            itemBuilder: (context, productIndex) {
-                              if (order?.packages?[packageIndex].products?[productIndex].type == ProductType.GIFT_CARD) {
-                                return Container(
-                                  margin: EdgeInsets.symmetric(vertical: 10.h),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5.r)),
-                                        child: Container(
-                                            height: 80.w,
-                                            width: 80.w,
-                                            child: FancyShimmerImage(
-                                              imageUrl: AppConfig.assetPath + '/' + '${order?.packages?[packageIndex].products?[productIndex].giftCard?.thumbnailImage}',
-                                              boxFit: BoxFit.contain,
-                                              errorWidget: FancyShimmerImage(
-                                                imageUrl:
-                                                "${AppConfig.assetPath}/backend/img/default.png",
-                                                boxFit: BoxFit.contain,
-                                              ),
-                                            )),
-                                      ),
-                                      SizedBox(
-                                        width: 15.w,
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                order?.packages?[packageIndex].products?[productIndex].giftCard?.name ?? '',
-                                                style: AppStyles.kFontBlack14w5,
-                                              ),
-                                              SizedBox(
-                                                height: 5.h,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .spaceAround,
-                                                children: [
-                                                  Obx(() {
-                                                    return Text(
-                                                      '${currencyController.setCurrentSymbolPosition(amount: ((order?.packages?[packageIndex].products?[productIndex].price??0) * currencyController.conversionRate.value).toString())}',
-                                                      style: AppStyles
-                                                          .kFontPink15w5,
-                                                    );
-                                                  }),
-                                                  Expanded(
-                                                    child: Container(),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 5.h,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              } else {
-                                return Container(
-                                  margin: EdgeInsets.symmetric(vertical: 10.h),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5.r)),
-                                        child: Container(
-                                          height: 80.w,
-                                          width: 80.w,
-                                          child: FancyShimmerImage(
-                                            imageUrl: order?.packages?[packageIndex].products?[productIndex].sellerProductSku?.sku?.variantImage !=
-                                                null
-                                                ? '${AppConfig.assetPath}/${order?.packages?[packageIndex].products?[productIndex].sellerProductSku?.sku?.variantImage}'
-                                                : '${AppConfig.assetPath}/${order?.packages?[packageIndex].products?[productIndex].sellerProductSku?.product?.product?.thumbnailImageSource}',
-                                            boxFit: BoxFit.contain,
-                                            errorWidget: FancyShimmerImage(
-                                              imageUrl:
-                                              "${AppConfig.assetPath}/backend/img/default.png",
-                                              boxFit: BoxFit.contain,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 15.w,
-                                      ),
-                                      Expanded(
-                                        child: Container(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                order?.packages?[packageIndex].products?[productIndex].sellerProductSku?.product?.productName ?? '',
-                                                style: AppStyles.kFontBlack14w5,
-                                              ),
-
-                                              ListView.builder(
-                                                shrinkWrap: true,
-                                                physics:
-                                                NeverScrollableScrollPhysics(),
-                                                itemCount: order?.packages?[packageIndex].products?[productIndex].sellerProductSku?.productVariations?.length ?? 0,
-                                                itemBuilder:
-                                                    (context, variantIndex) {
-                                                  // if (order?.packages?[packageIndex].products?[productIndex].sellerProductSku?.productVariations?[variantIndex].attribute?.name == 'Color') {
-                                                  //   return Padding(
-                                                  //     padding: const EdgeInsets
-                                                  //             .symmetric(
-                                                  //         vertical: 4.0),
-                                                  //     child: Text(
-                                                  //       'Color: ${order?.packages?[packageIndex].products?[productIndex].sellerProductSku?.productVariations?[variantIndex].attributeValue?.color?.name??''}',
-                                                  //       style: AppStyles
-                                                  //           .kFontBlack12w4,
-                                                  //     ),
-                                                  //   );
-                                                  // }
-                                                  // else {
-
-                                                  var attributeValue = order?.packages?[packageIndex].products?[productIndex].sellerProductSku?.productVariations?[variantIndex].attributeValue;
-                                                  var attribute = order?.packages?[packageIndex].products?[productIndex].sellerProductSku?.productVariations?[variantIndex].attribute;
-
-                                                  return Padding(
-                                                    padding: EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 4.0.h),
-                                                    child: Text(
-                                                      '${attribute?.name??''}: ${attributeValue?.name??attributeValue?.value??''}',
-                                                      style: AppStyles
-                                                          .kFontBlack12w4,
-                                                    ),
-                                                  );
-
-                                                },
-                                              ),
-
-                                              SizedBox(
-                                                height: 5.h,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .spaceAround,
-                                                children: [
-                                                  Column(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                    CrossAxisAlignment
-                                                        .start,
-                                                    children: [
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .start,
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                        children: [
-                                                          Obx(() {
-                                                            return Text(
-                                                              '${currencyController.setCurrentSymbolPosition(amount: ((order?.packages?[packageIndex].products?[productIndex].price??0) * currencyController.conversionRate.value).toStringAsFixed(2))}',
-                                                              style: AppStyles
-                                                                  .kFontPink15w5,
-                                                            );
-                                                          }),
-                                                          SizedBox(
-                                                            width: 5.w,
-                                                          ),
-                                                          Text(
-                                                            '(${order?.packages?[packageIndex].products?[productIndex].qty}x)',
-                                                            style: AppStyles
-                                                                .kFontBlack14w5,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Expanded(
-                                                    child: Container(),
-                                                  ),
-                                                  // Text(
-                                                  //   '=\$${orderController.orderListModel.value.orders[index].packages[packageIndex].products[productIndex].totalPrice}',
-                                                  //   style: AppStyles
-                                                  //       .kFontBlack14w5,
-                                                  // ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 5.h,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                            }),
                       ],
                     ),
-                  );
-                }),
-            SizedBox(
-              height: 10.h,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '${order?.packages?.length} ' +
-                      'Package'.tr +
-                      ',' +
-                      'Total'.tr +
-                      ': ' +
-                      currencyController.setCurrentSymbolPosition(amount: ((order?.grandTotal??0) * currencyController.conversionRate.value).toStringAsFixed(2)),
-                  style: AppStyles.kFontBlack14w5,
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),

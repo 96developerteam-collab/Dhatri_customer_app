@@ -264,7 +264,7 @@ class LanguageModel {
 
   factory LanguageModel.fromJson(Map<String, dynamic> json) => LanguageModel(
       id: json["id"],
-      name: json["name"],
+      name: json["name"] is Map ? json["name"]["en"] : json["name"],
       code: json["code"],
       status: json["status"],
       native: json['native'],

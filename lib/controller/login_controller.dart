@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:dio/dio.dart' as DIO;
 import 'package:amazcart/config/config.dart';
 import 'package:amazcart/controller/account_controller.dart';
 import 'package:amazcart/controller/cart_controller.dart';
@@ -47,6 +49,10 @@ class LoginController extends GetxController {
   final TextEditingController registerPassword = TextEditingController();
   final TextEditingController registerConfirmPassword = TextEditingController();
   final TextEditingController referralCode = TextEditingController();
+  final TextEditingController storeName = TextEditingController();
+
+  Rx<File?> pickedDocument = Rx<File?>(null);
+  Rx<File?> pickedShopImage = Rx<File?>(null);
 
   String? loadToken;
 
@@ -144,34 +150,110 @@ class LoginController extends GetxController {
     }
   }
 
-  Future registerUser(Map data) async {
+  Future registerUser(Map<String, dynamic> data) async {
     isLoading(true);
     try {
-      var loginData = await register(data);
+      DIO.Dio dio = DIO.Dio();
 
-      print('Register $loginData');
+      // Handle email vs phone
+      if (data.containsKey('login')) {
+        String input = data['login'];
+        String digits = input.replaceAll(RegExp(r'\D'), '');
+        bool isPhone = digits.length >= 10; // Simple check, adjust as needed
 
-      if (loginData != null) {
+        data.remove('login');
+        if (isPhone) {
+          data['phone'] = input;
+        } else {
+          data['email'] = input;
+        }
+      }
+
+      DIO.FormData formData = DIO.FormData.fromMap(data);
+
+      if (pickedDocument.value != null) {
+        formData.files.add(MapEntry(
+          "document",
+          await DIO.MultipartFile.fromFile(
+            pickedDocument.value!.path,
+            filename: pickedDocument.value!.path.split('/').last,
+          ),
+        ));
+      }
+
+      if (pickedShopImage.value != null) {
+        formData.files.add(MapEntry(
+          "store_image", // Changed from shop_image to store_image
+          await DIO.MultipartFile.fromFile(
+            pickedShopImage.value!.path,
+            filename: pickedShopImage.value!.path.split('/').last,
+          ),
+        ));
+      }
+
+      debugPrint('Register URL: ${URLs.REGISTER}');
+      debugPrint('Register Fields: ${formData.fields}');
+
+      var response = await dio.post(
+        URLs.REGISTER,
+        data: formData,
+        options: DIO.Options(
+          headers: {
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      debugPrint('Register Response: ${response.data}');
+
+      if (response.statusCode == 201) {
         await fetchUserLogin(
-          emailOrPhone: registerEmail.text,
+          emailOrPhone: data['email'] ?? data['phone'] ?? registerEmail.text,
           password: registerPassword.text,
         ).then((value) {
           if (value) {
-
             firstName.clear();
             lastName.clear();
             registerEmail.clear();
             registerPassword.clear();
             registerConfirmPassword.clear();
             referralCode.clear();
+            storeName.clear();
+            pickedDocument.value = null;
+            pickedShopImage.value = null;
           }
         });
         return true;
       } else {
         return false;
       }
+    } on DIO.DioException catch (e) {
+      debugPrint('Register Error: ${e.response?.data}');
+      if (e.response?.data != null) {
+        var responseData = e.response?.data;
+        if (responseData['errors'] != null) {
+          Map<String, dynamic> errors = responseData['errors'];
+          String errorMessage = '';
+          errors.forEach((key, value) {
+            if (value is List) {
+              errorMessage += value.join('\n') + '\n';
+            } else {
+              errorMessage += value.toString() + '\n';
+            }
+          });
+          SnackBars().snackBarError(errorMessage.trim());
+        } else if (responseData['message'] != null) {
+          SnackBars().snackBarError(responseData['message']);
+        } else {
+          SnackBars().snackBarError("Registration failed");
+        }
+      } else {
+        SnackBars().snackBarError("Registration failed");
+      }
+      return false;
     } catch (e) {
-      isLoading(false);
+      debugPrint('Register Error: $e');
+      return false;
     } finally {
       isLoading(false);
     }
