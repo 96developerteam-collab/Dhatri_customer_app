@@ -1477,7 +1477,7 @@ class LocalizationLangValue {
     emailDelivery = json['Email Delivery'];
     canTAddLessThan = json["Can't add less than"];
     stockAvailable = json['Stock Available'];
-    homeDelivery = json['Home Delivery'];
+    homeDelivery = json['Store Delivery'];
     pickupLocation = json['Pickup Location'];
     selectAPickupPoint = json['Select a pickup point'];
     billingAddress = json['Billing Address'];
@@ -1997,7 +1997,7 @@ class LocalizationLangValue {
     data['Email Delivery'] = this.emailDelivery;
     data["Can't add less than"] = this.canTAddLessThan;
     data['Stock Available'] = this.stockAvailable;
-    data['Home Delivery'] = this.homeDelivery;
+    data['Store Delivery'] = this.homeDelivery;
     data['Pickup Location'] = this.pickupLocation;
     data['Select a pickup point'] = this.selectAPickupPoint;
     data['Billing Address'] = this.billingAddress;

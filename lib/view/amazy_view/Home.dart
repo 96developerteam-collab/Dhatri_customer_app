@@ -431,129 +431,163 @@ LinearGradient? selectColor(int position) {
 
                         ///** CATEGORY */
 
-                        Container(
-                          padding:  EdgeInsets.only(
-                              left: 10.0.w, right: 10.0.w, top: 30.0.h),
-                          child: Obx(() =>
-                            !_homeController.isHomePageLoading.value && _homeController.homePageModel.value.topCategories != null &&
-                                _homeController.homePageModel.value.topCategories!.length > 0 ? Container(
-                                height: 100.w,
-                                child: ListView.separated(
-                                  separatorBuilder: (context, index) {
-                                    return SizedBox(
-                                      width: 15.w,
-                                    );
-                                  },
-                                  physics: BouncingScrollPhysics(),
-                                  scrollDirection: Axis.horizontal,
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.zero,
-                                  itemCount: _homeController.homePageModel.value
-                                      .topCategories!.length,
-                                  itemBuilder: (context, index) {
-                                    CategoryBrand category = _homeController
-                                        .homePageModel
-                                        .value
-                                        .topCategories![index];
+               Container(
+  padding: EdgeInsets.only(
+    left: 10.0.w, 
+    right: 10.0.w, 
+    top: 30.0.h
+  ),
+  child: Obx(() =>
+    !_homeController.isHomePageLoading.value && _homeController.homePageModel.value.topCategories != null &&
+        _homeController.homePageModel.value.topCategories!.length > 0 ? Container(
+        height: 100.w,
+        child: ListView.separated(
+          separatorBuilder: (context, index) {
+            return SizedBox(
+              width: 15.w,
+            );
+          },
+          physics: BouncingScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          itemCount: _homeController.homePageModel.value
+              .topCategories!.length,
+          itemBuilder: (context, index) {
+            CategoryBrand category = _homeController
+                .homePageModel
+                .value
+                .topCategories![index];
 
-                                    return Container(
-                                      alignment: Alignment.center,
-                                      height: 50.w,
-                                      width: 50.w,
-                                      child: ListView(
-                                        padding: EdgeInsets.zero,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        children: [
-                                          Container(
-                                            height: 50.w,
-                                            width: 50.w,
-                                            child: InkWell(
-                                              customBorder: CircleBorder(),
-                                              onTap: () async {
-                                                Get.to(() => ProductsByCategory(
-                                                      categoryId: category.id,
-                                                    ));
-                                              },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  gradient: selectColor(index),
-                                                  borderRadius:
-                                                      BorderRadius.circular(12.r),
-                                                ),
-                                                child: category.icon != null
-                                                    ? Icon(
-                                                        FaCustomIcon
-                                                            .getFontAwesomeIcon(
-                                                                category.icon!),
-                                                        color: Colors.white,
-                                                        size: 20.w,
-                                                      )
-                                                    : Icon(
-                                                        Icons.list_alt_outlined,
-                                                        color: Colors.white,
-                                                        size: 20.w,
-                                                      ),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            category.name!,
-                                            textAlign: TextAlign.center,
-                                            maxLines: 2,
-                                            style: AppStyles.appFontMedium
-                                                .copyWith(
-                                              fontSize: 14.fontSize,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                              )
-                            :  Container(
-                                child: GridView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.zero,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 5,
-                                    mainAxisSpacing: 10.0,
-                                    crossAxisSpacing: 10.0,
-                                    mainAxisExtent: 80.w,
-                                  ),
-                                  itemCount: 5,
-                                  itemBuilder: (context, index) {
-                                    return Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(12.r)),
-                                          child: LoadingSkeleton(
-                                            width: 50.w,
-                                            height: 50.w,
-                                            child: SizedBox(),
-                                            colors: [
-                                              Colors.black.withOpacity(0.1),
-                                              Colors.black.withOpacity(0.2),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                              )
-
-                          ),
+            return Container(
+              alignment: Alignment.center,
+              height: 50.w,
+              width: 50.w,
+              child: ListView(
+                padding: EdgeInsets.zero,
+                physics: NeverScrollableScrollPhysics(),
+                children: [
+                  Container(
+                    height: 50.w,
+                    width: 50.w,
+                    child: InkWell(
+                      customBorder: CircleBorder(),
+                      onTap: () async {
+                        Get.to(() => ProductsByCategory(
+                              categoryId: category.id,
+                            ));
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12.r),
+                          // Removed gradient for better image visibility
+                          color: Colors.grey[100], // Fallback color
                         ),
-
+                        child: category.image != null 
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(12.r),
+                                child: FancyShimmerImage(
+                                  imageUrl: AppConfig.assetPath + '/' + category.image!,
+                                  boxFit: BoxFit.cover,
+                                  width: 50.w,
+                                  height: 50.w,
+                                  errorWidget: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: selectColor(index),
+                                      borderRadius: BorderRadius.circular(12.r),
+                                    ),
+                                    child: Icon(
+                                      category.icon != null
+                                          ? FaCustomIcon.getFontAwesomeIcon(category.icon!)
+                                          : Icons.list_alt_outlined,
+                                      color: Colors.white,
+                                      size: 20.w,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : category.icon != null
+                                ? Container(
+                                    decoration: BoxDecoration(
+                                      gradient: selectColor(index),
+                                      borderRadius: BorderRadius.circular(12.r),
+                                    ),
+                                    child: Icon(
+                                      FaCustomIcon.getFontAwesomeIcon(category.icon!),
+                                      color: Colors.white,
+                                      size: 20.w,
+                                    ),
+                                  )
+                                : Container(
+                                    decoration: BoxDecoration(
+                                      gradient: selectColor(index),
+                                      borderRadius: BorderRadius.circular(12.r),
+                                    ),
+                                    child: Icon(
+                                      Icons.list_alt_outlined,
+                                      color: Colors.white,
+                                      size: 20.w,
+                                    ),
+                                  ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    category.name!,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    style: AppStyles.appFontMedium
+                        .copyWith(
+                      fontSize: 14.fontSize,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      )
+      : Container(
+          child: GridView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            gridDelegate:
+                SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 5,
+              mainAxisSpacing: 10.0,
+              crossAxisSpacing: 10.0,
+              mainAxisExtent: 80.w,
+            ),
+            itemCount: 5,
+            itemBuilder: (context, index) {
+              return Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(12.r)),
+                    child: LoadingSkeleton(
+                      width: 50.w,
+                      height: 50.w,
+                      child: SizedBox(),
+                      colors: [
+                        Colors.black.withOpacity(0.1),
+                        Colors.black.withOpacity(0.2),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        )
+  ),
+),
                         /// ** FLASH SALE
                         Container(
                           padding:  EdgeInsets.only(
@@ -892,7 +926,7 @@ LinearGradient? selectColor(int position) {
                                                                           '${_settingsController.setCurrentSymbolPosition(amount:  (_homeController.homePageModel.value.newUserZone!.allProducts![index].product!.mrp! * _settingsController.conversionRate.value).toStringAsFixed(2))}',
                                                                           style: AppStyles.kFontGrey12w5.copyWith(
                                                                             decoration: TextDecoration.lineThrough,
-                                                                            fontSize: 12.fontSize,
+                                                                            fontSize: 10.fontSize,
                                                                           ),
                                                                         ),
                                                                       if (_homeController
@@ -1069,236 +1103,198 @@ LinearGradient? selectColor(int position) {
 
                         ///** BRANDS
 
-                        Container(
-                          padding:  EdgeInsets.only(
-                              left: 10.0.w, right: 10.0.w, top: 10.0.h),
-                          child: Obx(() {
-                            if (_homeController.isHomePageLoading.value) {
-                              return ListView(
-                                shrinkWrap: true,
-                                padding: EdgeInsets.zero,
-                                physics: NeverScrollableScrollPhysics(),
-                                children: [
-                                  HomeTitlesWidget(
-                                    title: 'Brands'.tr,
-                                    btnOnTap: () {
-                                      // Get.to(() => AllBrandsPage());
-                                    },
-                                    showDeal: false,
-                                  ),
-                                  ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10.r)),
-                                    child: Container(
-                                      color: AppStyles.lightBlueColorAlt,
-                                      child: Container(
-                                        padding: EdgeInsets.all(10.w),
-                                        child: Container(
-                                          child: GridView.builder(
-                                            physics:
-                                                NeverScrollableScrollPhysics(),
-                                            shrinkWrap: true,
-                                            gridDelegate:
-                                                SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount: 4,
-                                              mainAxisSpacing: 10.0,
-                                              crossAxisSpacing: 10.0,
-                                              mainAxisExtent: 90.h,
-                                            ),
-                                            itemCount: 8,
-                                            itemBuilder: (context, index) {
-                                              return ClipRRect(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(5.r)),
-                                                child: LoadingSkeleton(
-                                                  width: 50.w,
-                                                  height: 40.w,
-                                                  colors: [
-                                                    Colors.black
-                                                        .withOpacity(0.1),
-                                                    Colors.black
-                                                        .withOpacity(0.2),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            } else {
-                              return ListView(
-                                shrinkWrap: true,
-                                padding: EdgeInsets.zero,
-                                physics: NeverScrollableScrollPhysics(),
-                                children: [
-                                  HomeTitlesWidget(
-                                    title: 'Brands'.tr,
-                                    btnOnTap: () {
-                                      Get.to(() => AllBrandsPage());
-                                    },
-                                    showDeal: false,
-                                  ),
-                                  ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10.r)),
-                                    child: Container(
-                                      color: AppStyles.lightBlueColorAlt,
-                                      child: Container(
-                                        height: _homeController
-                                                    .chunkedBrands.length >
-                                                4
-                                            ? 230.h
-                                            : 130.h,
-                                        padding: EdgeInsets.all(10.w),
-                                        child: Container(
-                                          child: Swiper.children(
-                                            children: _homeController
-                                                .chunkedBrands
-                                                .chunked(8)
-                                                .map((e) {
-                                              return GridView.builder(
-                                                physics:
-                                                    NeverScrollableScrollPhysics(),
-                                                padding: EdgeInsets.zero,
-                                                gridDelegate:
-                                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                                  crossAxisCount: 4,
-                                                  mainAxisSpacing: 10.0,
-                                                  crossAxisSpacing: 10.0,
-                                                  mainAxisExtent: 90.h,
-                                                ),
-                                                itemBuilder: (context, index) {
-                                                  CategoryBrand brand =
-                                                      e[index];
-                                                  return InkWell(
-                                                    onTap: () {
-                                                      Get.to(() =>
-                                                          ProductsByBrands(
-                                                            brandId: brand.id!,
-                                                          ));
-                                                    },
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  5.r)),
-                                                      clipBehavior:
-                                                          Clip.antiAlias,
-                                                      child: Container(
-                                                        color: Colors.white,
-                                                        child: Column(
-                                                          children: <Widget>[
-                                                            Expanded(
-                                                              child: Padding(
-                                                                padding:
-                                                                     EdgeInsets
-                                                                        .all(
-                                                                        8.0.w),
-                                                                child: brand.logo !=
-                                                                        null
-                                                                    ? Container(
-                                                                        child:
-                                                                            FancyShimmerImage(
-                                                                          imageUrl:
-                                                                              AppConfig.assetPath + '/' + brand.logo! ?? '',
-                                                                          boxFit:
-                                                                              BoxFit.contain,
-                                                                          errorWidget:
-                                                                              FancyShimmerImage(
-                                                                            imageUrl:
-                                                                                "${AppConfig.assetPath}/backend/img/default.png",
-                                                                            boxFit:
-                                                                                BoxFit.contain,
-                                                                          ),
-                                                                        ),
-                                                                      )
-                                                                    : Container(
-                                                                        child: Icon(
-                                                                            Icons.list_alt)),
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 5.w,
-                                                            ),
-                                                            Padding(
-                                                              padding: EdgeInsets.symmetric(
-                                                                  vertical:
-                                                                      brand.name!.length <
-                                                                              10
-                                                                          ? 1.0
-                                                                          : 0.0,
-                                                                  horizontal:
-                                                                      4.w),
-                                                              child: Text(
-                                                                brand.name!,
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                maxLines: 2,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                style: AppStyles
-                                                                    .appFontLight
-                                                                    .copyWith(
-                                                                  fontSize: 12.fontSize,
-                                                                  color: AppStyles
-                                                                      .blackColor,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 10,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                                itemCount: e.length,
-                                              );
-                                            }).toList(),
-                                            loop: false,
-                                            // pagination: FractionPaginationBuilder(
-                                            //   fontSize: 1,
-                                            //   activeColor: Colors.transparent,
-                                            // ),
-                                            pagination: SwiperPagination(
-                                              margin: EdgeInsets.zero,
-                                              builder: SwiperCustomPagination(
-                                                builder: (BuildContext context,
-                                                    SwiperPluginConfig config) {
-                                                  return Align(
-                                                    alignment:
-                                                        Alignment.bottomCenter,
-                                                    child:
-                                                        RectSwiperPaginationBuilder(
-                                                      color: Colors.white
-                                                          .withOpacity(0.5),
-                                                      activeColor: Colors.pink,
-                                                      size: Size(5.0, 5.0),
-                                                      activeSize:
-                                                          Size(20.0.w, 5.0.h),
-                                                    ).build(context, config),
-                                                  );
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            }
-                          }),
+            Container(
+  padding: EdgeInsets.only(
+    left: 10.0.w, 
+    right: 10.0.w, 
+    top: 10.0.h
+  ),
+  child: Obx(() {
+    if (_homeController.isHomePageLoading.value) {
+      return ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        physics: NeverScrollableScrollPhysics(),
+        children: [
+          HomeTitlesWidget(
+            title: 'Brands'.tr,
+            btnOnTap: () {
+              // Get.to(() => AllBrandsPage());
+            },
+            showDeal: false,
+          ),
+          ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(10.r)),
+            child: Container(
+              color: AppStyles.lightBlueColorAlt,
+              child: Container(
+                padding: EdgeInsets.all(10.w),
+                child: Container(
+                  child: GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      mainAxisSpacing: 10.0,
+                      crossAxisSpacing: 10.0,
+                      mainAxisExtent: 110.h, // Increased for larger image
+                    ),
+                    itemCount: 8,
+                    itemBuilder: (context, index) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(5.r)),
+                        child: LoadingSkeleton(
+                          width: 70.w, // Increased from 50.w
+                          height: 60.w, // Increased from 40.w
+                          colors: [
+                            Colors.black.withOpacity(0.1),
+                            Colors.black.withOpacity(0.2),
+                          ],
                         ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        physics: NeverScrollableScrollPhysics(),
+        children: [
+          HomeTitlesWidget(
+            title: 'Brands'.tr,
+            btnOnTap: () {
+              Get.to(() => AllBrandsPage());
+            },
+            showDeal: false,
+          ),
+          ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(10.r)),
+            child: Container(
+              color: AppStyles.lightBlueColorAlt,
+              child: Container(
+                height: _homeController.chunkedBrands.length > 4
+                    ? 250.h // Increased for larger image
+                    : 150.h, // Increased for larger image
+                padding: EdgeInsets.all(10.w),
+                child: Container(
+                  child: Swiper.children(
+                    children: _homeController
+                        .chunkedBrands
+                        .chunked(8)
+                        .map((e) {
+                      return GridView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.zero,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          mainAxisSpacing: 10.0,
+                          crossAxisSpacing: 10.0,
+                          mainAxisExtent: 110.h, // Increased from 90.h
+                        ),
+                        itemBuilder: (context, index) {
+                          CategoryBrand brand = e[index];
+                          return InkWell(
+                            onTap: () {
+                              Get.to(() => ProductsByBrands(
+                                brandId: brand.id!,
+                              ));
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5.r)
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Container(
+                                color: Colors.white,
+                                child: Column(
+                                  children: <Widget>[
+                                    // Image container - increased size
+                                    Expanded(
+                                      flex: 4, // Increased flex for image
+                                      child: Container(
+                                        padding: EdgeInsets.all(12.w), // More padding
+                                        child: brand.logo != null
+                                            ? Container(
+                                                child: FancyShimmerImage(
+                                                  imageUrl: AppConfig.assetPath + '/' + brand.logo! ?? '',
+                                                  boxFit: BoxFit.contain,
+                                                  errorWidget: FancyShimmerImage(
+                                                    imageUrl: "${AppConfig.assetPath}/backend/img/default.png",
+                                                    boxFit: BoxFit.contain,
+                                                  ),
+                                                ),
+                                              )
+                                            : Container(
+                                                child: Icon(
+                                                  Icons.list_alt,
+                                                  size: 50.w, // Increased icon size
+                                                ),
+                                              ),
+                                      ),
+                                    ),
+                                    // Text container - smaller
+                                    Expanded(
+                                      flex: 1, // Reduced flex for text
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 2.w,
+                                        ),
+                                        child: Text(
+                                          brand.name!,
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: AppStyles.appFontLight.copyWith(
+                                            fontSize: 9.fontSize, // Further reduced from 10.fontSize
+                                            color: AppStyles.blackColor,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 6), // Reduced spacing
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        itemCount: e.length,
+                      );
+                    }).toList(),
+                    loop: false,
+                    pagination: SwiperPagination(
+                      margin: EdgeInsets.zero,
+                      builder: SwiperCustomPagination(
+                        builder: (BuildContext context, SwiperPluginConfig config) {
+                          return Align(
+                            alignment: Alignment.bottomCenter,
+                            child: RectSwiperPaginationBuilder(
+                              color: Colors.white.withOpacity(0.5),
+                              activeColor: Colors.pink,
+                              size: Size(5.0, 5.0),
+                              activeSize: Size(20.0.w, 5.0.h),
+                            ).build(context, config),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+  }),
+),
 
                         ///** TOP PICKS
                         Container(

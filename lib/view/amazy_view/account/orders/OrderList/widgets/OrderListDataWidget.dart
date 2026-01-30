@@ -149,28 +149,28 @@ class OrderAllToPayListDataWidget extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            children: [
-                              Image.asset(
-                                'assets/images/icon_delivery-parcel.png',
-                                width: 16.w,
-                                height: 16.w,
-                              ),
-                              SizedBox(width: 8.w),
-                              Text(
-                                package.packageCode ?? '',
-                                style: AppStyles.appFontBold.copyWith(fontSize: 13.sp),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            pStatus,
-                            style: AppStyles.appFontMedium.copyWith(
-                              fontSize: 12.sp,
-                              color: pStatusColor,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
+                          // Row(
+                          //   children: [
+                          //     Image.asset(
+                          //       'assets/images/icon_delivery-parcel.png',
+                          //       width: 16.w,
+                          //       height: 16.w,
+                          //     ),
+                          //     SizedBox(width: 8.w),
+                          //     Text(
+                          //       package.packageCode ?? '',
+                          //       style: AppStyles.appFontBold.copyWith(fontSize: 13.sp),
+                          //     ),
+                          //   ],
+                          // ),
+                          // Text(
+                          //   pStatus,
+                          //   style: AppStyles.appFontMedium.copyWith(
+                          //     fontSize: 12.sp,
+                          //     color: pStatusColor,
+                          //     fontStyle: FontStyle.italic,
+                          //   ),
+                          // ),
                         ],
                       ),
                       if (currencyController.vendorType.value != "single")

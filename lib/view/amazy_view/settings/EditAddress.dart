@@ -263,9 +263,6 @@ class _EditAddressState extends State<EditAddress> {
                     fontWeight: FontWeight.w500,
                   ),
                   validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return 'Please Type Email address'.tr;
-                    }
                     return null;
                   },
                 ),

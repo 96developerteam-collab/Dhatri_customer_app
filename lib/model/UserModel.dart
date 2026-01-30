@@ -53,6 +53,9 @@ class UserClass {
     this.updatedAt,
     this.name,
     this.customerAddresses,
+    this.storeName,
+    this.storeImage,
+    this.document,
   });
 
   int? id;
@@ -75,6 +78,9 @@ class UserClass {
   DateTime? createdAt;
   DateTime? updatedAt;
   String? name;
+  String? storeName;
+  String? storeImage;
+  String? document;
   List<CustomerAddress>? customerAddresses;
 
   factory UserClass.fromJson(Map<String, dynamic> json) => UserClass(
@@ -98,6 +104,9 @@ class UserClass {
     createdAt: AppUtilities.convertToDateTime(dateTime: json["created_at"]),
     updatedAt: AppUtilities.convertToDateTime(dateTime: json["updated_at"]),
     name: json['name'],
+    storeName: json['store_name'],
+    storeImage: json['store_image'],
+    document: json['document'],
         customerAddresses: List<CustomerAddress>.from(
             json["customer_addresses"].map((x) => CustomerAddress.fromJson(x))),
       );
@@ -123,6 +132,9 @@ class UserClass {
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
         "name": name,
+        "store_name": storeName,
+        "store_image": storeImage,
+        "document": document,
         "customer_addresses":
             List<dynamic>.from(customerAddresses!.map((x) => x.toJson())),
       };

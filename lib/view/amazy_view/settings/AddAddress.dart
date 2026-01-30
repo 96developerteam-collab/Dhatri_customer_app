@@ -233,7 +233,7 @@ class _AddAddressState extends State<AddAddress> {
                       fontSize: 12.fontSize,
                       fontWeight: FontWeight.w500,
                     ),
-                    labelText: 'Email'.tr + " *",
+                    labelText: 'Email'.tr,
                     labelStyle: AppStyles.appFont.copyWith(
                       color: AppStyles.blackColor,
                       fontSize: 12.fontSize,
@@ -246,9 +246,6 @@ class _AddAddressState extends State<AddAddress> {
                     fontWeight: FontWeight.w500,
                   ),
                   validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return 'Please Type Email address'.tr;
-                    }
                     return null;
                   },
                 ),

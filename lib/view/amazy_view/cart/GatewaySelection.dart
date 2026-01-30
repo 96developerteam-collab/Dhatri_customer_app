@@ -398,7 +398,7 @@ class _GatewaySelectionState extends State<GatewaySelection> {
                 cancelOrders) {
           Map data = {
             "type": "otp_on_order_with_cod",
-            "email": _checkoutController.orderData['customer_email'],
+            "email": _checkoutController.orderData['customer_email'] ?? '',
             "name": _checkoutController.orderData['customer_name'],
             "phone": _checkoutController.orderData['customer_phone'],
           };
@@ -431,7 +431,7 @@ class _GatewaySelectionState extends State<GatewaySelection> {
         } else if (_loginController.profileData.value.isVerified == 0) {
           Map data = {
             "type": "otp_on_order_with_cod",
-            "email": _checkoutController.orderData['customer_email'],
+            "email": _checkoutController.orderData['customer_email'] ?? '',
             "name": _checkoutController.orderData['customer_name'],
             "phone": _checkoutController.orderData['customer_phone'],
           };
@@ -567,7 +567,7 @@ class _GatewaySelectionState extends State<GatewaySelection> {
       final request = PaystackTransactionRequest(
         reference: 'ps_${DateTime.now().microsecondsSinceEpoch}',
         secretKey: payStackSecretKey,
-        email: _checkoutController.orderData['customer_email'],
+        email: _checkoutController.orderData['customer_email'] ?? '',
         amount: ((num.tryParse("${_checkoutController.orderData['grand_total']}")??0) * 100).toDouble(),
         currency: payStackCurrency,
         channel: [
@@ -785,7 +785,7 @@ class _GatewaySelectionState extends State<GatewaySelection> {
           customer: Customer(
               name: addressController.shippingAddress.value.name ?? '',
               phoneNumber: _checkoutController.orderData['customer_phone'],
-              email: _checkoutController.orderData['customer_email']),
+              email: _checkoutController.orderData['customer_email'] ?? ''),
           txRef: 'AMZ_${DateFormat("yyyyMMddHHmmss").format(DateTime.now())}', isTestMode: false, redirectUrl: '',
         );
 

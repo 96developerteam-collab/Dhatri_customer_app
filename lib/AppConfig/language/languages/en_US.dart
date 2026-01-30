@@ -413,7 +413,7 @@ const Map<String, String> en_US = {
   "Email Delivery": "Email Delivery",
   "Can't add less than": "Can't add less than",
   "Stock Available": "Stock Available",
-  "Home Delivery": "Home Delivery",
+  "Store Delivery": "Store Delivery",
   "Pickup Location": "Pickup Location",
   "Select a pickup point": "Select a pickup point",
   "Billing Address": "Billing Address",

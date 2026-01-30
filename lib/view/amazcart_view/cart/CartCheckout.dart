@@ -49,9 +49,9 @@ class _CartCheckoutState extends State<CartCheckout> {
   var gstShow = '';
   var gstShowList = [];
 
-  String _verticalGroupValue = "Home Delivery";
+  String _verticalGroupValue = "Store Delivery";
   List<String> _status = [
-    "Home Delivery",
+    "Store Delivery",
     "Pickup Location",
   ];
 
@@ -73,7 +73,7 @@ class _CartCheckoutState extends State<CartCheckout> {
           currencyController.settingsModel.value.pickupLocations?.first;
     }
 
-    if (_verticalGroupValue == "Home Delivery") {
+    if (_verticalGroupValue == "Store Delivery") {
       checkoutController.deliveryType.value = "home_delivery";
     } else {
       checkoutController.deliveryType.value = "pickup_location";
@@ -265,7 +265,7 @@ class _CartCheckoutState extends State<CartCheckout> {
                         ),
                         SizedBox(height: 8.h),
 
-                        //** HOME DELIVERY / PICKUP */
+                        //** Store Delivery / PICKUP */
 
 
                         currencyController.vendorType.value == "single"
@@ -280,7 +280,7 @@ class _CartCheckoutState extends State<CartCheckout> {
                                 setState(() {
                                   _verticalGroupValue = value ?? '';
 
-                                  if (_verticalGroupValue == "Home Delivery") {
+                                  if (_verticalGroupValue == "Store Delivery") {
                                     checkoutController.deliveryType.value = "home_delivery";
                                     checkoutController.calculateShipment();
                                     print(checkoutController.shipping.value);
@@ -302,7 +302,7 @@ class _CartCheckoutState extends State<CartCheckout> {
                         )
                             : SizedBox.shrink(),
                         currencyController.vendorType.value == "single"
-                            ? _verticalGroupValue != "Home Delivery"
+                            ? _verticalGroupValue != "Store Delivery"
                                 ? ListView(
                                     shrinkWrap: true,
                                     padding: EdgeInsets.only(top: 10.h),
@@ -552,7 +552,7 @@ class _CartCheckoutState extends State<CartCheckout> {
                                   ),
                                 ],
                               )
-                            : _verticalGroupValue == "Home Delivery"
+                            : _verticalGroupValue == "Store Delivery"
                                 ? ListTile(
                                     contentPadding: EdgeInsets.zero,
                                     dense: true,
@@ -1546,14 +1546,14 @@ class _CartCheckoutState extends State<CartCheckout> {
                                   ],
                                 ),
                               ),
-                              _verticalGroupValue == "Home Delivery"
+                              _verticalGroupValue == "Store Delivery"
                                   ? Divider(
                                       height: 10.h,
                                       thickness: 2,
                                       color: AppStyles.appBackgroundColor,
                                     )
                                   : SizedBox.shrink(),
-                              _verticalGroupValue == "Home Delivery" ? Padding(
+                              _verticalGroupValue == "Store Delivery" ? Padding(
                                 padding: EdgeInsets.symmetric(
                                           vertical: 8.0.h, horizontal: 10.w),
                                       child: Align(
@@ -1566,7 +1566,7 @@ class _CartCheckoutState extends State<CartCheckout> {
                                       ),
                                     )
                                   : SizedBox.shrink(),
-                              _verticalGroupValue == "Home Delivery"
+                              _verticalGroupValue == "Store Delivery"
                                   ? Padding(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 10.w),
@@ -1636,7 +1636,7 @@ class _CartCheckoutState extends State<CartCheckout> {
                             ),
                           ],
                         ),
-                        _verticalGroupValue == "Home Delivery"
+                        _verticalGroupValue == "Store Delivery"
                             ? Container(
                                 margin: EdgeInsets.symmetric(vertical: 12),
                                 child: Row(
@@ -1703,7 +1703,7 @@ class _CartCheckoutState extends State<CartCheckout> {
                                 ],
                               )
                             : Container(),
-                        _verticalGroupValue == "Home Delivery"
+                        _verticalGroupValue == "Store Delivery"
                             ? SizedBox(
                                 height: 12.h,
                               )

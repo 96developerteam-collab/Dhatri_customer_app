@@ -167,11 +167,11 @@ class RegistrationPage extends GetView<LoginController> {
                   _buildFilePickerField(
                     label: 'Store Documents (GST, MSME, STORE DOCS, COMPANY PAN)'.tr + " *",
                     file: _accountController.pickedDocument.value,
-                    icon: Icons.picture_as_pdf,
+                    icon: Icons.description,
                     onTap: () async {
                       FilePickerResult? result = await FilePicker.platform.pickFiles(
                         type: FileType.custom,
-                        allowedExtensions: ['pdf'],
+                        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
                       );
                       if (result != null && result.files.single.path != null) {
                         File file = File(result.files.single.path!);

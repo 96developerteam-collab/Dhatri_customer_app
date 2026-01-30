@@ -112,6 +112,11 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     return Obx(
       () {
+        try {
+          print("ProfileData Full: ${loginController.profileData.value.toJson()}");
+        } catch (e) {
+          print("ProfileData (Basic): Name=${loginController.profileData.value.name}, Email=${loginController.profileData.value.email}");
+        }
         if (loginController.loggedIn.value) {
           return Scaffold(
             body: CustomScrollView(
@@ -269,7 +274,7 @@ class _AccountPageState extends State<AccountPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          '${loginController.profileData.value.name ?? ""}',
+                                          '${loginController.profileData.value.storeName ?? loginController.profileData.value.name ?? ""}',
                                           textAlign: TextAlign.left,
                                           style: AppStyles.appFontMedium
                                               .copyWith(

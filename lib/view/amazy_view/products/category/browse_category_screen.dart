@@ -133,10 +133,35 @@ class _BrowseCategoryScreenState extends State<BrowseCategoryScreen> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
-                                        category.icon != null && (category.icon??'').isNotEmpty
+                                        category.categoryImage?.image != null && (category.categoryImage?.image ?? '').isNotEmpty
                                             ? Container(
                                           height: 50.h,
-                                          child: FaCustomIcon.getIconWidget(category.icon ?? '',
+                                          width: 50.w,
+                                          child: FancyShimmerImage(
+                                            imageUrl: AppConfig.assetPath + '/' + category.categoryImage!.image!,
+                                            boxFit: BoxFit.contain,
+                                            errorWidget: category.icon != null && (category.icon ?? '').isNotEmpty
+                                                ? FaCustomIcon.getIconWidget(
+                                              category.icon ?? '',
+                                              size: 30.w,
+                                              color: _selectedIndex == index
+                                                  ? AppStyles.pinkColor
+                                                  : Colors.black,
+                                            )
+                                                : Icon(
+                                              Icons.list_alt_outlined,
+                                              size: 30.w,
+                                              color: _selectedIndex == index
+                                                  ? AppStyles.pinkColor
+                                                  : Colors.black,
+                                            ),
+                                          ),
+                                        )
+                                            : category.icon != null && (category.icon ?? '').isNotEmpty
+                                            ? Container(
+                                          height: 50.h,
+                                          child: FaCustomIcon.getIconWidget(
+                                            category.icon ?? '',
                                             size: 30.w,
                                             color: _selectedIndex == index
                                                 ? AppStyles.pinkColor
@@ -233,12 +258,35 @@ class _BrowseCategoryScreenState extends State<BrowseCategoryScreen> {
                                       print(controller.singleCat.value.data);
                                       openCategory(controller.singleCat.value.data);
                                     },
-                                    leading:
-                                    controller.singleCat.value.data?.icon != null && (controller.singleCat.value.data?.icon??'').isNotEmpty
+                                    leading: controller.singleCat.value.data?.categoryImage?.image != null &&
+                                        (controller.singleCat.value.data?.categoryImage?.image ?? '').isNotEmpty
+                                        ? Container(
+                                      height: 50.h,
+                                      width: 50.w,
+                                      child: FancyShimmerImage(
+                                        imageUrl: AppConfig.assetPath + '/' + controller.singleCat.value.data!.categoryImage!.image!,
+                                        boxFit: BoxFit.contain,
+                                        errorWidget: controller.singleCat.value.data?.icon != null &&
+                                            (controller.singleCat.value.data?.icon ?? '').isNotEmpty
+                                            ? FaCustomIcon.getIconWidget(
+                                          controller.singleCat.value.data?.icon ?? '',
+                                          size: 30.w,
+                                          color: AppStyles.blackColor,
+                                        )
+                                            : Icon(
+                                          Icons.list_alt_outlined,
+                                          size: 30.w,
+                                          color: AppStyles.blackColor,
+                                        ),
+                                      ),
+                                    )
+                                        : controller.singleCat.value.data?.icon != null &&
+                                        (controller.singleCat.value.data?.icon ?? '').isNotEmpty
                                         ? Container(
                                       height: 50.h,
                                       child: Icon(
-                                        FaCustomIcon.getFontAwesomeIcon(controller.singleCat.value.data?.icon ?? ''),
+                                        FaCustomIcon.getFontAwesomeIcon(
+                                            controller.singleCat.value.data?.icon ?? ''),
                                         size: 30.w,
                                         color: AppStyles.blackColor,
                                       ),
