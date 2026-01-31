@@ -835,21 +835,166 @@ class _ProductDetailsState extends State<ProductDetails> {
                                  )
                                      : Container(),
                                  Expanded(child: Container()),
-
-                                 if(!(Platform.isIOS && controller.products.value.data?.product?.isPhysical == 0))
-                                   Text(
-                                   "Select Quantity".tr,
-                                   style: AppStyles.appFontBook.copyWith(
-                                     fontSize: 14.fontSize,
-                                     color: AppStyles.greyColorBook,
-                                   ),
-                                 ),
                                ],
                              ),
 
                              SizedBox(
                                height: 10,
                              ),
+
+
+                              Obx(() {
+                                var wholesalePrices = <dynamic>[];
+                                if (controller.productSKU.value.sku?.wholeSalePrices != null &&
+                                    controller.productSKU.value.sku!.wholeSalePrices!.isNotEmpty) {
+                                  wholesalePrices =
+                                      controller.productSKU.value.sku!.wholeSalePrices!;
+                                } else if (controller.visibleSKU.value.wholeSalePrices != null) {
+                                  wholesalePrices =
+                                      controller.visibleSKU.value.wholeSalePrices!;
+                                }
+
+                                if (wholesalePrices.isEmpty) {
+                                  print("DEBUG: wholesalePrices is empty for SKU: ${controller.productSKU.value.sku?.sku}");
+                                  return SizedBox.shrink();
+                                }
+                                print("DEBUG: wholesalePrices found! Count: ${wholesalePrices.length}");
+
+                                return Container(
+                                  padding: EdgeInsets.all(10),
+                                  margin: EdgeInsets.only(top: 10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                        color: Colors.grey.withOpacity(0.3)),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Wholesale Prices".tr,
+                                        style: AppStyles.appFontBold.copyWith(
+                                          fontSize: 14.fontSize,
+                                          color: AppStyles.blackColor,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Table(
+                                        border: TableBorder(
+                                          horizontalInside: BorderSide(
+                                            color: Colors.grey.withOpacity(0.2),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        children: [
+                                          TableRow(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                    vertical: 8.0),
+                                                child: Text(
+                                                  "Min QTY".tr,
+                                                  style: AppStyles.appFontBook
+                                                      .copyWith(
+                                                    fontSize: 12.fontSize,
+                                                    color: AppStyles
+                                                        .greyColorBook,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                    vertical: 8.0),
+                                                child: Text(
+                                                  "Max QTY".tr,
+                                                  style: AppStyles.appFontBook
+                                                      .copyWith(
+                                                    fontSize: 12.fontSize,
+                                                    color: AppStyles
+                                                        .greyColorBook,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                    vertical: 8.0),
+                                                child: Text(
+                                                  "Unit Price".tr,
+                                                  style: AppStyles.appFontBook
+                                                      .copyWith(
+                                                    fontSize: 12.fontSize,
+                                                    color: AppStyles
+                                                        .greyColorBook,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          ...wholesalePrices.map((price) {
+                                            return TableRow(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.symmetric(
+                                                      vertical: 8.0),
+                                                  child: Text(
+                                                    "${price.minQty}",
+                                                    style: AppStyles.appFontBook
+                                                        .copyWith(
+                                                      fontSize: 12.fontSize,
+                                                      color: AppStyles.blackColor,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.symmetric(
+                                                      vertical: 8.0),
+                                                  child: Text(
+                                                    "${price.maxQty}",
+                                                    style: AppStyles.appFontBook
+                                                        .copyWith(
+                                                      fontSize: 12.fontSize,
+                                                      color: AppStyles.blackColor,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.symmetric(
+                                                      vertical: 8.0),
+                                                  child: Text(
+                                                    _settingsController
+                                                        .setCurrentSymbolPosition(
+                                                      amount: (price.sellingPrice *
+                                                              _settingsController
+                                                                  .conversionRate
+                                                                  .value)
+                                                          .toStringAsFixed(2),
+                                                    ),
+                                                    style: AppStyles.appFontBold
+                                                        .copyWith(
+                                                      fontSize: 12.fontSize,
+                                                      color: AppStyles.pinkColor,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          }).toList(),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
 
                              Container(
                                child: Row(
@@ -955,6 +1100,14 @@ class _ProductDetailsState extends State<ProductDetails> {
                                      child: Obx(() {
                                        return Row(
                                          children: [
+                                           Text(
+                                             "Quantity: ".tr,
+                                             style: AppStyles.appFontBold.copyWith(
+                                               fontSize: 14.fontSize,
+                                               color: AppStyles.blackColor,
+                                             ),
+                                           ),
+                                           SizedBox(width: 10),
                                            InkWell(
                                              onTap: () {
                                                if (controller
@@ -1034,6 +1187,32 @@ class _ProductDetailsState extends State<ProductDetails> {
                                  ],
                                ),
                              ),
+                              SizedBox(height: 10),
+                              Obx(() {
+                                return Row(
+                                  children: [
+                                    Text(
+                                      "Total: ".tr,
+                                      style: AppStyles.appFontBold.copyWith(
+                                        fontSize: 20.fontSize,
+                                        color: AppStyles.blackColor,
+                                      ),
+                                    ),
+                                    Text(
+                                      _settingsController.setCurrentSymbolPosition(
+                                          amount: (controller.finalPrice.value *
+                                                  controller.itemQuantity.value *
+                                                  _settingsController.conversionRate.value)
+                                              .toStringAsFixed(2)),
+                                      style: AppStyles.appFontBold.copyWith(
+                                        fontSize: 20.fontSize,
+                                        color: AppStyles.pinkColor,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }),
+
 
                              ((controller.products.value.data?.variantDetails??[]).length) >
                                  0

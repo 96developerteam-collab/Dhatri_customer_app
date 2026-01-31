@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:amazcart/utils/app_utilities.dart';
 
 import 'ProductVariations.dart';
+import 'WholeSalePrice.dart';
 
 class Skus {
   Skus({
@@ -15,7 +16,8 @@ class Skus {
     this.sellingPrice,
     this.status,
     this.productVariations,
-    this.inAppPurchaseId
+    this.inAppPurchaseId,
+    this.wholeSalePrices,
   });
 
   int? id;
@@ -28,6 +30,7 @@ class Skus {
   int? status;
   List<ProductVariation>? productVariations;
   String? inAppPurchaseId;
+  List<WholeSalePrice>? wholeSalePrices;
 
   factory Skus.fromJson(Map<String, dynamic> json){
 
@@ -44,7 +47,11 @@ class Skus {
         productVariations: json["product_variations"] == null ? null :List<ProductVariation>.from(
             json["product_variations"].map((x) =>
                 ProductVariation.fromJson(x))),
-        inAppPurchaseId: json["in_app_purchase"]
+        inAppPurchaseId: json["in_app_purchase"],
+        wholeSalePrices: (json["whole_sale_prices"] ?? json["wholesale_prices"] ?? json["wholesale_price"]) == null
+            ? []
+            : List<WholeSalePrice>.from((json["whole_sale_prices"] ?? json["wholesale_prices"] ?? json["wholesale_price"])
+                .map((x) => WholeSalePrice.fromJson(x))),
       );
     }catch(e,tr){
       log("Skus Error -> $e");
@@ -63,6 +70,9 @@ class Skus {
         "selling_price": sellingPrice,
         "status": status,
         "product_variations": productVariations == null ? null : List<dynamic>.from(productVariations!.map((x) => x.toJson())),
-        "in_app_purchase" : inAppPurchaseId
+        "in_app_purchase" : inAppPurchaseId,
+        "whole_sale_prices": wholeSalePrices == null
+            ? null
+            : List<dynamic>.from(wholeSalePrices!.map((x) => x.toJson())),
       };
 }
