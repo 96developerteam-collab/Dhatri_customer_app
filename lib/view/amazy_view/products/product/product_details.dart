@@ -835,166 +835,21 @@ class _ProductDetailsState extends State<ProductDetails> {
                                  )
                                      : Container(),
                                  Expanded(child: Container()),
+
+                                 if(!(Platform.isIOS && controller.products.value.data?.product?.isPhysical == 0))
+                                   Text(
+                                   "Select Quantity".tr,
+                                   style: AppStyles.appFontBook.copyWith(
+                                     fontSize: 14.fontSize,
+                                     color: AppStyles.greyColorBook,
+                                   ),
+                                 ),
                                ],
                              ),
 
                              SizedBox(
                                height: 10,
                              ),
-
-
-                              Obx(() {
-                                var wholesalePrices = <dynamic>[];
-                                if (controller.productSKU.value.sku?.wholeSalePrices != null &&
-                                    controller.productSKU.value.sku!.wholeSalePrices!.isNotEmpty) {
-                                  wholesalePrices =
-                                      controller.productSKU.value.sku!.wholeSalePrices!;
-                                } else if (controller.visibleSKU.value.wholeSalePrices != null) {
-                                  wholesalePrices =
-                                      controller.visibleSKU.value.wholeSalePrices!;
-                                }
-
-                                if (wholesalePrices.isEmpty) {
-                                  print("DEBUG: wholesalePrices is empty for SKU: ${controller.productSKU.value.sku?.sku}");
-                                  return SizedBox.shrink();
-                                }
-                                print("DEBUG: wholesalePrices found! Count: ${wholesalePrices.length}");
-
-                                return Container(
-                                  padding: EdgeInsets.all(10),
-                                  margin: EdgeInsets.only(top: 10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                        color: Colors.grey.withOpacity(0.3)),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Wholesale Prices".tr,
-                                        style: AppStyles.appFontBold.copyWith(
-                                          fontSize: 14.fontSize,
-                                          color: AppStyles.blackColor,
-                                        ),
-                                      ),
-                                      SizedBox(height: 8),
-                                      Table(
-                                        border: TableBorder(
-                                          horizontalInside: BorderSide(
-                                            color: Colors.grey.withOpacity(0.2),
-                                            width: 1,
-                                          ),
-                                        ),
-                                        children: [
-                                          TableRow(
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                    vertical: 8.0),
-                                                child: Text(
-                                                  "Min QTY".tr,
-                                                  style: AppStyles.appFontBook
-                                                      .copyWith(
-                                                    fontSize: 12.fontSize,
-                                                    color: AppStyles
-                                                        .greyColorBook,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                    vertical: 8.0),
-                                                child: Text(
-                                                  "Max QTY".tr,
-                                                  style: AppStyles.appFontBook
-                                                      .copyWith(
-                                                    fontSize: 12.fontSize,
-                                                    color: AppStyles
-                                                        .greyColorBook,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                    vertical: 8.0),
-                                                child: Text(
-                                                  "Unit Price".tr,
-                                                  style: AppStyles.appFontBook
-                                                      .copyWith(
-                                                    fontSize: 12.fontSize,
-                                                    color: AppStyles
-                                                        .greyColorBook,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          ...wholesalePrices.map((price) {
-                                            return TableRow(
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets.symmetric(
-                                                      vertical: 8.0),
-                                                  child: Text(
-                                                    "${price.minQty}",
-                                                    style: AppStyles.appFontBook
-                                                        .copyWith(
-                                                      fontSize: 12.fontSize,
-                                                      color: AppStyles.blackColor,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.symmetric(
-                                                      vertical: 8.0),
-                                                  child: Text(
-                                                    "${price.maxQty}",
-                                                    style: AppStyles.appFontBook
-                                                        .copyWith(
-                                                      fontSize: 12.fontSize,
-                                                      color: AppStyles.blackColor,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.symmetric(
-                                                      vertical: 8.0),
-                                                  child: Text(
-                                                    _settingsController
-                                                        .setCurrentSymbolPosition(
-                                                      amount: (price.sellingPrice *
-                                                              _settingsController
-                                                                  .conversionRate
-                                                                  .value)
-                                                          .toStringAsFixed(2),
-                                                    ),
-                                                    style: AppStyles.appFontBold
-                                                        .copyWith(
-                                                      fontSize: 12.fontSize,
-                                                      color: AppStyles.pinkColor,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              ],
-                                            );
-                                          }).toList(),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }),
 
                              Container(
                                child: Row(
@@ -1100,14 +955,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                                      child: Obx(() {
                                        return Row(
                                          children: [
-                                           Text(
-                                             "Quantity: ".tr,
-                                             style: AppStyles.appFontBold.copyWith(
-                                               fontSize: 14.fontSize,
-                                               color: AppStyles.blackColor,
-                                             ),
-                                           ),
-                                           SizedBox(width: 10),
                                            InkWell(
                                              onTap: () {
                                                if (controller
@@ -1187,32 +1034,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                  ],
                                ),
                              ),
-                              SizedBox(height: 10),
-                              Obx(() {
-                                return Row(
-                                  children: [
-                                    Text(
-                                      "Total: ".tr,
-                                      style: AppStyles.appFontBold.copyWith(
-                                        fontSize: 20.fontSize,
-                                        color: AppStyles.blackColor,
-                                      ),
-                                    ),
-                                    Text(
-                                      _settingsController.setCurrentSymbolPosition(
-                                          amount: (controller.finalPrice.value *
-                                                  controller.itemQuantity.value *
-                                                  _settingsController.conversionRate.value)
-                                              .toStringAsFixed(2)),
-                                      style: AppStyles.appFontBold.copyWith(
-                                        fontSize: 20.fontSize,
-                                        color: AppStyles.pinkColor,
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              }),
 
+                             // Bulk Pricing UI Component
+                             SizedBox(height: 20),
+                             _buildBulkPricingWidget(),
+                             SizedBox(height: 20),
 
                              ((controller.products.value.data?.variantDetails??[]).length) >
                                  0
@@ -2822,6 +2648,205 @@ class _ProductDetailsState extends State<ProductDetails> {
       ),
     );
   }
+
+  // Bulk Pricing Widget
+  Widget _buildBulkPricingWidget() {
+    // Static data for demonstration
+    double currentPrice = 1100.00;
+    
+    // Pricing tiers
+    List<Map<String, dynamic>> pricingTiers = [
+      {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
+      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
+         {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
+      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
+         {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
+      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
+         {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
+      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
+         {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
+      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
+         {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
+      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
+         {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
+      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},   {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
+      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
+         {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
+      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
+    ];
+
+    return Container(
+      padding: EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Pricing Table
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Column(
+              children: [
+                // Table Header
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(4),
+                      topRight: Radius.circular(4),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          'Min QTY',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          'Max QTY',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          'Unit Price',
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // Table Rows (Scrollable with fixed height)
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: 200, // Fixed max height
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: pricingTiers.asMap().entries.map((entry) {
+                        int index = entry.key;
+                        Map<String, dynamic> tier = entry.value;
+                        bool isLast = index == pricingTiers.length - 1;
+                        
+                        return Container(
+                          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: isLast 
+                                ? BorderSide.none 
+                                : BorderSide(color: Colors.grey[300]!),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  '${tier['minQty']}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  '${tier['maxQty']}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  '₹ ${tier['unitPrice'].toStringAsFixed(2)}',
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          SizedBox(height: 16),
+          
+          // Total Price
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              children: [
+                Text(
+                  'Total: ',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                Text(
+                  '₹ ${currentPrice.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 }
 
 class PhotoViewerWidget extends StatefulWidget {

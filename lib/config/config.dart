@@ -23,8 +23,6 @@ mixin URLs {
   static const String PRODUCT_PRICE_SKU_WISE =
       '$API_URL/seller/product/get-sku-wise-price';
 
-  static const String WHOLESALE_PRODUCT_DETAILS = '$API_URL/seller/product/variant-wholesale-product';
-
   static const String ALL_CATEGORY = '$API_URL/product/category';
 
   static const String TOP_CATEGORY = '$API_URL/product/category/filter/top';
