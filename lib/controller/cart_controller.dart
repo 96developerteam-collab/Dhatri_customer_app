@@ -142,7 +142,7 @@ class CartController extends GetxController {
 
     if (response.statusCode == 201) {
       EasyLoading.dismiss();
-      SnackBars().snackBarSuccessBottom(
+      SnackBars().snackBarSuccess(
           jsonString['message'].toString().capitalizeFirst);
       await getCartList();
       return true;

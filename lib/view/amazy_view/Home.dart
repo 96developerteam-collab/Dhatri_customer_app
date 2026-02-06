@@ -1102,12 +1102,12 @@ LinearGradient? selectColor(int position) {
                         ),
 
                         ///** BRANDS
-
-            Container(
+///** BRANDS
+Container(
   padding: EdgeInsets.only(
-    left: 10.0.w, 
-    right: 10.0.w, 
-    top: 10.0.h
+    left: 10.0.w,
+    right: 10.0.w,
+    top: 10.0.h,
   ),
   child: Obx(() {
     if (_homeController.isHomePageLoading.value) {
@@ -1128,24 +1128,24 @@ LinearGradient? selectColor(int position) {
             child: Container(
               color: AppStyles.lightBlueColorAlt,
               child: Container(
-                padding: EdgeInsets.all(10.w),
+                padding: EdgeInsets.all(8.w),
                 child: Container(
                   child: GridView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
-                      mainAxisSpacing: 10.0,
-                      crossAxisSpacing: 10.0,
-                      mainAxisExtent: 110.h, // Increased for larger image
+                      mainAxisSpacing: 8.0,
+                      crossAxisSpacing: 8.0,
+                      mainAxisExtent: 110.h,
                     ),
                     itemCount: 8,
                     itemBuilder: (context, index) {
                       return ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(5.r)),
+                        borderRadius: BorderRadius.all(Radius.circular(8.r)),
                         child: LoadingSkeleton(
-                          width: 70.w, // Increased from 50.w
-                          height: 60.w, // Increased from 40.w
+                          width: 65.w,
+                          height: 55.w,
                           colors: [
                             Colors.black.withOpacity(0.1),
                             Colors.black.withOpacity(0.2),
@@ -1179,9 +1179,9 @@ LinearGradient? selectColor(int position) {
               color: AppStyles.lightBlueColorAlt,
               child: Container(
                 height: _homeController.chunkedBrands.length > 4
-                    ? 250.h // Increased for larger image
-                    : 150.h, // Increased for larger image
-                padding: EdgeInsets.all(10.w),
+                    ? 240.h
+                    : 140.h,
+                padding: EdgeInsets.all(8.w),
                 child: Container(
                   child: Swiper.children(
                     children: _homeController
@@ -1193,9 +1193,9 @@ LinearGradient? selectColor(int position) {
                         padding: EdgeInsets.zero,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,
-                          mainAxisSpacing: 10.0,
-                          crossAxisSpacing: 10.0,
-                          mainAxisExtent: 110.h, // Increased from 90.h
+                          mainAxisSpacing: 8.0,
+                          crossAxisSpacing: 8.0,
+                          mainAxisExtent: 110.h, // Reduced from 110.h to 100.h
                         ),
                         itemBuilder: (context, index) {
                           CategoryBrand brand = e[index];
@@ -1205,62 +1205,77 @@ LinearGradient? selectColor(int position) {
                                 brandId: brand.id!,
                               ));
                             },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(5.r)
-                              ),
-                              clipBehavior: Clip.antiAlias,
-                              child: Container(
+                            borderRadius: BorderRadius.circular(8.r),
+                            child: Container(
+                              decoration: BoxDecoration(
                                 color: Colors.white,
-                                child: Column(
-                                  children: <Widget>[
-                                    // Image container - increased size
-                                    Expanded(
-                                      flex: 4, // Increased flex for image
-                                      child: Container(
-                                        padding: EdgeInsets.all(12.w), // More padding
-                                        child: brand.logo != null
-                                            ? Container(
-                                                child: FancyShimmerImage(
-                                                  imageUrl: AppConfig.assetPath + '/' + brand.logo! ?? '',
-                                                  boxFit: BoxFit.contain,
-                                                  errorWidget: FancyShimmerImage(
-                                                    imageUrl: "${AppConfig.assetPath}/backend/img/default.png",
-                                                    boxFit: BoxFit.contain,
-                                                  ),
-                                                ),
-                                              )
-                                            : Container(
-                                                child: Icon(
-                                                  Icons.list_alt,
-                                                  size: 50.w, // Increased icon size
-                                                ),
-                                              ),
-                                      ),
+                                borderRadius: BorderRadius.circular(8.r),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0x0D000000),
+                                    offset: Offset(0, 2),
+                                    blurRadius: 4.r,
+                                    spreadRadius: 0,
+                                  )
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  // Image container
+                                  Container(
+                                    height: 60.h, // Reduced from 65.h
+                                    width: 60.w,  // Reduced from 65.w
+                                    margin: EdgeInsets.only(top: 10.h, bottom: 4.h), // Reduced margins
+                                    padding: EdgeInsets.all(4.w),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade50,
+                                      borderRadius: BorderRadius.circular(6.r),
                                     ),
-                                    // Text container - smaller
-                                    Expanded(
-                                      flex: 1, // Reduced flex for text
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 2.w,
-                                        ),
-                                        child: Text(
-                                          brand.name!,
-                                          textAlign: TextAlign.center,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: AppStyles.appFontLight.copyWith(
-                                            fontSize: 9.fontSize, // Further reduced from 10.fontSize
-                                            color: AppStyles.blackColor,
+                                    child: brand.logo != null
+                                        ? FancyShimmerImage(
+                                            imageUrl: AppConfig.assetPath + '/' + brand.logo!,
+                                            boxFit: BoxFit.contain,
+                                            errorWidget: FancyShimmerImage(
+                                              imageUrl: "${AppConfig.assetPath}/backend/img/default.png",
+                                              boxFit: BoxFit.contain,
+                                            ),
+                                          )
+                                        : Container(
+                                            alignment: Alignment.center,
+                                            child: Icon(
+                                              Icons.business,
+                                              size: 24.w, // Reduced from 28.w
+                                              color: AppStyles.greyColorDark,
+                                            ),
                                           ),
+                                  ),
+                                  
+                                  // Text container with constraints
+                                  ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxHeight: 28.h, // Set max height for text
+                                    ),
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 2.w), // Reduced padding
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        brand.name!,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: AppStyles.appFontMedium.copyWith(
+                                          fontSize: 10.fontSize, // Reduced from 12.fontSize
+                                          color: AppStyles.blackColor,
+                                          fontWeight: FontWeight.w500,
+                                          height: 1.2,
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 6), // Reduced spacing
-                                  ],
-                                ),
+                                  ),
+                                  SizedBox(height: 6.h), // Reduced from 8.h
+                                ],
                               ),
                             ),
                           );

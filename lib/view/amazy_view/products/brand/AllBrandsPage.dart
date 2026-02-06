@@ -65,14 +65,14 @@ class _AllBrandsPageState extends State<AllBrandsPage> {
               } else {
                 return GridView.builder(
                     shrinkWrap: true,
-                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h), // Reduced outer padding
                     physics: BouncingScrollPhysics(),
                     gridDelegate:
                         SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
                       crossAxisCount: 3,
-                      crossAxisSpacing: 0,
-                      mainAxisSpacing: 6,
-                      height: 130.h,
+                      crossAxisSpacing: 8.w, // Added spacing between cards
+                      mainAxisSpacing: 8.h, // Added spacing between cards
+                      height: 140.h, // Reduced height slightly
                     ),
                     itemCount: _brandController.allBrands.length,
                     itemBuilder: (context, index) {
@@ -84,80 +84,71 @@ class _AllBrandsPageState extends State<AllBrandsPage> {
                               ));
                         },
                         child: Container(
-                          width: Get.width * 0.5,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8.w, vertical: 5.h),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color(0x1a000000),
-                                    offset: Offset(0, 3),
-                                    blurRadius: 6.r,
-                                    spreadRadius: 0,
-                                  )
-                                ],
-                              ),
-                              child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0x0D000000),
+                                offset: Offset(0, 2),
+                                blurRadius: 4.r,
+                                spreadRadius: 0,
+                              )
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // Brand logo/image - with less padding
+                              Container(
+                                height: 65.h, // Slightly reduced
+                                width: 65.w,  // Slightly reduced
+                                margin: EdgeInsets.only(top: 12.h, bottom: 6.h), // Reduced bottom margin
+                                padding: EdgeInsets.all(4.w), // Reduced padding
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5),
+                                  color: Colors.grey.shade50,
+                                  borderRadius: BorderRadius.circular(6.r),
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 10, horizontal: 10),
-                                        child: brand.logo != null
-                                            ? Container(
-                                                child: FancyShimmerImage(
-                                                  imageUrl:
-                                                      AppConfig.assetPath +
-                                                              '/' +
-                                                              brand.logo! ??
-                                                          '',
-                                                  boxFit: BoxFit.contain,
-                                                  errorWidget:
-                                                      FancyShimmerImage(
-                                                    imageUrl:
-                                                        "${AppConfig.assetPath}/backend/img/default.png",
-                                                    boxFit: BoxFit.contain,
-                                                  ),
-                                                ),
-                                              )
-                                            : Container(
-                                                child: Icon(
-                                                  Icons.list_alt,
-                                                  size: 50.w,
-                                                ),
-                                              ),
+                                child: brand.logo != null
+                                    ? FancyShimmerImage(
+                                        imageUrl: AppConfig.assetPath + '/' + brand.logo!,
+                                        boxFit: BoxFit.contain,
+                                        errorWidget: FancyShimmerImage(
+                                          imageUrl:
+                                              "${AppConfig.assetPath}/backend/img/default.png",
+                                          boxFit: BoxFit.contain,
+                                        ),
+                                      )
+                                    : Container(
+                                        alignment: Alignment.center,
+                                        child: Icon(
+                                          Icons.business,
+                                          size: 28.w, // Slightly reduced
+                                          color: AppStyles.greyColorDark,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      brand.name!,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: AppStyles.appFontMedium.copyWith(
-                                        color: AppStyles.blackColor,
-                                        fontSize: 15.fontSize,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                  ],
+                              ),
+                              
+                              // Brand name text - increased font size slightly
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 4.w), // Reduced horizontal padding
+                                child: Text(
+                                  brand.name!,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: AppStyles.appFontMedium.copyWith(
+                                    color: AppStyles.blackColor,
+                                    fontSize: 12.fontSize, // Increased from 11
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.2,
+                                  ),
                                 ),
                               ),
-                            ),
+                              
+                              SizedBox(height: 8.h), // Reduced bottom spacing
+                            ],
                           ),
                         ),
                       );

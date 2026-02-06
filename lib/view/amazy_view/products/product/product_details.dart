@@ -41,6 +41,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:dio/dio.dart' as DIO;
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter/services.dart';
 import 'dart:ui' as ui;
 
 import '../../../../AppConfig/language/app_localizations.dart';
@@ -61,6 +62,7 @@ class ProductDetails extends StatefulWidget {
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
+  final TextEditingController _quantityTextController = TextEditingController();
   final CartController cartController = Get.find();
   final ProductDetailsController controller =
       Get.put(ProductDetailsController());
@@ -279,7 +281,27 @@ class _ProductDetailsState extends State<ProductDetails> {
       inAppPurchaseController = Get.find();
     }
     getProductFuture = getProductDetails();
+    
+    // Initialize controller with current quantity
+    _quantityTextController.text = controller.itemQuantity.value.toString();
+    
+    // Listen to quantity changes from +/- buttons
+    ever(controller.itemQuantity, (val) {
+      if (int.tryParse(_quantityTextController.text) != val && 
+          _quantityTextController.text != val.toString()) {
+         _quantityTextController.text = val.toString();
+         _quantityTextController.selection = TextSelection.fromPosition(
+            TextPosition(offset: _quantityTextController.text.length));
+      }
+    });
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _quantityTextController.dispose();
+    super.dispose();
   }
 
   @override
@@ -883,13 +905,55 @@ class _ProductDetailsState extends State<ProductDetails> {
                                               ),
                                             ),
                                          Obx(() {
-                                           return Text(
-                                             _settingsController.setCurrentSymbolPosition(amount: (controller.finalPrice.value * _settingsController.conversionRate.value).toStringAsFixed(2)),
-                                             style: AppStyles.appFontBold
-                                                 .copyWith(
-                                               height: 1,
-                                               fontSize: 26.fontSize,
-                                             ),
+                                           return Column(
+                                             crossAxisAlignment: CrossAxisAlignment.start,
+                                             children: [
+                                               Row(
+                                                 children: [
+                                                   Text(
+                                                     "Unit Price: ".tr,
+                                                     style: AppStyles.appFontBook.copyWith(
+                                                       fontSize: 14.fontSize,
+                                                       color: AppStyles.greyColorBook,
+                                                     ),
+                                                   ),
+                                                   Flexible(
+                                                     child: Text(
+                                                       _settingsController.setCurrentSymbolPosition(amount: (controller.productPrice.value * _settingsController.conversionRate.value).toStringAsFixed(2)),
+                                                       style: AppStyles.appFontBold.copyWith(
+                                                         height: 1,
+                                                         fontSize: 16.fontSize,
+                                                         color: AppStyles.blackColor,
+                                                       ),
+                                                       overflow: TextOverflow.ellipsis,
+                                                     ),
+                                                   ),
+                                                 ],
+                                               ),
+                                               SizedBox(height: 5),
+                                               Row(
+                                                 children: [
+                                                   Text(
+                                                     "Total Price: ".tr,
+                                                     style: AppStyles.appFontBook.copyWith(
+                                                       fontSize: 14.fontSize,
+                                                       color: AppStyles.greyColorBook,
+                                                     ),
+                                                   ),
+                                                   Flexible(
+                                                     child: Text(
+                                                       _settingsController.setCurrentSymbolPosition(amount: (controller.finalPrice.value * _settingsController.conversionRate.value).toStringAsFixed(2)),
+                                                       style: AppStyles.appFontBold.copyWith(
+                                                         height: 1,
+                                                         fontSize: 22.fontSize,
+                                                         color: AppStyles.pinkColor,
+                                                       ),
+                                                       overflow: TextOverflow.ellipsis,
+                                                     ),
+                                                   ),
+                                                 ],
+                                               ),
+                                             ],
                                            );
                                          }),
                                          _settingsController
@@ -952,8 +1016,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                          shape: BoxShape.rectangle,
                                          borderRadius:
                                          BorderRadius.circular(7.r)),
-                                     child: Obx(() {
-                                       return Row(
+                                     child: Row(
                                          children: [
                                            InkWell(
                                              onTap: () {
@@ -977,19 +1040,33 @@ class _ProductDetailsState extends State<ProductDetails> {
                                              ),
                                            ),
                                            SizedBox(
-                                             width: 40,
+                                             width: 10,
                                            ),
-                                           Text(
-                                             "${controller.itemQuantity.value
-                                                 .toString()}",
-                                             style: AppStyles.appFontBold
-                                                 .copyWith(
-                                               fontSize: 18.fontSize,
-                                               color: AppStyles.pinkColor,
+                                           SizedBox(
+                                             width: 50.w,
+                                             child: TextField(
+                                               controller: _quantityTextController,
+                                               textAlign: TextAlign.center,
+                                               keyboardType: TextInputType.number,
+                                               inputFormatters: [
+                                                 FilteringTextInputFormatter.digitsOnly
+                                               ],
+                                               onChanged: (val) {
+                                                 controller.updateQuantity(val);
+                                               },
+                                               decoration: InputDecoration(
+                                                 border: InputBorder.none,
+                                                 isDense: true,
+                                                 contentPadding: EdgeInsets.zero,
+                                               ),
+                                               style: AppStyles.appFontBold.copyWith(
+                                                 fontSize: 18.fontSize,
+                                                 color: AppStyles.pinkColor,
+                                               ),
                                              ),
                                            ),
                                            SizedBox(
-                                             width: 40,
+                                             width: 10,
                                            ),
                                            InkWell(
                                              onTap: () {
@@ -1028,17 +1105,13 @@ class _ProductDetailsState extends State<ProductDetails> {
                                              ),
                                            ),
                                          ],
-                                       );
-                                     }),
+                                       ),
                                    ),
                                  ],
                                ),
                              ),
 
-                             // Bulk Pricing UI Component
-                             SizedBox(height: 20),
-                             _buildBulkPricingWidget(),
-                             SizedBox(height: 20),
+               
 
                              ((controller.products.value.data?.variantDetails??[]).length) >
                                  0
@@ -2453,7 +2526,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                  textAlign: TextAlign.center,
                                  style: AppStyles.appFontMedium
                                      .copyWith(
-                                   color: Colors.white,
+                                   color:  AppStyles.pinkColor,
                                    fontSize: 14.fontSize,
                                  ),
                                )
@@ -2461,7 +2534,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                  width: 20.w,
                                  height: 20.w,
                                  child: CircularProgressIndicator(
-                                   color: Colors.white,
+                                   color:  AppStyles.pinkColor,
                                  ),
                                ),
                              ),
@@ -2517,7 +2590,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                              width: Get.width,
                              height: 46.h,
                              decoration: BoxDecoration(
-                               color: Color(0xff5c7185),
+                               color: AppStyles.pinkColor,
                                borderRadius: BorderRadius.all(
                                  Radius.circular(5.r),
                                ),
@@ -2529,7 +2602,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                ),
                                child: !cartController.isCartLoading.value
                                    ? Text(
-                                 Platform.isIOS && _productDetailsModel.data?.product?.isPhysical == 0 ?  "Buy now".tr :"Add to Cart".tr,
+                                 Platform.isIOS && _productDetailsModel.data?.product?.isPhysical == 0 ?  "Buy now".tr :"Add to  Cart".tr,
                                  textAlign: TextAlign.center,
                                  style: AppStyles.appFontMedium
                                      .copyWith(
@@ -2649,203 +2722,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     );
   }
 
-  // Bulk Pricing Widget
-  Widget _buildBulkPricingWidget() {
-    // Static data for demonstration
-    double currentPrice = 1100.00;
-    
-    // Pricing tiers
-    List<Map<String, dynamic>> pricingTiers = [
-      {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
-      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
-         {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
-      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
-         {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
-      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
-         {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
-      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
-         {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
-      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
-         {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
-      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
-         {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
-      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},   {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
-      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
-         {'minQty': 1, 'maxQty': 9, 'unitPrice': 1100.00},
-      {'minQty': 10, 'maxQty': 20, 'unitPrice': 1090.00},
-    ];
 
-    return Container(
-      padding: EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Pricing Table
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Column(
-              children: [
-                // Table Header
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(4),
-                      topRight: Radius.circular(4),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          'Min QTY',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          'Max QTY',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          'Unit Price',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                
-                // Table Rows (Scrollable with fixed height)
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: 200, // Fixed max height
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: pricingTiers.asMap().entries.map((entry) {
-                        int index = entry.key;
-                        Map<String, dynamic> tier = entry.value;
-                        bool isLast = index == pricingTiers.length - 1;
-                        
-                        return Container(
-                          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: isLast 
-                                ? BorderSide.none 
-                                : BorderSide(color: Colors.grey[300]!),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  '${tier['minQty']}',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  '${tier['maxQty']}',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Text(
-                                  '₹ ${tier['unitPrice'].toStringAsFixed(2)}',
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          
-          SizedBox(height: 16),
-          
-          // Total Price
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              children: [
-                Text(
-                  'Total: ',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                Text(
-                  '₹ ${currentPrice.toStringAsFixed(2)}',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
 }
 

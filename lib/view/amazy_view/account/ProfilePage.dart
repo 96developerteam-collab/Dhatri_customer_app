@@ -117,15 +117,18 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController descriptionCtrl = TextEditingController();
   final TextEditingController phoneNumberCtrl = TextEditingController();
   final TextEditingController emailCtrl = TextEditingController();
+  final TextEditingController storeNameCtrl = TextEditingController(); // Added for store name
 
   @override
   void initState() {
+    // Initialize all controllers with existing data
     firstNameCtrl.text = loginController.profileData.value.firstName ?? "";
     lastNameCtrl.text = loginController.profileData.value.lastName ?? "";
     dobCtrl.text = loginController.profileData.value.dateOfBirth ?? "";
     descriptionCtrl.text = loginController.profileData.value.description ?? "";
     phoneNumberCtrl.text = loginController.profileData.value.phone ?? "";
     emailCtrl.text = loginController.profileData.value.email ?? "";
+    storeNameCtrl.text = loginController.profileData.value.storeName ?? ""; // Added for store name
     super.initState();
   }
 
@@ -289,6 +292,41 @@ class _ProfilePageState extends State<ProfilePage> {
                   SizedBox(
                     height: 20,
                   ),
+                  // Display store name below profile picture (optional)
+                  Obx(() {
+                    if (loginController.profileData.value.storeName != null && 
+                        loginController.profileData.value.storeName!.isNotEmpty) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: AppStyles.pinkColorAlt.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.store, size: 16, color: AppStyles.pinkColor),
+                              SizedBox(width: 8),
+                              Text(
+                                'Store: ${loginController.profileData.value.storeName}',
+                                style: AppStyles.appFontBook.copyWith(
+                                  fontSize: 14.fontSize,
+                                  color: AppStyles.pinkColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                    return SizedBox.shrink();
+                  }),
+                  SizedBox(
+                    height: 20,
+                  ),
                   Flexible(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -333,6 +371,19 @@ class _ProfilePageState extends State<ProfilePage> {
                                   }
                                   return null;
                                 },
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              // Added Store Name field
+                              TextFormField(
+                                controller: storeNameCtrl,
+                                keyboardType: TextInputType.text,
+                                decoration: CustomInputDecoration()
+                                    .underlineDecoration(label: "Store Name".tr),
+                                style: AppStyles.appFontBook.copyWith(
+                                  fontSize: 16.fontSize,
+                                ),
                               ),
                               SizedBox(
                                 height: 5,
@@ -500,6 +551,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         "phone": phoneNumberCtrl.text,
                                         "date_of_birth": dobCtrl.text,
                                         "description": descriptionCtrl.text,
+                                        "store_name": storeNameCtrl.text, // Added store name to update data
                                       };
                                       await updateProfile(data)
                                           .then((value) async {

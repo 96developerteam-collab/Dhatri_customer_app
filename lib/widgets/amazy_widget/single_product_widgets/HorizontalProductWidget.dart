@@ -406,7 +406,7 @@ class _HorizontalProductWidgetState extends State<HorizontalProductWidget> {
                           SizedBox(
                             width: 5,
                           ),
-                          CartIcon(widget.productModel!),
+                          // CartIcon(widget.productModel!),
                         ],
                       ),
                     ],

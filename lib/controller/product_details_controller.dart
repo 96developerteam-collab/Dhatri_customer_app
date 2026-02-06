@@ -113,12 +113,14 @@ class ProductDetailsController extends GetxController {
           discount = products.value.data?.discount;
         }
         discountType = products.value.data?.discountType;
-        minOrder.value = products.value.data?.product?.minimumOrderQty??1;
+        minOrder.value = (products.value.data?.product?.minimumOrderQty ?? 1) < 1 
+            ? 1 
+            : products.value.data?.product?.minimumOrderQty!;
         maxOrder.value = products.value.data?.product?.maxOrderQty ?? 1;
         // shippingID.value =
         //     products.value.data.product.shippingMethods.first.shippingMethodId;
 
-        itemQuantity.value = products.value.data?.product?.minimumOrderQty??1;
+        itemQuantity.value = minOrder.value;
 
         if ((products.value.data?.variantDetails?.length??0) > 0) {
           await skuGet();
@@ -189,7 +191,7 @@ class ProductDetailsController extends GetxController {
       if (response.data == "0") {
         SnackBars().snackBarWarning('Product not available');
         getProductDetails2(data['product_id']).then((value) {
-          itemQuantity.value = products.value.data?.product?.minimumOrderQty??1;
+          itemQuantity.value = minOrder.value;
           productId.value = data['product_id'];
           shippingValue.value = products.value.data?.product?.shippingMethods?.first??ShippingMethodElement();
         });
@@ -204,7 +206,7 @@ class ProductDetailsController extends GetxController {
 
         stockManage.value = products.value.data?.stockManage??0;
         stockCount.value = productSKU.value.productStock;
-        itemQuantity.value = products.value.data?.product?.minimumOrderQty??1;
+        itemQuantity.value = minOrder.value;
         calculatePriceAfterSku();
       }
     } catch (e, t) {
@@ -317,6 +319,48 @@ class ProductDetailsController extends GetxController {
       itemQuantity.value--;
       finalPrice.value = productPrice * itemQuantity.value;
     }
+  }
+
+  void updateQuantity(String qty) {
+    if (qty.isEmpty) {
+      return;
+    }
+    int? newQty = int.tryParse(qty);
+    if (newQty == null) {
+      return;
+    }
+
+    if (stockManage.value == 1) {
+      if (newQty > stockCount.value) {
+        itemQuantity.value = stockCount.value;
+        SnackBars().snackBarWarning('Stock not available.');
+      } else if (newQty < minOrder.value) {
+         SnackBars().snackBarWarning("Can't add less than" + ' ${minOrder.value} ' + 'Products');
+          itemQuantity.value = minOrder.value;
+      } else {
+        itemQuantity.value = newQty;
+      }
+    } else {
+      if (maxOrder.value != null) {
+        if (newQty > maxOrder.value) {
+           SnackBars().snackBarWarning("Can't add more than" + ' ${maxOrder.value} ' + 'Products');
+            itemQuantity.value = maxOrder.value;
+        } else if (newQty < minOrder.value) {
+             SnackBars().snackBarWarning("Can't add less than" + ' ${minOrder.value} ' + 'Products');
+            itemQuantity.value = minOrder.value;
+        } else {
+          itemQuantity.value = newQty;
+        }
+      } else {
+         if (newQty < minOrder.value) {
+             SnackBars().snackBarWarning("Can't add less than" + ' ${minOrder.value} ' + 'Products');
+            itemQuantity.value = minOrder.value;
+        } else {
+          itemQuantity.value = newQty;
+        }
+      }
+    }
+    finalPrice.value = productPrice.roundToDouble() * itemQuantity.value;
   }
 
   @override
