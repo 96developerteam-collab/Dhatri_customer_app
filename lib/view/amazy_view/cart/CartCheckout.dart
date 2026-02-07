@@ -1984,7 +1984,7 @@ class _CartCheckoutState extends State<CartCheckout> {
                           addressController.shippingAddress.value.id,
                           'customer_billing_address':
                           addressController.billingAddress.value.id,
-                          'customer_email': '${customerEmailCtrl.text}',
+                          'customer_email': customerEmailCtrl.text.isEmpty ? "no-email@checkout.com" : customerEmailCtrl.text,
                           'customer_phone': '${customerPhoneCtrl.text}',
                           'customer_name':
                           '${addressController.shippingAddress.value.name ?? ""}',

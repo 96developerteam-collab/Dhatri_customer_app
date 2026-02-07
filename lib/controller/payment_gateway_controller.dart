@@ -192,57 +192,64 @@ class PaymentGatewayController extends GetxController {
     return jsonString['count'];
   }
 
-  Future submitOrder(data) async {
-    print('cash on delevery------>2');
-    // print(data);
-    EasyLoading.show(
-        maskType: EasyLoadingMaskType.none, indicator: CustomLoadingWidget());
-    String token = await userToken.read(tokenKey);
+Future submitOrder(data) async {
+  print('cash on delivery ------> 2');
 
-    final m = new Map<String, dynamic>.from(data);
+  EasyLoading.show(
+    maskType: EasyLoadingMaskType.none,
+    indicator: CustomLoadingWidget(),
+  );
 
-    final DIO.FormData formData = DIO.FormData.fromMap(m);
+  String token = await userToken.read(tokenKey);
 
-    try {
-      response = await dio.post(URLs.ORDER_STORE,
-          options: DIO.Options(
-            followRedirects: false,
-            headers: {
-              'Accept': 'application/json',
-              'Authorization': 'Bearer $token',
-              'Content-Type': 'multipart/form-data',
-            },
-          ),
-          data: formData);
-      print('cash on delevery------>3 ${response?.data}' );
-      print(response!.statusCode);
-      //print(response!.data);
-      if (response!.statusCode == 201) {
-        SnackBars().snackBarSuccess("Order created successfully");
-        Get.delete<CheckoutController>();
-        await cartController.getCartList();
-        await 2500.milliseconds.delay();
-        Get.back();
-        Get.back();
-        Get.to(() => MyOrders(0));
-      }
-    } on DIO.DioError catch (e) {
-      print('cash on delevery------>error ${e.response?.data}');
-      if (e.response!.statusCode == 404) {
-        print(e.response!.statusCode);
-      } else {
-        print(e.message);
-        print(e.response);
-        SnackBars().snackBarError(e.response!.statusMessage);
-      }
+  final m = Map<String, dynamic>.from(data);
+  final DIO.FormData formData = DIO.FormData.fromMap(m);
+
+  try {
+    print('REQUEST URL -----> ${URLs.ORDER_STORE}');
+    print('REQUEST DATA -----> ${formData.fields}');
+    print('REQUEST HEADERS -----> Authorization: Bearer $token');
+
+    response = await dio.post(
+      URLs.ORDER_STORE,
+      options: DIO.Options(
+        followRedirects: false,
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'multipart/form-data',
+        },
+      ),
+      data: formData,
+    );
+
+    print('RESPONSE STATUS -----> ${response?.statusCode}');
+    print('RESPONSE DATA -----> ${response?.data}');
+
+    if (response!.statusCode == 201) {
+      SnackBars().snackBarSuccess("Order created successfully");
+      Get.delete<CheckoutController>();
+      await cartController.getCartList();
+      await 2500.milliseconds.delay();
+      Get.back();
+      Get.back();
+      Get.to(() => MyOrders(0));
     }
 
-    EasyLoading.dismiss();
-    // Get.offAndToNamed('/');
-    // Get.to(() => MainNavigation(
-    //   navIndex: 2,
-    // ));
+  } on DIO.DioError catch (e) {
+    print('ERROR URL -----> ${e.requestOptions.uri}');
+    print('ERROR STATUS -----> ${e.response?.statusCode}');
+    print('ERROR DATA -----> ${e.response?.data}');
+    print('ERROR MESSAGE -----> ${e.message}');
+
+    SnackBars().snackBarError(
+      e.response?.statusMessage ?? 'Something went wrong',
+    );
   }
+
+  EasyLoading.dismiss();
+}
+
 
   @override
   void onInit() {

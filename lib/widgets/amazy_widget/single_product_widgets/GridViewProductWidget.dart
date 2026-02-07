@@ -380,10 +380,10 @@ class _GridViewProductWidgetState extends State<GridViewProductWidget> {
                             ],
                           ),
                         ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        CartIcon(widget.productModel!),
+                        // SizedBox(
+                        //   width: 5,
+                        // ),
+                        // CartIcon(widget.productModel!),
                       ],
                     ),
                   ],
