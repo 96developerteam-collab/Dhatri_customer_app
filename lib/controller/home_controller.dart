@@ -1109,6 +1109,7 @@ class HomeController extends GetxController {
         Map<String, dynamic> data = Map<String, dynamic>.from(value.data);
 
         HomePageModel model = HomePageModel.fromJson(data);
+        print("FETCHED CAT DATA: ${model.topCategories?.map((e) => "${e.id}: ${e.name}").toList()}");
 
         model.newUserZone?.allProducts
             ?.removeWhere((element) => element.product == null);
