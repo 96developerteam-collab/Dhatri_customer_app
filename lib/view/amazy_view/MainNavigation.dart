@@ -21,7 +21,7 @@ import 'SplashScreen.dart';
 import 'account/AccountPage.dart';
 import 'authentication/LoginPage.dart';
 import 'cart/CartMain.dart';
-import 'package:amazcart/view/amazy_view/account/orders/OrderList/AllOrdersList.dart';
+import 'package:amazcart/view/amazy_view/account/OrdersHubPage.dart';
 import 'products/category/browse_category_screen.dart';
 
 // Hexagon clipper for cart icon
@@ -143,7 +143,7 @@ class _MainNavigationState extends State<MainNavigation> {
                 CartMain(true, false),
                 !loginController.loggedIn.value
                     ? LoginPage()
-                    : AllOrdersListScreen(),
+                    : OrdersHubPage(),
                 AccountPage(),
               ],
               confineInSafeArea: true,

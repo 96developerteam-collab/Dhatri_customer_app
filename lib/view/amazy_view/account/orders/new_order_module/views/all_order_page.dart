@@ -70,99 +70,144 @@ class _DynamicOrderListTabsState extends State<DynamicOrderListTabs> {
       //   child: Text('Selected Tab ID: ${_tabData[_selectedIndex]['id']}'),
       // ),
 
-      body: Column(
-        children: [
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFE8F5E9), // Light green
+              Color(0xFFF1F8F4), // Greenish-white
+              Color(0xFFFFFFFF), // White
+            ],
+          ),
+        ),
+        child: Column(
+          children: [
+            5.verticalSpace,
+            Obx(() =>
+            orderController.isOrderLoading.value ? Center(
+              child: CustomLoadingWidget(),
+            ) :
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0xFF4CAF50).withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: List.generate(orderController.tabData.length, (index) {
 
-          5.verticalSpace,
-          Obx(() =>
-          orderController.isOrderLoading.value ? Center(
-            child: CustomLoadingWidget(),
-          ) :
-          Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: List.generate(orderController.tabData.length, (index) {
-
-                  log(orderController.tabData[index].name??'');
-                  return GestureDetector(
-                    onTap: () => orderController.onTabSelected(index),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            orderController.tabData[index].name?.tr ?? '',
-                            style: orderController.selectedIndex == index
-                                ? AppStyles.appFontBook.copyWith(fontSize: 12.fontSize)
-                                : AppStyles.appFontBook.copyWith(
-                              fontSize: 12.fontSize,
-                              color: AppStyles.greyColorLight,
+                        log(orderController.tabData[index].name??'');
+                        return GestureDetector(
+                          onTap: () => orderController.onTabSelected(index),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                            margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
+                            decoration: BoxDecoration(
+                              color: orderController.selectedIndex == index
+                                  ? Color(0xFF4CAF50).withOpacity(0.1)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                            child: Column(
+                              children: [
+                                Text(
+                                  orderController.tabData[index].name?.tr ?? '',
+                                  style: orderController.selectedIndex == index
+                                      ? AppStyles.appFontBold.copyWith(
+                                          fontSize: 13.fontSize,
+                                          color: Color(0xFF4CAF50),
+                                        )
+                                      : AppStyles.appFontBook.copyWith(
+                                    fontSize: 12.fontSize,
+                                    color: AppStyles.greyColorDark,
+                                  ),
+                                ),
+                                SizedBox(height: 4.h),
+                                if (orderController.selectedIndex == index)
+                                  Container(
+                                    width: 24.w,
+                                    height: 3.h,
+                                    decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [Color(0xFF4CAF50), Color(0xFF66BB6A)],
+                                        ),
+                                        borderRadius: BorderRadius.circular(2.r)),
+                                  ),
+                              ],
                             ),
                           ),
-                        ),
-                        if (orderController.selectedIndex == index)
-                          Container(
-                            width: 20.w,
-                            height: 4.h,
-                            decoration: BoxDecoration(
-                                color: AppStyles.pinkColor,
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(5.r),
-                                    topRight: Radius.circular(5.r))),
-                          ),
-                      ],
+                        );
+                      }),
                     ),
-                  );
-                }),
+                  ),
+                  Container(
+                    width: Get.width,
+                    height: 1,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.transparent,
+                          Color(0xFF4CAF50).withOpacity(0.3),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  )
+                ],
               ),
-              Container(
-                width: Get.width,
-                height: 1,
-                color: AppStyles.pinkColor.withOpacity(0.3),
-              )
-            ],
-          )
+            )
 
-          ),
-
-
-          5.verticalSpace,
-          Expanded(
-            child: Obx(
-                  () {
-                if (orderController.isAllOrderLoading.value) {
-                  return Center(
-                    child: CustomLoadingWidget(),
-                  );
-                } else {
-                  if (orderController.allOrderListModel.value.orders == null ||
-                      orderController.allOrderListModel.value.orders!.length == 0) {
-                    return Center(child: NoOrderPlacedWidget());
-                  }
-                  return Container(
-                    child: ListView.separated(
-                      separatorBuilder: (context, index) {
-                        return Divider(
-                          color: AppStyles.appBackgroundColor,
-                          height: 5,
-                          thickness: 5,
-                        );
-                      },
-                      itemCount: orderController.allOrderListModel.value.orders!.length,
-                      itemBuilder: (context, index) {
-                        OrderData order = orderController.allOrderListModel.value.orders![index];
-                        return OrderAllToPayListDataWidget(
-                          order: order,
-                        );
-                      },
-                    ),
-                  );
-                }
-              },
             ),
-          ),
-        ],
+
+
+            5.verticalSpace,
+            Expanded(
+              child: Obx(
+                    () {
+                  if (orderController.isAllOrderLoading.value) {
+                    return Center(
+                      child: CustomLoadingWidget(),
+                    );
+                  } else {
+                    if (orderController.allOrderListModel.value.orders == null ||
+                        orderController.allOrderListModel.value.orders!.length == 0) {
+                      return Center(child: NoOrderPlacedWidget());
+                    }
+                    return Container(
+                      child: ListView.separated(
+                        separatorBuilder: (context, index) {
+                          return SizedBox(height: 8.h);
+                        },
+                        padding: EdgeInsets.only(bottom: 16.h),
+                        itemCount: orderController.allOrderListModel.value.orders!.length,
+                        itemBuilder: (context, index) {
+                          OrderData order = orderController.allOrderListModel.value.orders![index];
+                          return OrderAllToPayListDataWidget(
+                            order: order,
+                          );
+                        },
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

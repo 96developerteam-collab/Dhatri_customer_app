@@ -70,16 +70,24 @@ class OrderAllToPayListDataWidget extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: context.theme.cardColor,
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFF0F9F4), // Light greenish-white
+              Color(0xFFFFFFFF), // Pure white
+              Color(0xFFF5FFF9), // Very light green tint
+            ],
+          ),
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Color(0xFF4CAF50).withOpacity(0.08),
               blurRadius: 10,
               offset: Offset(0, 4),
             ),
           ],
-          border: Border.all(color: Colors.grey.withOpacity(0.1)),
+          border: Border.all(color: Color(0xFFE8F5E9).withOpacity(0.5), width: 1.5),
         ),
         child: Column(
           children: [

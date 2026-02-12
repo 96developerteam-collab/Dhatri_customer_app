@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppConfig {
 
- static const String hostUrl = "https://arun.dhatri.store";
+ static const String hostUrl = "https://dev.dhatri.store";
  static String appName = 'Dhatri';
 
  static bool isAmazCartTheme = false;

@@ -290,37 +290,84 @@ class _ProductDetailsState extends State<ProductDetails> {
       }
 
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+        width: double.infinity,
+        margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: AppStyles.greyColorLight.withOpacity(0.3),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Text(
-            //   "Wholesale Prices".tr,
-            //   style: AppStyles.appFontBold.copyWith(
-            //     fontSize: 16.fontSize,
-            //     color: AppStyles.blackColor,
-            //   ),
-            // ),
-            // SizedBox(height: 10.h),
+            Text(
+              "Wholesale Prices".tr,
+              style: AppStyles.appFontBold.copyWith(
+                fontSize: 16.fontSize,
+                color: AppStyles.blackColor,
+              ),
+            ),
+            SizedBox(height: 12.h),
             Table(
               border: TableBorder(
-                bottom: BorderSide(color: AppStyles.greyColorLight.withOpacity(0.5)),
-                horizontalInside: BorderSide(color: AppStyles.greyColorLight.withOpacity(0.5)),
+                top: BorderSide(color: AppStyles.greyColorLight.withOpacity(0.3), width: 1),
+                bottom: BorderSide(color: AppStyles.greyColorLight.withOpacity(0.3), width: 1),
+                horizontalInside: BorderSide(color: AppStyles.greyColorLight.withOpacity(0.2), width: 1),
               ),
+              columnWidths: {
+                0: FlexColumnWidth(1),
+                1: FlexColumnWidth(1),
+                2: FlexColumnWidth(1.5),
+              },
               children: [
                 TableRow(
+                  decoration: BoxDecoration(
+                    color: AppStyles.greyColorLight.withOpacity(0.1),
+                  ),
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.h),
-                      child: Text("Min QTY".tr, style: AppStyles.appFontBook.copyWith(color: AppStyles.greyColorBook)),
+                      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
+                      child: Text(
+                        "Min QTY".tr, 
+                        textAlign: TextAlign.center,
+                        style: AppStyles.appFontMedium.copyWith(
+                          color: AppStyles.blackColor,
+                          fontSize: 13.fontSize,
+                        ),
+                      ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.h),
-                      child: Text("Max QTY".tr, style: AppStyles.appFontBook.copyWith(color: AppStyles.greyColorBook)),
+                      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
+                      child: Text(
+                        "Max QTY".tr, 
+                        textAlign: TextAlign.center,
+                        style: AppStyles.appFontMedium.copyWith(
+                          color: AppStyles.blackColor,
+                          fontSize: 13.fontSize,
+                        ),
+                      ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.h),
-                      child: Text("Unit Price".tr, style: AppStyles.appFontBook.copyWith(color: AppStyles.greyColorBook)),
+                      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
+                      child: Text(
+                        "Unit Price".tr, 
+                        textAlign: TextAlign.center,
+                        style: AppStyles.appFontMedium.copyWith(
+                          color: AppStyles.blackColor,
+                          fontSize: 13.fontSize,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -329,22 +376,40 @@ class _ProductDetailsState extends State<ProductDetails> {
                   bool isSelected = controller.itemQuantity.value >= tier.minQty! && (tier.maxQty == null || controller.itemQuantity.value <= tier.maxQty!);
                   return TableRow(
                     decoration: BoxDecoration(
-                      color: isSelected ? AppStyles.pinkColor.withOpacity(0.05) : Colors.transparent,
+                      color: isSelected ? AppStyles.pinkColor.withOpacity(0.08) : Colors.transparent,
                     ),
                     children: [
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.h),
-                        child: Text("${tier.minQty}", style: AppStyles.appFontBold.copyWith(fontSize: 14.fontSize, color: isSelected ? AppStyles.pinkColor : AppStyles.blackColor)),
+                        padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
+                        child: Text(
+                          "${tier.minQty}", 
+                          textAlign: TextAlign.center,
+                          style: AppStyles.appFontBold.copyWith(
+                            fontSize: 14.fontSize, 
+                            color: isSelected ? AppStyles.pinkColor : AppStyles.blackColor,
+                          ),
+                        ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.h),
-                        child: Text(tier.maxQty != null ? "${tier.maxQty}" : "-", style: AppStyles.appFontBold.copyWith(fontSize: 14.fontSize, color: isSelected ? AppStyles.pinkColor : AppStyles.blackColor)),
+                        padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
+                        child: Text(
+                          tier.maxQty != null ? "${tier.maxQty}" : "∞", 
+                          textAlign: TextAlign.center,
+                          style: AppStyles.appFontBold.copyWith(
+                            fontSize: 14.fontSize, 
+                            color: isSelected ? AppStyles.pinkColor : AppStyles.blackColor,
+                          ),
+                        ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                        padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
                         child: Text(
                           "${_settingsController.appCurrency.value} ${tier.sellingPrice!.toStringAsFixed(2)}",
-                          style: AppStyles.appFontBold.copyWith(fontSize: 14.fontSize, color: isSelected ? AppStyles.pinkColor : AppStyles.blackColor),
+                          textAlign: TextAlign.center,
+                          style: AppStyles.appFontBold.copyWith(
+                            fontSize: 14.fontSize, 
+                            color: isSelected ? AppStyles.pinkColor : AppStyles.blackColor,
+                          ),
                         ),
                       ),
                     ],
@@ -2499,248 +2564,212 @@ class _ProductDetailsState extends State<ProductDetails> {
                    ],
                  ),
                ),
-               bottomNavigationBar: Container(
-                 height: 75.h,
-                 alignment: Alignment.topCenter,
-                 child: Row(
-                   crossAxisAlignment: CrossAxisAlignment.center,
-                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                   children: [
-                     SizedBox(width: 20),
-                     Obx(() {
-                       return InkWell(
-                         onTap: () {
-                           Get.to(() => CartMain(true, true));
-                         },
-                         child: Container(
-                           width: 50.w,
-                           height: 46.w,
-                           decoration: BoxDecoration(
-                             gradient: AppStyles.gradient,
-                             shape: BoxShape.rectangle,
-                             borderRadius: BorderRadius.circular(5),
-                           ),
-                           child: badges.Badge(
-                             // toAnimate: false,
-                             showBadge: _loginController.loggedIn.value
-                                 ? true
-                                 : false,
-                             position: badges.BadgePosition.topEnd(
-                                 end: 4.w, top: 0.h),
-                             badgeAnimation: badges.BadgeAnimation.size(
-                                 toAnimate: false),
-                             badgeStyle: badges.BadgeStyle(
-                               badgeColor: Colors.white,
-                               padding: EdgeInsets.all(2),
-                             ),
-                             badgeContent: Text(
-                               '${cartController.cartListSelectedCount.value
-                                   .toString()}',
-                               style: AppStyles.appFontBook.copyWith(
-                                 color: AppStyles.pinkColor,
-                                   fontSize: 12.fontSize
-                               ),
-                             ),
-                             child: Center(
-                               child: Image.asset(
-                                 'assets/images/cart_icon.png',
-                                 width: 30.w,
-                                 height: 30.w,
-                                 color: Colors.white,
-                               ),
-                             ),
-                           ),
-                         ),
-                       );
-                     }),
-                     SizedBox(width: 15),
-                     _settingsController.vendorType.value == "single"
-                         ? SizedBox.shrink()
-                         : Padding(
-                           padding: EdgeInsets.only(left: 15),
-                           child: InkWell(
-                                                  onTap: () {
-                           Get.to(() =>
-                               StoreHome(
-                                   sellerId:
-                                   _productDetailsModel.data!.seller!.id!));
-                                                  },
-                                                  child: Container(
-                           width: 60.w,
-                           height: 46.w,
-                           margin: EdgeInsets.only(right: 15),
-                           padding: EdgeInsets.all(10),
-                           decoration: BoxDecoration(
-                             gradient: AppStyles.gradient,
-                             shape: BoxShape.rectangle,
-                             borderRadius: BorderRadius.circular(5.r),
-                           ),
-                           child: Image.asset(
-                             'assets/images/store.png',
-                             width: 5.w,
-                             height: 5.w,
-                             color: Colors.white,
-                           ),
-                                                  ),
-                                                ),
-                         ),
+       bottomNavigationBar: Container(
+  height: 75.h,
+  alignment: Alignment.topCenter,
+  child: Row(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      SizedBox(width: 20),
+      
+      /// Cart Button
+      Obx(() {
+        return InkWell(
+          onTap: () {
+            Get.to(() => CartMain(true, true));
+          },
+          child: Container(
+            width: 50.w,
+            height: 46.w,
+            decoration: BoxDecoration(
+              gradient: AppStyles.gradient,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: badges.Badge(
+              showBadge: _loginController.loggedIn.value ? true : false,
+              position: badges.BadgePosition.topEnd(end: 4.w, top: 0.h),
+              badgeAnimation: badges.BadgeAnimation.size(toAnimate: false),
+              badgeStyle: badges.BadgeStyle(
+                badgeColor: Colors.white,
+                padding: EdgeInsets.all(2),
+              ),
+              badgeContent: Text(
+                '${cartController.cartListSelectedCount.value.toString()}',
+                style: AppStyles.appFontBook.copyWith(
+                    color: AppStyles.pinkColor, fontSize: 12.fontSize),
+              ),
+              child: Center(
+                child: Image.asset(
+                  'assets/images/cart_icon.png',
+                  width: 30.w,
+                  height: 30.w,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        );
+      }),
+      
+      SizedBox(width: 15),
+      
+      /// Removed Store Button
+      // SizedBox.shrink(),  // No need, we just skip it
+      
+      Expanded(
+        child: Obx(() {
+          return controller.stockManage.value == 1
+              ? InkWell(
+                  child: Container(
+                    alignment: Alignment.center,
+                    width: Get.width,
+                    height: 46.h,
+                    decoration: BoxDecoration(
+                      color: AppStyles.pinkColor,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5.r),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: 10,
+                      ),
+                      child: !cartController.isCartLoading.value
+                          ? Text(
+                              Platform.isIOS &&
+                                      _productDetailsModel
+                                              .data?.product?.isPhysical ==
+                                          0
+                                  ? "Buy now".tr
+                                  : "Add to Cart 1".tr,
+                              textAlign: TextAlign.center,
+                              style: AppStyles.appFontMedium.copyWith(
+                                color: AppStyles.pinkColor,
+                                fontSize: 14.fontSize,
+                              ),
+                            )
+                          : Container(
+                              width: 20.w,
+                              height: 20.w,
+                              child: CircularProgressIndicator(
+                                color: AppStyles.pinkColor,
+                              ),
+                            ),
+                    ),
+                  ),
+                  onTap: () async {
+                    if (cartController.isCartLoading.value) return;
 
-                     Expanded(
-                       child: Obx(() {
-                         return controller.stockManage.value == 1
-                             ? InkWell(
-                           child: Container(
-                             alignment: Alignment.center,
-                             width: Get.width,
-                             height: 46.h,
-                             decoration: BoxDecoration(
-                               color: AppStyles.pinkColor,
-                               borderRadius: BorderRadius.all(
-                                 Radius.circular(5.r),
-                               ),
-                             ),
-                             child: Padding(
-                               padding: const EdgeInsets.symmetric(
-                                 vertical: 8.0,
-                                 horizontal: 10,
-                               ),
-                               child: !cartController.isCartLoading.value
-                                   ? Text(
-                                 Platform.isIOS && _productDetailsModel.data?.product?.isPhysical == 0 ?  "Buy now".tr :"Add to Cart".tr,
-                                 textAlign: TextAlign.center,
-                                 style: AppStyles.appFontMedium
-                                     .copyWith(
-                                   color:  AppStyles.pinkColor,
-                                   fontSize: 14.fontSize,
-                                 ),
-                               )
-                                   : Container(
-                                 width: 20.w,
-                                 height: 20.w,
-                                 child: CircularProgressIndicator(
-                                   color:  AppStyles.pinkColor,
-                                 ),
-                               ),
-                             ),
-                           ),
-                           onTap: () async {
-                             if (cartController.isCartLoading.value) {
-                               return;
-                             } else {
-                               if (controller.stockCount.value > 0) {
-                                 if (controller.minOrder.value >
-                                     controller.stockCount.value) {
-                                   SnackBars().snackBarWarning(
-                                       'No more stock'.tr);
-                                 } else {
+                    if (controller.stockCount.value > 0) {
+                      if (controller.minOrder.value >
+                          controller.stockCount.value) {
+                        SnackBars().snackBarWarning('No more stock'.tr);
+                      } else {
+                        Map<String, dynamic> data = {
+                          'product_id': _productDetailsModel
+                              .data?.skus?.first.id,
+                          'qty': controller.itemQuantity.value,
+                          'price': getPriceForCart(),
+                          'seller_id':
+                              controller.products.value.data?.userId ?? 1,
+                          'shipping_method_id': controller.shippingID.value,
+                          'product_type': 'product',
+                          'checked': true,
+                          "in_app_purchase_id": _productDetailsModel
+                              .data?.skus?.first.inAppPurchaseId,
+                        };
 
+                        if (Platform.isIOS &&
+                            _productDetailsModel.data?.product?.isPhysical ==
+                                0) {
+                          inAppPurchaseController
+                              .onInAppPurchaseProduct(productInfo: data);
+                        } else {
+                          final CartController cartController = Get.find();
+                          await cartController.addToCart(data);
+                        }
+                      }
+                    } else {
+                      SnackBars().snackBarWarning('No more stock'.tr);
+                    }
+                  },
+                )
+              : InkWell(
+                  child: Container(
+                    alignment: Alignment.center,
+                    width: Get.width,
+                    height: 46.h,
+                    decoration: BoxDecoration(
+                      color: AppStyles.pinkColor,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5.r),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10.0,
+                        horizontal: 10,
+                      ),
+                      child: !cartController.isCartLoading.value
+                          ? Text(
+                              Platform.isIOS &&
+                                      _productDetailsModel
+                                              .data?.product?.isPhysical ==
+                                          0
+                                  ? "Buy now".tr
+                                  : "Add to Cart".tr,
+                              textAlign: TextAlign.center,
+                              style: AppStyles.appFontMedium.copyWith(
+                                color: Colors.white,
+                                fontSize: 14.fontSize,
+                              ),
+                            )
+                          : Container(
+                              width: 20.w,
+                              height: 20.w,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            ),
+                    ),
+                  ),
+                  onTap: () async {
+                    if (cartController.isCartLoading.value) return;
 
-                                   Map<String, dynamic> data = {
-                                     'product_id':
-                                     _productDetailsModel
-                                         .data?.skus?.first.id,
-                                     'qty':
-                                     controller.itemQuantity.value,
-                                     'price': getPriceForCart(),
-                                     'seller_id': controller
-                                         .products.value.data?.userId??1,
-                                     'shipping_method_id':
-                                     controller.shippingID.value,
-                                     'product_type': 'product',
-                                     'checked': true,
-                                     "in_app_purchase_id" :  _productDetailsModel.data?.skus?.first.inAppPurchaseId,
-                                   };
+                    Map<String, dynamic> data = {
+                      'product_id': _productDetailsModel.data?.skus?.first.id,
+                      'qty': controller.itemQuantity.value,
+                      'price': getPriceForCart(),
+                      'seller_id':
+                          controller.products.value.data?.userId ?? 1,
+                      'shipping_method_id': controller.shippingID.value,
+                      'product_type': 'product',
+                      'checked': true,
+                      "in_app_purchase_id": _productDetailsModel
+                          .data?.skus?.first.inAppPurchaseId,
+                    };
 
-                                   if(Platform.isIOS && _productDetailsModel.data?.product?.isPhysical == 0){
+                    if (Platform.isIOS &&
+                        _productDetailsModel.data?.product?.isPhysical == 0) {
+                      inAppPurchaseController
+                          .onInAppPurchaseProduct(productInfo: data);
+                    } else {
+                      final CartController cartController = Get.find();
+                      await cartController.addToCart(data);
+                    }
+                  },
+                );
+        }),
+      ),
+      
+      SizedBox(width: 20),
+    ],
+  ),
+),
 
-                                     inAppPurchaseController.onInAppPurchaseProduct(productInfo: data);
-
-                                   }else {
-                                     final CartController cartController =
-                                     Get.find();
-                                     await cartController.addToCart(data);
-                                   }
-                                 }
-                               } else {
-                                 SnackBars().snackBarWarning(
-                                     'No more stock'.tr);
-                               }
-                             }
-                           },
-                         )
-                             : InkWell(
-                           child: Container(
-                             alignment: Alignment.center,
-                             width: Get.width,
-                             height: 46.h,
-                             decoration: BoxDecoration(
-                               color: AppStyles.pinkColor,
-                               borderRadius: BorderRadius.all(
-                                 Radius.circular(5.r),
-                               ),
-                             ),
-                             child: Padding(
-                               padding: const EdgeInsets.symmetric(
-                                 vertical: 10.0,
-                                 horizontal: 10,
-                               ),
-                               child: !cartController.isCartLoading.value
-                                   ? Text(
-                                 Platform.isIOS && _productDetailsModel.data?.product?.isPhysical == 0 ?  "Buy now".tr :"Add to  Cart".tr,
-                                 textAlign: TextAlign.center,
-                                 style: AppStyles.appFontMedium
-                                     .copyWith(
-                                   color: Colors.white,
-                                   fontSize: 14.fontSize,
-                                 ),
-                               )
-                                   : Container(
-                                 width: 20.w,
-                                 height: 20.w,
-                                 child: CircularProgressIndicator(
-                                   color: Colors.white,
-                                 ),
-                               ),
-                             ),
-                           ),
-                           onTap: () async {
-                             if (cartController.isCartLoading.value) {
-                               return;
-                             } else {
-
-                                 Map<String, dynamic> data = {
-                                   'product_id':
-                                   _productDetailsModel
-                                       .data?.skus?.first.id,
-                                   'qty': controller.itemQuantity.value,
-                                   'price': getPriceForCart(),
-                                   'seller_id': controller
-                                       .products.value.data?.userId??1,
-                                   'shipping_method_id':
-                                   controller.shippingID.value,
-                                   'product_type': 'product',
-                                   'checked': true,
-                                   "in_app_purchase_id" :  _productDetailsModel
-                                       .data?.skus?.first.inAppPurchaseId,
-
-                                 };
-
-                               if(Platform.isIOS && _productDetailsModel.data?.product?.isPhysical == 0){
-                               inAppPurchaseController.onInAppPurchaseProduct(productInfo: data);
-                               }else {
-                                 final CartController cartController =
-                                 Get.find();
-                                 await cartController.addToCart(data);
-                               }
-                             }
-                           },
-                         );
-                       }),
-                     ),
-                     SizedBox(width: 20),
-                   ],
-                 ),
-               ),
              );
            }
          }

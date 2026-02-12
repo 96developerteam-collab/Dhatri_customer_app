@@ -74,484 +74,593 @@ class _RefundDetailsState extends State<RefundDetails> {
 
   @override
   Widget build(BuildContext context) {
+    var status = widget.refundOrder?.checkConfirmed ?? '';
+    Color statusColor = status.toLowerCase().contains('approved')
+        ? Colors.green
+        : status.toLowerCase().contains('rejected')
+            ? Colors.red
+            : Colors.orange;
+
     return Scaffold(
-      backgroundColor: AppStyles.appBackgroundColor,
       appBar: AppBarWidget(title: 'Refund Details'.tr),
-      body: LoadingMoreCustomScrollView(
-        reverse: false,
-        showGlowLeading: false,
-        physics: const ClampingScrollPhysics(),
-        slivers: [
-          SliverToBoxAdapter(
-            child: Container(
-              color: Colors.white,
-              child: ListView(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFE8F5E9), // Light green
+              Color(0xFFF1F8F4), // Greenish-white
+              Color(0xFFFFFFFF), // White
+            ],
+          ),
+        ),
+        child: LoadingMoreCustomScrollView(
+          reverse: false,
+          showGlowLeading: false,
+          physics: const ClampingScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.all(12.w),
+                child: Column(
+                  children: [
+                    // Order Info Card
+                    Container(
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFFF0F9F4),
+                            Color(0xFFFFFFFF),
+                            Color(0xFFF5FFF9),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF4CAF50).withOpacity(0.08),
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                        border: Border.all(
+                          color: Color(0xFFE8F5E9).withOpacity(0.5),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            widget
-                                .refundOrder?.order?.orderNumber?.capitalizeFirst ?? '',
-                            style: AppStyles.kFontBlack15w4,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Order Number'.tr,
+                                      style: AppStyles.appFontBook.copyWith(
+                                        fontSize: 11.sp,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                    SizedBox(height: 4.h),
+                                    Text(
+                                      widget.refundOrder?.order?.orderNumber
+                                              ?.toUpperCase() ??
+                                          '',
+                                      style: AppStyles.appFontBold.copyWith(
+                                        fontSize: 16.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12.w,
+                                  vertical: 6.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: statusColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(20.r),
+                                  border: Border.all(
+                                    color: statusColor.withOpacity(0.3),
+                                  ),
+                                ),
+                                child: Text(
+                                  status.tr,
+                                  style: AppStyles.appFontMedium.copyWith(
+                                    fontSize: 12.sp,
+                                    color: statusColor,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(
-                            height: 5.2.h,
+                          SizedBox(height: 16.h),
+                          Divider(height: 1, color: Color(0xFFE8F5E9)),
+                          SizedBox(height: 16.h),
+                          // Date Info
+                          _buildInfoRow(
+                            icon: Icons.calendar_today_outlined,
+                            label: 'Request Sent Date'.tr,
+                            value: CustomDate().formattedDateTime(
+                                widget.refundOrder?.createdAt),
                           ),
-                          Text(
-                            'Request Sent Date'.tr +
-                                ': ' +
-                                CustomDate().formattedDateTime(
-                                    widget.refundOrder?.createdAt),
-                            style: AppStyles.kFontBlack12w4,
+                          SizedBox(height: 12.h),
+                          _buildInfoRow(
+                            icon: Icons.event_outlined,
+                            label: 'Order Date'.tr,
+                            value: CustomDate().formattedDateTime(
+                                widget.refundOrder?.order?.createdAt),
                           ),
-                          SizedBox(
-                            height: 5.2.h,
+                          SizedBox(height: 12.h),
+                          _buildInfoRow(
+                            icon: Icons.account_balance_wallet_outlined,
+                            label: 'Refund Method'.tr,
+                            value: widget.refundOrder!.refundMethod!
+                                .replaceAll("_", ' ')
+                                .capitalizeFirst!,
                           ),
-                          Text(
-                            'Order Date'.tr +
-                                ': ' +
-                                CustomDate().formattedDateTime(
-                                    widget.refundOrder?.order?.createdAt),
-                            style: AppStyles.kFontBlack12w4,
-                          ),
-                          SizedBox(
-                            height: 5.2.h,
-                          ),
-                          Text('Refund Method'.tr + ': ' + widget.refundOrder!.refundMethod!.replaceAll("_", ' ').capitalizeFirst!,
-                            style: AppStyles.kFontBlack12w4,
-                          ),
-                          SizedBox(
-                            height: 5.2.h,
-                          ),
-                          Text(
-                            'Shipping Type'.tr +
-                                ': ' +
-                                widget.refundOrder!.shippingMethod
-                                !.replaceAll("_", ' ')
-                                    .capitalizeFirst!,
-                            style: AppStyles.kFontBlack12w4,
+                          SizedBox(height: 12.h),
+                          _buildInfoRow(
+                            icon: Icons.local_shipping_outlined,
+                            label: 'Shipping Type'.tr,
+                            value: widget.refundOrder!.shippingMethod!
+                                .replaceAll("_", ' ')
+                                .capitalizeFirst!,
                           ),
                         ],
                       ),
-                      Expanded(child: Container()),
-                      Text(
-                        '${widget.refundOrder?.checkConfirmed}'.tr,
-                        style: AppStyles.kFontDarkBlue12w5,
+                    ),
+
+                    SizedBox(height: 16.h),
+
+                    // Products Card
+                    Container(
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFFF0F9F4),
+                            Color(0xFFFFFFFF),
+                            Color(0xFFF5FFF9),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF4CAF50).withOpacity(0.08),
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                        border: Border.all(
+                          color: Color(0xFFE8F5E9).withOpacity(0.5),
+                          width: 1.5,
+                        ),
                       ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: widget.refundOrder?.refundDetails?.length,
-                      itemBuilder: (context, packageIndex) {
-                        return Container(
-                          padding: EdgeInsets.symmetric(vertical: 10.h),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Refund Products'.tr,
+                            style: AppStyles.appFontBold.copyWith(
+                              fontSize: 15.sp,
+                              color: Color(0xFF4CAF50),
+                            ),
+                          ),
+                          SizedBox(height: 16.h),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount:
+                                widget.refundOrder?.refundDetails?.length ?? 0,
+                            itemBuilder: (context, packageIndex) {
+                              var refundDetail =
+                                  widget.refundOrder!.refundDetails![packageIndex];
+                              return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Image.asset(
-                                              'assets/images/icon_delivery-parcel.png',
-                                              width: 17.w,
-                                              height: 17.w,
-                                            ),
-                                            SizedBox(
-                                              width: 8.w,
-                                            ),
-                                            Text(
-                                              widget
-                                                  .refundOrder
-                                                  ?.refundDetails?[packageIndex]
-                                                  .orderPackage
-                                                  ?.packageCode ?? '',
-                                              style: AppStyles.kFontBlack14w5,
-                                            ),
-                                          ],
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 26.0, top: 5),
-                                          child: Text(
-                                            'Sold by'.tr + ': ' + '${widget.refundOrder?.refundDetails?[packageIndex].seller?.firstName}',
-                                            style: AppStyles.kFontBlack14w5,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 26.0, top: 5),
-                                          child: Text(widget.refundOrder?.refundDetails?[packageIndex].orderPackage?.shippingDate ?? '',
-                                            style: AppStyles.kFontBlack12w4,
-                                          ),
-                                        ),
-                                      ],
+                                  if (packageIndex > 0)
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                                      child: Divider(
+                                          height: 1, color: Color(0xFFE8F5E9)),
                                     ),
+                                  // Package Info
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.inventory_2_outlined,
+                                        size: 16.sp,
+                                        color: Color(0xFF4CAF50),
+                                      ),
+                                      SizedBox(width: 8.w),
+                                      Text(
+                                        refundDetail.orderPackage?.packageCode ??
+                                            '',
+                                        style: AppStyles.appFontBold.copyWith(
+                                          fontSize: 13.sp,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 15.h,
-                              ),
-                              ListView.separated(
-                                  separatorBuilder: (context, index) {
-                                    return Divider(
-                                      color: AppStyles.appBackgroundColor,
-                                      height: 2.h,
-                                      thickness: 2,
-                                    );
-                                  },
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.only(left: 26.0),
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: widget
-                                      .refundOrder
-                                      ?.refundDetails?[packageIndex]
-                                      .refundProducts
-                                      ?.length ?? 0,
-                                  itemBuilder: (context, productIndex) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Get.to(() => ProductDetails(
-                                          productID: widget.refundOrder?.refundDetails?[packageIndex].refundProducts?[productIndex].sellerProductSku?.product?.id??0,
-                                        ));
-                                      },
-                                      child: Container(
-                                        margin:
-                                        EdgeInsets.symmetric(vertical: 10),
+                                  if (currencyController.vendorType.value !=
+                                      "single")
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 24.w,
+                                        top: 4.h,
+                                      ),
+                                      child: Text(
+                                        'Sold by'.tr +
+                                            ': ' +
+                                            '${refundDetail.seller?.firstName ?? ''}',
+                                        style: AppStyles.appFontBook.copyWith(
+                                          fontSize: 12.sp,
+                                          color: Colors.grey[700],
+                                        ),
+                                      ),
+                                    ),
+                                  SizedBox(height: 12.h),
+
+                                  // Products
+                                  ListView.separated(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    separatorBuilder: (context, index) =>
+                                        SizedBox(height: 12.h),
+                                    itemCount:
+                                        refundDetail.refundProducts?.length ?? 0,
+                                    itemBuilder: (context, productIndex) {
+                                      var product = refundDetail
+                                          .refundProducts![productIndex];
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Get.to(() => ProductDetails(
+                                                productID: product
+                                                        .sellerProductSku
+                                                        ?.product
+                                                        ?.id ??
+                                                    0,
+                                              ));
+                                        },
                                         child: Row(
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                           children: [
                                             ClipRRect(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5.w)),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.r),
                                               child: Container(
-                                                  height: 80.w,
-                                                  width: 80.w,
-                                                  color: Colors.white,
-                                                  child: Image.network(
-                                                    AppConfig.assetPath +
-                                                        '/' +
-                                                        '${widget.refundOrder?.refundDetails?[packageIndex].refundProducts?[productIndex].sellerProductSku?.product?.product?.thumbnailImageSource}',
-                                                    fit: BoxFit.contain,
-                                                  )),
-                                            ),
-                                            SizedBox(
-                                              width: 15.w,
-                                            ),
-                                            Expanded(
-                                              child: Container(
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      widget
-                                                          .refundOrder
-                                                          ?.refundDetails?[
-                                                      packageIndex]
-                                                          .refundProducts?[
-                                                      productIndex]
-                                                          .sellerProductSku
-                                                          ?.product
-                                                          ?.productName ?? '',
-                                                      style: AppStyles
-                                                          .kFontBlack14w5,
-                                                    ),
-                                                    ListView.builder(
-                                                      shrinkWrap: true,
-                                                      physics:
-                                                      NeverScrollableScrollPhysics(),
-                                                      itemCount: widget
-                                                          .refundOrder
-                                                          ?.refundDetails?[
-                                                      packageIndex]
-                                                          .refundProducts?[
-                                                      productIndex]
-                                                          .sellerProductSku
-                                                          ?.productVariations
-                                                          ?.length,
-                                                      itemBuilder: (context,
-                                                          variantIndex) {
-
-
-                                                        var attribute = widget.refundOrder?.refundDetails?[packageIndex].refundProducts?[productIndex].sellerProductSku?.productVariations?[variantIndex].attribute;
-                                                        var attributeValue = widget.refundOrder?.refundDetails?[packageIndex].refundProducts?[productIndex].sellerProductSku?.productVariations?[variantIndex].attributeValue;
-
-                                                        return Text(
-                                                          '${attribute?.name??""}'+
-                                                              ': ${attributeValue?.name??attributeValue?.value??''}',
-                                                          style: AppStyles
-                                                              .kFontBlack12w4,
-                                                        );
-
-                                                      },
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .start,
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .center,
-                                                      children: [
-                                                        Text(
-                                                          '${currencyController.setCurrentSymbolPosition(amount: ((widget.refundOrder?.refundDetails?[packageIndex].refundProducts?[productIndex].returnAmount??0) * currencyController.conversionRate.value).toStringAsFixed(2))}',
-                                                          style: AppStyles
-                                                              .kFontPink15w5,
-                                                        ),
-                                                        SizedBox(
-                                                          width: 5.w,
-                                                        ),
-                                                        Text(
-                                                          '(${widget.refundOrder?.refundDetails?[packageIndex].refundProducts?[productIndex].returnQty}x)',
-                                                          style: AppStyles
-                                                              .kFontBlack14w5,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      height: 10.h,
-                                                    ),
-                                                  ],
+                                                height: 70.w,
+                                                width: 70.w,
+                                                child: FancyShimmerImage(
+                                                  imageUrl: AppConfig.assetPath +
+                                                      '/' +
+                                                      '${product.sellerProductSku?.product?.product?.thumbnailImageSource}',
+                                                  boxFit: BoxFit.cover,
+                                                  errorWidget: Image.asset(
+                                                    "assets/images/placeholder.png",
+                                                    fit: BoxFit.cover,
+                                                  ),
                                                 ),
+                                              ),
+                                            ),
+                                            SizedBox(width: 12.w),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    product.sellerProductSku?.product
+                                                            ?.productName ??
+                                                        '',
+                                                    style: AppStyles.appFontMedium
+                                                        .copyWith(
+                                                      fontSize: 13.sp,
+                                                    ),
+                                                    maxLines: 2,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                  // Variations
+                                                  ...(product.sellerProductSku
+                                                              ?.productVariations ??
+                                                          [])
+                                                      .map((v) => Padding(
+                                                            padding: EdgeInsets.only(
+                                                                top: 2.h),
+                                                            child: Text(
+                                                              '${v.attribute?.name ?? ''}: ${v.attributeValue?.name ?? v.attributeValue?.value ?? ''}',
+                                                              style: AppStyles
+                                                                  .appFontBook
+                                                                  .copyWith(
+                                                                fontSize: 11.sp,
+                                                                color: Colors.grey,
+                                                              ),
+                                                            ),
+                                                          ))
+                                                      .toList(),
+                                                  SizedBox(height: 6.h),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        currencyController
+                                                            .setCurrentSymbolPosition(
+                                                          amount: ((product
+                                                                      .returnAmount ??
+                                                                  0) *
+                                                              currencyController
+                                                                  .conversionRate
+                                                                  .value)
+                                                              .toStringAsFixed(2),
+                                                        ),
+                                                        style: AppStyles.appFontBold
+                                                            .copyWith(
+                                                          fontSize: 14.sp,
+                                                          color: Color(0xFF4CAF50),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 6.w),
+                                                      Text(
+                                                        '(${product.returnQty}x)',
+                                                        style: AppStyles.appFontBook
+                                                            .copyWith(
+                                                          fontSize: 12.sp,
+                                                          color: Colors.grey[600],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],
                                         ),
-                                      ),
-                                    );
-                                  }),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: 16.h),
+
+                    // Pickup/Drop-off Info Card
+                    Container(
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFFF0F9F4),
+                            Color(0xFFFFFFFF),
+                            Color(0xFFF5FFF9),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF4CAF50).withOpacity(0.08),
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                        border: Border.all(
+                          color: Color(0xFFE8F5E9).withOpacity(0.5),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                widget.refundOrder?.pickUpAddressCustomer != null
+                                    ? Icons.local_shipping_outlined
+                                    : Icons.location_on_outlined,
+                                size: 20.sp,
+                                color: Color(0xFF4CAF50),
+                              ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                widget.refundOrder?.pickUpAddressCustomer != null
+                                    ? 'Courier Pickup Info'.tr
+                                    : 'Drop off Info'.tr,
+                                style: AppStyles.appFontBold.copyWith(
+                                  fontSize: 15.sp,
+                                  color: Color(0xFF4CAF50),
+                                ),
+                              ),
                             ],
                           ),
-                        );
-                      }),
-                  widget.refundOrder?.pickUpAddressCustomer != null
-                      ? Text(
-                    'Courier Pickup Info'.tr,
-                    style: AppStyles.kFontBlack15w6,
-                  )
-                      : Text(
-                    'Drop off Info'.tr,
-                    style: AppStyles.kFontBlack15w6,
-                  ),
-                  SizedBox(
-                    height: 5.2,
-                  ),
-                  PickUpInfoWidget(
-                    title: 'Shipping Method'.tr,
-                    value: '${widget.refundOrder?.shippingGateway?.methodName}',
-                  ),
-                  widget.refundOrder?.pickUpAddressCustomer != null
-                      ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 5.2.h,
+                          SizedBox(height: 16.h),
+                          _buildPickupInfoRow(
+                            'Shipping Method'.tr,
+                            '${widget.refundOrder?.shippingGateway?.methodName}',
+                          ),
+                          if (widget.refundOrder?.pickUpAddressCustomer != null)
+                            ...[
+                              SizedBox(height: 10.h),
+                              _buildPickupInfoRow(
+                                'Name'.tr,
+                                '${widget.refundOrder?.pickUpAddressCustomer?.name}',
+                              ),
+                              SizedBox(height: 10.h),
+                              _buildPickupInfoRow(
+                                'Email'.tr,
+                                '${widget.refundOrder?.pickUpAddressCustomer?.email}',
+                              ),
+                              SizedBox(height: 10.h),
+                              _buildPickupInfoRow(
+                                'Phone Number'.tr,
+                                '${widget.refundOrder?.pickUpAddressCustomer?.phone}',
+                              ),
+                              SizedBox(height: 10.h),
+                              _buildPickupInfoRow(
+                                'Address'.tr,
+                                '${widget.refundOrder?.pickUpAddressCustomer?.address}',
+                              ),
+                              SizedBox(height: 10.h),
+                              _buildPickupInfoRow(
+                                'City'.tr,
+                                '${widget.refundOrder?.pickUpAddressCustomer?.city}',
+                              ),
+                              SizedBox(height: 10.h),
+                              _buildPickupInfoRow(
+                                'State'.tr,
+                                '${widget.refundOrder?.pickUpAddressCustomer?.state}',
+                              ),
+                              SizedBox(height: 10.h),
+                              _buildPickupInfoRow(
+                                'Country'.tr,
+                                '${widget.refundOrder?.pickUpAddressCustomer?.country}',
+                              ),
+                              SizedBox(height: 10.h),
+                              _buildPickupInfoRow(
+                                'Postcode'.tr,
+                                '${widget.refundOrder?.pickUpAddressCustomer?.postalCode}',
+                              ),
+                            ]
+                          else ...[
+                            SizedBox(height: 10.h),
+                            _buildPickupInfoRow(
+                              'Drop off Address'.tr,
+                              '${widget.refundOrder?.dropOffAddress ?? ""}',
+                            ),
+                          ],
+                        ],
                       ),
-                      PickUpInfoWidget(
-                        title: 'Name'.tr,
-                        value:
-                        '${widget.refundOrder?.pickUpAddressCustomer?.name}',
-                      ),
-                      SizedBox(
-                        height: 5.2.h,
-                      ),
-                      PickUpInfoWidget(
-                        title: 'Email'.tr,
-                        value:
-                        '${widget.refundOrder?.pickUpAddressCustomer?.email}',
-                      ),
-                      SizedBox(
-                        height: 5.2.h,
-                      ),
-                      PickUpInfoWidget(
-                        title: 'Phone Number'.tr,
-                        value:
-                        '${widget.refundOrder?.pickUpAddressCustomer?.phone}',
-                      ),
-                      SizedBox(
-                        height: 5.2.h,
-                      ),
-                      PickUpInfoWidget(
-                        title: 'Address'.tr,
-                        value:
-                        '${widget.refundOrder?.pickUpAddressCustomer?.address}',
-                      ),
-                      SizedBox(
-                        height: 5.2.h,
-                      ),
-                      PickUpInfoWidget(
-                        title: 'City'.tr,
-                        value:
-                        '${widget.refundOrder?.pickUpAddressCustomer?.city}',
-                      ),
-                      SizedBox(
-                        height: 5.2.h,
-                      ),
-                      PickUpInfoWidget(
-                        title: 'State'.tr,
-                        value:
-                        '${widget.refundOrder?.pickUpAddressCustomer?.state}',
-                      ),
-
-                      SizedBox(
-                        height: 5.2.h,
-                      ),
-
-                      PickUpInfoWidget(
-                        title: 'Country'.tr,
-                        value:
-                        '${widget.refundOrder?.pickUpAddressCustomer?.country}',
-                      ),
-                      SizedBox(
-                        height: 5.2.h,
-                      ),
-                      PickUpInfoWidget(
-                        title: 'Postcode'.tr,
-                        value:
-                        '${widget.refundOrder?.pickUpAddressCustomer?.postalCode}',
-                      ),
-                      SizedBox(
-                        height: 5.2.h,
-                      ),
-                    ],
-                  )
-                      : PickUpInfoWidget(
-                    title: 'Drop off Address'.tr,
-                    value: '${widget.refundOrder?.dropOffAddress ?? ""}',
-                  ),
-                  SizedBox(
-                    height: 15.h,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 15.h),
-              child: Text(
-                'You might like'.tr,
-                textAlign: TextAlign.center,
-                style: AppStyles.appFont.copyWith(
-                  color: AppStyles.blackColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                    ),
+                    SizedBox(height: 16.h),
+                  ],
                 ),
               ),
             ),
-          ),
-          LoadingMoreSliverList<ProductModel>(
-            SliverListConfig<ProductModel>(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              indicatorBuilder: BuildIndicatorBuilder(
-                source: source,
-                isSliver: true,
-                name: 'Recommended Products'.tr,
-              ).buildIndicator,
-              extendedListDelegate:
-              SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 15.h),
+                child: Text(
+                  'You might like'.tr,
+                  textAlign: TextAlign.center,
+                  style: AppStyles.appFont.copyWith(
+                    color: Color(0xFF4CAF50),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
-              itemBuilder: (BuildContext c, ProductModel prod, int index) {
-                return GridViewProductWidget(
-                  productModel: prod,
-                  averageRating: 0,
-                );
-              },
-              sourceList: source!,
             ),
-            key: const Key('refundDetailsPageLoadMoreKey'),
-          ),
-        ],
+            LoadingMoreSliverList<ProductModel>(
+              SliverListConfig<ProductModel>(
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                indicatorBuilder: BuildIndicatorBuilder(
+                  source: source,
+                  isSliver: true,
+                  name: 'Recommended Products'.tr,
+                ).buildIndicator,
+                extendedListDelegate:
+                    SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                ),
+                itemBuilder: (BuildContext c, ProductModel prod, int index) {
+                  return GridViewProductWidget(
+                    productModel: prod,
+                    averageRating: 0,
+                  );
+                },
+                sourceList: source!,
+              ),
+              key: const Key('refundDetailsPageLoadMoreKey'),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  getPaidBy(RefundOrder order) {
-    if (order.order?.paymentType == 1) {
-      return 'Cash On Delivery';
-    } else if (order.order?.paymentType == 2) {
-      return 'Wallet';
-    } else if (order.order?.paymentType == 3) {
-      return 'PayPal';
-    } else if (order.order?.paymentType == 4) {
-      return 'Stripe';
-    } else if (order.order?.paymentType == 5) {
-      return 'PayStack';
-    } else if (order.order?.paymentType == 6) {
-      return 'Razorpay';
-    } else if (order.order?.paymentType == 7) {
-      return 'Bank Payment';
-    } else if (order.order?.paymentType == 8) {
-      return 'Instamojo';
-    } else if (order.order?.paymentType == 9) {
-      return 'PayTM';
-    } else if (order.order?.paymentType == 10) {
-      return 'Midtrans';
-    } else if (order.order?.paymentType == 11) {
-      return 'PayUMoney';
-    } else if (order.order?.paymentType == 12) {
-      return 'JazzCash';
-    } else if (order.order?.paymentType == 13) {
-      return 'Google Pay';
-    } else if (order.order?.paymentType == 14) {
-      return 'FlutterWave';
-    }
-  }
-}
-
-class PickUpInfoWidget extends StatelessWidget {
-  final String? title;
-  final String? value;
-
-  PickUpInfoWidget({this.title, this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: '$title',
-            style: AppStyles.kFontBlack12w4,
+  Widget _buildInfoRow({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          icon,
+          size: 16.sp,
+          color: Color(0xFF4CAF50),
+        ),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: AppStyles.appFontBook.copyWith(
+                  fontSize: 11.sp,
+                  color: Colors.grey[600],
+                ),
+              ),
+              SizedBox(height: 2.h),
+              Text(
+                value,
+                style: AppStyles.appFontMedium.copyWith(
+                  fontSize: 13.sp,
+                ),
+              ),
+            ],
           ),
-          TextSpan(
-            text: ': $value',
-            style: AppStyles.kFontGrey12w5,
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
+
+  Widget _buildPickupInfoRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 2,
+          child: Text(
+            label,
+            style: AppStyles.appFontBook.copyWith(
+              fontSize: 12.sp,
+              color: Colors.grey[700],
+            ),
+          ),
+        ),
+        SizedBox(width: 8.w),
+        Expanded(
+          flex: 3,
+          child: Text(
+            value,
+            style: AppStyles.appFontMedium.copyWith(
+              fontSize: 12.sp,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
 }

@@ -51,363 +51,381 @@ class _MyRefundsAndDisputesState extends State<MyRefundsAndDisputes> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppStyles.appBackgroundColor,
-      appBar: AppBarWidget(title: 'Refunds and Disputes'.tr,showCart: false,),
-      body: Obx(
-            () {
-          if (orderRefundController.isAllOrderLoading.value) {
-            return Center(
-              child: CustomLoadingWidget(),
-            );
-          } else {
-            if (orderRefundController.refundOrderListModel.value.refundOrders ==
-                null ||
-                orderRefundController
-                    .refundOrderListModel.value.refundOrders?.length ==
-                    0) {
+      appBar: AppBarWidget(title: 'Refunds and Disputes'.tr, showCart: false),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFE8F5E9), // Light green
+              Color(0xFFF1F8F4), // Greenish-white
+              Color(0xFFFFFFFF), // White
+            ],
+          ),
+        ),
+        child: Obx(
+          () {
+            if (orderRefundController.isAllOrderLoading.value) {
               return Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      FontAwesomeIcons.exclamation,
-                      color: AppStyles.pinkColor,
-                      size: 25.w,
-                    ),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    Text(
-                      'No Refund Orders'.tr,
-                      textAlign: TextAlign.center,
-                      style: AppStyles.kFontPink15w5.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                child: CustomLoadingWidget(),
               );
-            }
-            return Container(
-              child: ListView.separated(
+            } else {
+              if (orderRefundController.refundOrderListModel.value.refundOrders ==
+                      null ||
+                  orderRefundController
+                          .refundOrderListModel.value.refundOrders?.length ==
+                      0) {
+                return Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(20.w),
+                        decoration: BoxDecoration(
+                          color: Color(0xFF4CAF50).withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          FontAwesomeIcons.receipt,
+                          color: Color(0xFF4CAF50),
+                          size: 40.w,
+                        ),
+                      ),
+                      SizedBox(height: 20.h),
+                      Text(
+                        'No Refund Orders'.tr,
+                        textAlign: TextAlign.center,
+                        style: AppStyles.appFontBold.copyWith(
+                          fontSize: 18.sp,
+                          color: Color(0xFF4CAF50),
+                        ),
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        'You have no refund requests at the moment'.tr,
+                        textAlign: TextAlign.center,
+                        style: AppStyles.appFontBook.copyWith(
+                          fontSize: 14.sp,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              return ListView.separated(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
                 separatorBuilder: (context, index) {
-                  return Divider(
-                    color: AppStyles.appBackgroundColor,
-                    height: 5.h,
-                    thickness: 5,
-                  );
+                  return SizedBox(height: 12.h);
                 },
                 itemCount: orderRefundController
-                    .refundOrderListModel.value.refundOrders?.length ?? 0,
+                        .refundOrderListModel.value.refundOrders?.length ??
+                    0,
                 itemBuilder: (context, index) {
+                  var refundOrder = orderRefundController
+                      .refundOrderListModel.value.refundOrders![index];
+                  var status = refundOrder.checkConfirmed ?? '';
+                  Color statusColor = status.toLowerCase().contains('approved')
+                      ? Colors.green
+                      : status.toLowerCase().contains('rejected')
+                          ? Colors.red
+                          : Colors.orange;
+
                   return InkWell(
                     onTap: () {
-                      Get.to(() => RefundDetails(
-                        refundOrder: orderRefundController
-                            .refundOrderListModel.value.refundOrders![index],
-                      ));
+                      Get.to(() => RefundDetails(refundOrder: refundOrder));
                     },
+                    borderRadius: BorderRadius.circular(12.r),
                     child: Container(
-                      color: Colors.white,
-                      padding:
-                      EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFFF0F9F4), // Light greenish-white
+                            Color(0xFFFFFFFF), // Pure white
+                            Color(0xFFF5FFF9), // Very light green tint
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF4CAF50).withOpacity(0.08),
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                        border: Border.all(
+                          color: Color(0xFFE8F5E9).withOpacity(0.5),
+                          width: 1.5,
+                        ),
+                      ),
                       child: Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
+                          // Header
+                          Container(
+                            padding: EdgeInsets.all(16.w),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Color(0xFFE8F5E9),
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        orderRefundController
-                                            .refundOrderListModel
-                                            .value
-                                            .refundOrders?[index]
-                                            .order
-                                            ?.orderNumber
-                                            ?.capitalizeFirst ?? '',
-                                        style: AppStyles.kFontBlack15w4,
+                                      Row(
+                                        children: [
+                                          Text(
+                                            refundOrder.order?.orderNumber
+                                                    ?.toUpperCase() ??
+                                                '',
+                                            style: AppStyles.appFontBold.copyWith(
+                                              fontSize: 15.sp,
+                                            ),
+                                          ),
+                                          SizedBox(width: 4.w),
+                                          Icon(
+                                            Icons.arrow_forward_ios,
+                                            size: 12.sp,
+                                            color: Colors.grey,
+                                          ),
+                                        ],
                                       ),
-                                      Icon(
-                                        Icons.arrow_forward_ios,
-                                        size: 15.w,
-                                        color: AppStyles.blackColor,
+                                      SizedBox(height: 6.h),
+                                      Text(
+                                        'Refund Requested on'.tr +
+                                            ': ' +
+                                            CustomDate().formattedDateTime(
+                                                refundOrder.createdAt),
+                                        style: AppStyles.appFontBook.copyWith(
+                                          fontSize: 12.sp,
+                                          color: Colors.grey[600],
+                                        ),
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
-                                    height: 5.2,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12.w,
+                                    vertical: 6.h,
                                   ),
-                                  Text(
-                                    'Refund Requested on'.tr +
-                                        ': ' +
-                                        CustomDate().formattedDateTime(
-                                            orderRefundController
-                                                .refundOrderListModel
-                                                .value
-                                                .refundOrders?[index]
-                                                .createdAt),
-                                    style: AppStyles.kFontBlack12w4,
+                                  decoration: BoxDecoration(
+                                    color: statusColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(20.r),
+                                    border: Border.all(
+                                      color: statusColor.withOpacity(0.3),
+                                    ),
                                   ),
-                                  SizedBox(
-                                    height: 5.2.h,
+                                  child: Text(
+                                    status.tr,
+                                    style: AppStyles.appFontMedium.copyWith(
+                                      fontSize: 12.sp,
+                                      color: statusColor,
+                                    ),
                                   ),
-                                ],
-                              ),
-                              Expanded(child: Container()),
-                              Text(
-                                '${orderRefundController.refundOrderListModel.value.refundOrders?[index].checkConfirmed}'.tr,
-                                style: AppStyles.kFontBlack12w4,
-                              ),
-                            ],
+                                ),
+                              ],
+                            ),
                           ),
-                          SizedBox(
-                            height: 10.h,
-                          ),
-                          ListView.builder(
+
+                          // Refund Details
+                          Padding(
+                            padding: EdgeInsets.all(16.w),
+                            child: ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
-                              itemCount: orderRefundController
-                                  .refundOrderListModel
-                                  .value
-                                  .refundOrders?[index]
-                                  .refundDetails
-                                  ?.length,
+                              itemCount: refundOrder.refundDetails?.length ?? 0,
                               itemBuilder: (context, packageIndex) {
+                                var refundDetail =
+                                    refundOrder.refundDetails![packageIndex];
                                 return Container(
-                                  padding: EdgeInsets.symmetric(vertical: 10),
+                                  margin: EdgeInsets.only(bottom: 12.h),
                                   child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
+                                      // Package Info
                                       Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
                                         children: [
-                                          Expanded(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Image.asset(
-                                                      'assets/images/icon_delivery-parcel.png',
-                                                      width: 17.w,
-                                                      height: 17.w,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 8.w,
-                                                    ),
-                                                    Text(
-                                                      orderRefundController
-                                                          .refundOrderListModel
-                                                          .value
-                                                          .refundOrders?[index]
-                                                          .refundDetails?[
-                                                      packageIndex]
-                                                          .orderPackage
-                                                          ?.packageCode ?? '',
-                                                      style: AppStyles
-                                                          .kFontBlack14w5,
-                                                    ),
-                                                  ],
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 26.0, top: 5),
-                                                  child: Text(
-                                                    'Sold by'.tr +
-                                                        ': ' +
-                                                        '${orderRefundController.refundOrderListModel.value.refundOrders?[index].refundDetails?[packageIndex].seller?.firstName}',
-                                                    style: AppStyles
-                                                        .kFontBlack14w5,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 26.0, top: 5),
-                                                  child: Text(
-                                                    orderRefundController.refundOrderListModel.value.refundOrders?[index].refundDetails?[packageIndex].orderPackage?.shippingDate ?? '',
-                                                    style: AppStyles
-                                                        .kFontBlack12w4,
-                                                  ),
-                                                ),
-                                              ],
+                                          Icon(
+                                            Icons.inventory_2_outlined,
+                                            size: 16.sp,
+                                            color: Color(0xFF4CAF50),
+                                          ),
+                                          SizedBox(width: 8.w),
+                                          Text(
+                                            refundDetail.orderPackage
+                                                    ?.packageCode ??
+                                                '',
+                                            style: AppStyles.appFontBold.copyWith(
+                                              fontSize: 13.sp,
+                                              color: Color(0xFF4CAF50),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
-                                        height: 15.h,
-                                      ),
+                                      if (currencyController.vendorType.value !=
+                                          "single")
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                            left: 24.w,
+                                            top: 4.h,
+                                          ),
+                                          child: Text(
+                                            'Sold by'.tr +
+                                                ': ' +
+                                                '${refundDetail.seller?.firstName ?? ''}',
+                                            style: AppStyles.appFontBook.copyWith(
+                                              fontSize: 12.sp,
+                                              color: Colors.grey[700],
+                                            ),
+                                          ),
+                                        ),
+                                      SizedBox(height: 12.h),
+
+                                      // Products
                                       ListView.separated(
-                                          separatorBuilder: (context, index) {
-                                            return Divider(
-                                              color:
-                                              AppStyles.appBackgroundColor,
-                                              height: 2,
-                                              thickness: 2,
-                                            );
-                                          },
-                                          shrinkWrap: true,
-                                          padding: EdgeInsets.only(left: 26.0),
-                                          physics:
-                                          NeverScrollableScrollPhysics(),
-                                          itemCount: orderRefundController
-                                              .refundOrderListModel
-                                              .value
-                                              .refundOrders?[index]
-                                              .refundDetails?[packageIndex]
-                                              .refundProducts
-                                              ?.length ?? 0,
-                                          itemBuilder: (context, productIndex) {
-                                            return Container(
-                                              margin: EdgeInsets.symmetric(
-                                                  vertical: 10),
-                                              child: Row(
-                                                crossAxisAlignment:
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        separatorBuilder: (context, index) =>
+                                            SizedBox(height: 12.h),
+                                        itemCount:
+                                            refundDetail.refundProducts?.length ??
+                                                0,
+                                        itemBuilder: (context, productIndex) {
+                                          var product = refundDetail
+                                              .refundProducts![productIndex];
+                                          return Row(
+                                            crossAxisAlignment:
                                                 CrossAxisAlignment.start,
-                                                children: [
-                                                  ClipRRect(
-                                                    borderRadius:
-                                                    BorderRadius.all(
-                                                        Radius.circular(5)),
-                                                    child: Container(
-                                                        height: 80.w,
-                                                        width: 80.w,
-                                                        child: Image.network(
-                                                          AppConfig.assetPath +
-                                                              '/' +
-                                                              '${orderRefundController.refundOrderListModel.value.refundOrders?[index].refundDetails?[packageIndex].refundProducts?[productIndex].sellerProductSku?.product?.product?.thumbnailImageSource}',
-                                                          fit: BoxFit.contain,
-                                                        )),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 15.w,
-                                                  ),
-                                                  Expanded(
-                                                    child: Container(
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .start,
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                        children: [
-                                                          Text(
-                                                            orderRefundController.refundOrderListModel.value.refundOrders?[index].refundDetails?[packageIndex].refundProducts?[productIndex].sellerProductSku?.product?.productName ?? '',
-                                                            style: AppStyles
-                                                                .kFontBlack14w5,
-                                                          ),
-                                                          ListView.builder(
-                                                            shrinkWrap: true,
-                                                            physics:
-                                                            NeverScrollableScrollPhysics(),
-                                                            itemCount: orderRefundController
-                                                                .refundOrderListModel
-                                                                .value
-                                                                .refundOrders?[
-                                                            index]
-                                                                .refundDetails?[
-                                                            packageIndex]
-                                                                .refundProducts?[
-                                                            productIndex]
-                                                                .sellerProductSku
-                                                                ?.productVariations
-                                                                ?.length,
-                                                            itemBuilder: (context,
-                                                                variantIndex) {
-
-                                                              var attribute = orderRefundController.refundOrderListModel.value.refundOrders?[index].refundDetails?[packageIndex].refundProducts?[productIndex].sellerProductSku?.productVariations?[variantIndex].attribute;
-                                                              var attributeValue = orderRefundController.refundOrderListModel.value.refundOrders?[index].refundDetails?[packageIndex].refundProducts?[productIndex].sellerProductSku?.productVariations?[variantIndex].attributeValue;
-
-                                                              return Text(
-                                                                '${attribute?.name??''}'+
-                                                                    ': ${attributeValue?.name??attributeValue?.value??''}',
-                                                                style: AppStyles
-                                                                    .kFontBlack12w4,
-                                                              );
-
-                                                            },
-                                                          ),
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                            crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                            children: [
-                                                              Text(
-                                                                '${currencyController.setCurrentSymbolPosition(amount: ((orderRefundController.refundOrderListModel.value.refundOrders?[index].refundDetails?[packageIndex].refundProducts?[productIndex].returnAmount??0) * currencyController.conversionRate.value).toStringAsFixed(2))}',
-                                                                style: AppStyles
-                                                                    .kFontPink15w5,
-                                                              ),
-                                                              SizedBox(
-                                                                width: 5.w,
-                                                              ),
-                                                              Text(
-                                                                '(${orderRefundController.refundOrderListModel.value.refundOrders?[index].refundDetails?[packageIndex].refundProducts?[productIndex].returnQty}x)',
-                                                                style: AppStyles
-                                                                    .kFontBlack14w5,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: 5.h,
-                                                          ),
-                                                          SizedBox(
-                                                            height: 5.h,
-                                                          ),
-                                                        ],
-                                                      ),
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.r),
+                                                child: Container(
+                                                  height: 70.w,
+                                                  width: 70.w,
+                                                  child: FancyShimmerImage(
+                                                    imageUrl: AppConfig
+                                                            .assetPath +
+                                                        '/' +
+                                                        '${product.sellerProductSku?.product?.product?.thumbnailImageSource}',
+                                                    boxFit: BoxFit.cover,
+                                                    errorWidget: Image.asset(
+                                                      "assets/images/placeholder.png",
+                                                      fit: BoxFit.cover,
                                                     ),
                                                   ),
-                                                ],
+                                                ),
                                               ),
-                                            );
-                                          }),
+                                              SizedBox(width: 12.w),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      product
+                                                              .sellerProductSku
+                                                              ?.product
+                                                              ?.productName ??
+                                                          '',
+                                                      style: AppStyles.appFontMedium
+                                                          .copyWith(
+                                                        fontSize: 13.sp,
+                                                      ),
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                    // Variations
+                                                    ...(product
+                                                                .sellerProductSku
+                                                                ?.productVariations ??
+                                                            [])
+                                                        .map((v) => Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      top: 2.h),
+                                                              child: Text(
+                                                                '${v.attribute?.name ?? ''}: ${v.attributeValue?.name ?? v.attributeValue?.value ?? ''}',
+                                                                style: AppStyles
+                                                                    .appFontBook
+                                                                    .copyWith(
+                                                                  fontSize: 11.sp,
+                                                                  color: Colors
+                                                                      .grey,
+                                                                ),
+                                                              ),
+                                                            ))
+                                                        .toList(),
+                                                    SizedBox(height: 6.h),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          currencyController
+                                                              .setCurrentSymbolPosition(
+                                                            amount: ((product
+                                                                            .returnAmount ??
+                                                                        0) *
+                                                                    currencyController
+                                                                        .conversionRate
+                                                                        .value)
+                                                                .toStringAsFixed(
+                                                                    2),
+                                                          ),
+                                                          style: AppStyles
+                                                              .appFontBold
+                                                              .copyWith(
+                                                            fontSize: 14.sp,
+                                                            color: Color(
+                                                                0xFF4CAF50),
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 6.w),
+                                                        Text(
+                                                          '(${product.returnQty}x)',
+                                                          style: AppStyles
+                                                              .appFontBook
+                                                              .copyWith(
+                                                            fontSize: 12.sp,
+                                                            color: Colors
+                                                                .grey[600],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
                                     ],
                                   ),
                                 );
-                              }),
-                          SizedBox(
-                            height: 10.h,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              // Text(
-                              //   '${orderRefundController.refundOrderListModel.value.refundOrders[index].packages.length} Package, Total : \$' +
-                              //       orderRefundController.refundOrderListModel.value
-                              //           .refundOrders[index].grandTotal
-                              //           .toStringAsFixed(2),
-                              //   style: AppStyles.kFontBlack14w5,
-                              // ),
-                            ],
+                              },
+                            ),
                           ),
                         ],
                       ),
                     ),
                   );
                 },
-              ),
-            );
-          }
-        },
+              );
+            }
+          },
+        ),
       ),
     );
   }
