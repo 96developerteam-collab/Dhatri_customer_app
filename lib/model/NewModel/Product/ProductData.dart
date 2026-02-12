@@ -261,5 +261,8 @@ class Product {
         "related_products": relatedProducts == null
             ? null
             : List<dynamic>.from(relatedProducts!.map((x) => x.toJson())),
+        "skus": skus == null
+            ? null
+            : List<dynamic>.from(skus!.map((x) => x.toJson())),
       };
 }

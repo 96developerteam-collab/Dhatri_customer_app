@@ -25,9 +25,11 @@ class WholeSalePrice {
         skuId: json["sku_id"],
         minQty: json["min_qty"],
         maxQty: json["max_qty"],
-        sellingPrice: json["selling_price"] == null ? 0.0 : double.parse("${json["selling_price"]}"),
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
+        sellingPrice: json["selling_price"] == null 
+            ? 0.0 
+            : double.tryParse("${json["selling_price"]}") ?? 0.0,
+        createdAt: json["created_at"] == null ? null : DateTime.tryParse(json["created_at"]),
+        updatedAt: json["updated_at"] == null ? null : DateTime.tryParse(json["updated_at"]),
       );
 
   Map<String, dynamic> toJson() => {

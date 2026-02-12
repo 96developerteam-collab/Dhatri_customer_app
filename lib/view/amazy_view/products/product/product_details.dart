@@ -274,6 +274,89 @@ class _ProductDetailsState extends State<ProductDetails> {
   }
 
   late InAppPurchaseController inAppPurchaseController;
+  
+  Widget wholesalePriceWidget() {
+    return Obx(() {
+      var prices = ((controller.products.value.data?.variantDetails?.length ?? 0) > 0)
+        ? controller.productSKU.value.sku?.wholeSalePrices ?? []
+        : controller.products.value.data?.skus?.first.wholeSalePrices ?? [];
+
+      print("--- Wholesale Table Debug ---");
+      print("Variant Details Count: ${controller.products.value.data?.variantDetails?.length}");
+      print("Wholesale Prices Found: ${prices.length}");
+
+      if (prices.isEmpty) {
+        return SizedBox.shrink();
+      }
+
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Text(
+            //   "Wholesale Prices".tr,
+            //   style: AppStyles.appFontBold.copyWith(
+            //     fontSize: 16.fontSize,
+            //     color: AppStyles.blackColor,
+            //   ),
+            // ),
+            // SizedBox(height: 10.h),
+            Table(
+              border: TableBorder(
+                bottom: BorderSide(color: AppStyles.greyColorLight.withOpacity(0.5)),
+                horizontalInside: BorderSide(color: AppStyles.greyColorLight.withOpacity(0.5)),
+              ),
+              children: [
+                TableRow(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.h),
+                      child: Text("Min QTY".tr, style: AppStyles.appFontBook.copyWith(color: AppStyles.greyColorBook)),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.h),
+                      child: Text("Max QTY".tr, style: AppStyles.appFontBook.copyWith(color: AppStyles.greyColorBook)),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.h),
+                      child: Text("Unit Price".tr, style: AppStyles.appFontBook.copyWith(color: AppStyles.greyColorBook)),
+                    ),
+                  ],
+                ),
+                ...List.generate(prices.length, (index) {
+                  var tier = prices[index];
+                  bool isSelected = controller.itemQuantity.value >= tier.minQty! && (tier.maxQty == null || controller.itemQuantity.value <= tier.maxQty!);
+                  return TableRow(
+                    decoration: BoxDecoration(
+                      color: isSelected ? AppStyles.pinkColor.withOpacity(0.05) : Colors.transparent,
+                    ),
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                        child: Text("${tier.minQty}", style: AppStyles.appFontBold.copyWith(fontSize: 14.fontSize, color: isSelected ? AppStyles.pinkColor : AppStyles.blackColor)),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                        child: Text(tier.maxQty != null ? "${tier.maxQty}" : "-", style: AppStyles.appFontBold.copyWith(fontSize: 14.fontSize, color: isSelected ? AppStyles.pinkColor : AppStyles.blackColor)),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                        child: Text(
+                          "${_settingsController.appCurrency.value} ${tier.sellingPrice!.toStringAsFixed(2)}",
+                          style: AppStyles.appFontBold.copyWith(fontSize: 14.fontSize, color: isSelected ? AppStyles.pinkColor : AppStyles.blackColor),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+              ],
+            ),
+          ],
+        ),
+      );
+    });
+  }
 
   @override
   void initState() {
@@ -1111,8 +1194,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                ),
                              ),
 
-               
 
+
+                             wholesalePriceWidget(),
                              ((controller.products.value.data?.variantDetails??[]).length) >
                                  0
                                  ? SizedBox(
