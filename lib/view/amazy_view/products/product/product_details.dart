@@ -275,153 +275,165 @@ class _ProductDetailsState extends State<ProductDetails> {
 
   late InAppPurchaseController inAppPurchaseController;
   
-  Widget wholesalePriceWidget() {
-    return Obx(() {
-      var prices = ((controller.products.value.data?.variantDetails?.length ?? 0) > 0)
+Widget wholesalePriceWidget() {
+  return Obx(() {
+    var prices = ((controller.products.value.data?.variantDetails?.length ?? 0) > 0)
         ? controller.productSKU.value.sku?.wholeSalePrices ?? []
         : controller.products.value.data?.skus?.first.wholeSalePrices ?? [];
 
-      print("--- Wholesale Table Debug ---");
-      print("Variant Details Count: ${controller.products.value.data?.variantDetails?.length}");
-      print("Wholesale Prices Found: ${prices.length}");
+    if (prices.isEmpty) return SizedBox.shrink();
 
-      if (prices.isEmpty) {
-        return SizedBox.shrink();
-      }
+    double rowHeight = 40.h; // estimated row height
+    double tableHeight = prices.length > 3 ? rowHeight * 3 : rowHeight * prices.length;
 
-      return Container(
-        width: double.infinity,
-        margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-        padding: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(
-            color: AppStyles.greyColorLight.withOpacity(0.3),
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: Offset(0, 2),
-            ),
-          ],
+    return Container(
+      width: double.infinity, // full width
+      margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 10.h), // almost zero margin
+      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color: AppStyles.greyColorLight.withOpacity(0.3),
+          width: 1,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Wholesale Prices".tr,
-              style: AppStyles.appFontBold.copyWith(
-                fontSize: 16.fontSize,
-                color: AppStyles.blackColor,
-              ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Wholesale Prices".tr,
+            style: AppStyles.appFontBold.copyWith(
+              fontSize: 16.fontSize,
+              color: AppStyles.blackColor,
             ),
-            SizedBox(height: 12.h),
-            Table(
-              border: TableBorder(
-                top: BorderSide(color: AppStyles.greyColorLight.withOpacity(0.3), width: 1),
-                bottom: BorderSide(color: AppStyles.greyColorLight.withOpacity(0.3), width: 1),
-                horizontalInside: BorderSide(color: AppStyles.greyColorLight.withOpacity(0.2), width: 1),
-              ),
-              columnWidths: {
-                0: FlexColumnWidth(1),
-                1: FlexColumnWidth(1),
-                2: FlexColumnWidth(1.5),
-              },
-              children: [
-                TableRow(
-                  decoration: BoxDecoration(
-                    color: AppStyles.greyColorLight.withOpacity(0.1),
-                  ),
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
-                      child: Text(
-                        "Min QTY".tr, 
-                        textAlign: TextAlign.center,
-                        style: AppStyles.appFontMedium.copyWith(
-                          color: AppStyles.blackColor,
-                          fontSize: 13.fontSize,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
-                      child: Text(
-                        "Max QTY".tr, 
-                        textAlign: TextAlign.center,
-                        style: AppStyles.appFontMedium.copyWith(
-                          color: AppStyles.blackColor,
-                          fontSize: 13.fontSize,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
-                      child: Text(
-                        "Unit Price".tr, 
-                        textAlign: TextAlign.center,
-                        style: AppStyles.appFontMedium.copyWith(
-                          color: AppStyles.blackColor,
-                          fontSize: 13.fontSize,
-                        ),
-                      ),
-                    ),
-                  ],
+          ),
+          SizedBox(height: 8.h),
+
+          /// Scrollable Table
+          Container(
+            height: tableHeight,
+            child: SingleChildScrollView(
+              child: Table(
+                border: TableBorder(
+                  top: BorderSide(color: AppStyles.greyColorLight.withOpacity(0.3), width: 1),
+                  bottom: BorderSide(color: AppStyles.greyColorLight.withOpacity(0.3), width: 1),
+                  horizontalInside: BorderSide(color: AppStyles.greyColorLight.withOpacity(0.2), width: 1),
                 ),
-                ...List.generate(prices.length, (index) {
-                  var tier = prices[index];
-                  bool isSelected = controller.itemQuantity.value >= tier.minQty! && (tier.maxQty == null || controller.itemQuantity.value <= tier.maxQty!);
-                  return TableRow(
+                columnWidths: {
+                  0: FlexColumnWidth(1),
+                  1: FlexColumnWidth(1),
+                  2: FlexColumnWidth(1.5),
+                },
+                children: [
+                  // Table Header
+                  TableRow(
                     decoration: BoxDecoration(
-                      color: isSelected ? AppStyles.pinkColor.withOpacity(0.08) : Colors.transparent,
+                      color: AppStyles.greyColorLight.withOpacity(0.1),
                     ),
                     children: [
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
+                        padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 4.w),
                         child: Text(
-                          "${tier.minQty}", 
+                          "Min QTY".tr,
                           textAlign: TextAlign.center,
-                          style: AppStyles.appFontBold.copyWith(
-                            fontSize: 14.fontSize, 
-                            color: isSelected ? AppStyles.pinkColor : AppStyles.blackColor,
+                          style: AppStyles.appFontMedium.copyWith(
+                            color: AppStyles.blackColor,
+                            fontSize: 12.fontSize,
                           ),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
+                        padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 4.w),
                         child: Text(
-                          tier.maxQty != null ? "${tier.maxQty}" : "∞", 
+                          "Max QTY".tr,
                           textAlign: TextAlign.center,
-                          style: AppStyles.appFontBold.copyWith(
-                            fontSize: 14.fontSize, 
-                            color: isSelected ? AppStyles.pinkColor : AppStyles.blackColor,
+                          style: AppStyles.appFontMedium.copyWith(
+                            color: AppStyles.blackColor,
+                            fontSize: 12.fontSize,
                           ),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
+                        padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 4.w),
                         child: Text(
-                          "${_settingsController.appCurrency.value} ${tier.sellingPrice!.toStringAsFixed(2)}",
+                          "Unit Price".tr,
                           textAlign: TextAlign.center,
-                          style: AppStyles.appFontBold.copyWith(
-                            fontSize: 14.fontSize, 
-                            color: isSelected ? AppStyles.pinkColor : AppStyles.blackColor,
+                          style: AppStyles.appFontMedium.copyWith(
+                            color: AppStyles.blackColor,
+                            fontSize: 12.fontSize,
                           ),
                         ),
                       ),
                     ],
-                  );
-                }),
-              ],
+                  ),
+
+                  // Table rows
+                  ...List.generate(prices.length, (index) {
+                    var tier = prices[index];
+                    bool isSelected = controller.itemQuantity.value >= tier.minQty! &&
+                        (tier.maxQty == null || controller.itemQuantity.value <= tier.maxQty!);
+
+                    return TableRow(
+                      decoration: BoxDecoration(
+                        color: isSelected ? AppStyles.pinkColor.withOpacity(0.08) : Colors.transparent,
+                      ),
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 4.w),
+                          child: Text(
+                            "${tier.minQty}",
+                            textAlign: TextAlign.center,
+                            style: AppStyles.appFontBold.copyWith(
+                              fontSize: 12.fontSize,
+                              color: isSelected ? AppStyles.pinkColor : AppStyles.blackColor,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 4.w),
+                          child: Text(
+                            tier.maxQty != null ? "${tier.maxQty}" : "∞",
+                            textAlign: TextAlign.center,
+                            style: AppStyles.appFontBold.copyWith(
+                              fontSize: 12.fontSize,
+                              color: isSelected ? AppStyles.pinkColor : AppStyles.blackColor,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 4.w),
+                          child: Text(
+                            "${_settingsController.appCurrency.value} ${tier.sellingPrice!.toStringAsFixed(2)}",
+                            textAlign: TextAlign.center,
+                            style: AppStyles.appFontBold.copyWith(
+                              fontSize: 12.fontSize,
+                              color: isSelected ? AppStyles.pinkColor : AppStyles.blackColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }),
+                ],
+              ),
             ),
-          ],
-        ),
-      );
-    });
-  }
+          ),
+        ],
+      ),
+    );
+  });
+}
+
+
+
 
   @override
   void initState() {
