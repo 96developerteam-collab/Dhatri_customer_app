@@ -2594,7 +2594,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                              width: Get.width,
                              height: 46.h,
                              decoration: BoxDecoration(
-                               color: AppStyles.pinkColor,
+                               color: Colors.green,
                                borderRadius: BorderRadius.all(
                                  Radius.circular(5.r),
                                ),
@@ -2610,7 +2610,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                  textAlign: TextAlign.center,
                                  style: AppStyles.appFontMedium
                                      .copyWith(
-                                   color:  AppStyles.pinkColor,
+                                   color:  Colors.white,
                                    fontSize: 14.fontSize,
                                  ),
                                )
@@ -2618,7 +2618,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                  width: 20.w,
                                  height: 20.w,
                                  child: CircularProgressIndicator(
-                                   color:  AppStyles.pinkColor,
+                                   color:  Colors.white,
                                  ),
                                ),
                              ),
@@ -2674,7 +2674,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                              width: Get.width,
                              height: 46.h,
                              decoration: BoxDecoration(
-                               color: AppStyles.pinkColor,
+                               color: Colors.green,
                                borderRadius: BorderRadius.all(
                                  Radius.circular(5.r),
                                ),
