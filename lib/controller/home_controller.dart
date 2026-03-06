@@ -25,6 +25,7 @@ import 'package:amazcart/model/SliderModel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:amazcart/model/NewModel/Category/CategoryMain.dart';
@@ -167,8 +168,9 @@ class HomeController extends GetxController {
   Future<void> getSubCategories({required int categoryId}) async {
     try {
       isSubCategoryLoading(true);
-      await _dio.get(URLs.ALL_CATEGORY + '/$categoryId', queryParameters: {
-        "lang": AppLocalizations.getLanguageCode()
+      await _dio.get(URLs.ALL_CATEGORY + '/${categoryId}', queryParameters: {
+        "lang": AppLocalizations.getLanguageCode(),
+        if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
       }).then((value) {
         print(value.realUri);
         var data = Map<String, dynamic>.from(value.data);
@@ -419,7 +421,8 @@ class HomeController extends GetxController {
       isMoreLoading(true);
       await _dio.get(URLs.ALL_CATEGORY + '/$categoryId', queryParameters: {
         'page': pageNumber,
-        "lang": AppLocalizations.getLanguageCode()
+        "lang": AppLocalizations.getLanguageCode(),
+        if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
       }).then((value) {
         print('URL: ${value.realUri}');
         final data = Map<String, dynamic>.from(value.data);
@@ -511,7 +514,8 @@ class HomeController extends GetxController {
       // isMoreLoading(true);
       await _dio.get(URLs.ALL_CATEGORY + '/$categoryId', queryParameters: {
         'page': pageNumber,
-        "lang": AppLocalizations.getLanguageCode()
+        "lang": AppLocalizations.getLanguageCode(),
+        if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
       }).then((value) {
         print('URL: ${value.realUri.queryParameters}');
         print('URL: ${value.realUri}');
@@ -853,10 +857,17 @@ class HomeController extends GetxController {
     try {
       isRecommendedLoading(true);
       isMoreRecommendedLoading(true);
-      await _dio.get(URLs.ALL_RECOMMENDED, queryParameters: {
+      int? warehouseId = GetStorage().read('warehouse_id');
+      
+      Map<String, dynamic> queryParams = {
         'page': recommendedPageNumber,
         "lang": AppLocalizations.getLanguageCode()
-      }).then((value) {
+      };
+      if (warehouseId != null) {
+        queryParams["seller_id"] = warehouseId;
+      }
+
+      await _dio.get(URLs.ALL_RECOMMENDED, queryParameters: queryParams).then((value) {
         final data = Map<String, dynamic>.from(value.data);
         parentCategoryElement = AllRecommendedModel.fromJson(data);
         if (parentCategoryElement.data!.length == 0) {
@@ -896,10 +907,17 @@ class HomeController extends GetxController {
     try {
       isTopPicksLoading(true);
       isMoreTopPicksLoading(true);
-      await _dio.get(URLs.ALL_TOP_PICKS, queryParameters: {
+      int? warehouseId = GetStorage().read('warehouse_id');
+      
+      Map<String, dynamic> queryParams = {
         'page': topPicksPageNumber,
         "lang": AppLocalizations.getLanguageCode()
-      }).then((value) {
+      };
+      if (warehouseId != null) {
+        queryParams["seller_id"] = warehouseId;
+      }
+
+      await _dio.get(URLs.ALL_TOP_PICKS, queryParameters: queryParams).then((value) {
         final data = Map<String, dynamic>.from(value.data);
         parentCategoryElement = AllRecommendedModel.fromJson(data);
         if (parentCategoryElement.data!.length == 0) {
@@ -1103,9 +1121,24 @@ class HomeController extends GetxController {
     debugPrint("Home API ------>>>>> ${URLs.HOME_PAGE}");
     try {
       isHomePageLoading(true);
-      await _dio.get(URLs.HOME_PAGE, queryParameters: {
+      int? warehouseId = GetStorage().read('warehouse_id');
+      
+      // *** DEBUG: Check warehouse_id stored value ***
+      debugPrint("[getHomePage] warehouse_id from storage: $warehouseId");
+      
+      Map<String, dynamic> queryParams = {
         "lang": AppLocalizations.getLanguageCode()
-      }).then((value) {
+      };
+      if (warehouseId != null) {
+        queryParams["seller_id"] = warehouseId;
+      }
+
+      // *** DEBUG: Log query params being sent ***
+      debugPrint("[getHomePage] queryParams: $queryParams");
+
+      await _dio.get(URLs.HOME_PAGE, queryParameters: queryParams).then((value) {
+        // *** DEBUG: Log the actual URL that was hit ***
+        debugPrint("[getHomePage] actual request URL: ${value.realUri}");
         Map<String, dynamic> data = Map<String, dynamic>.from(value.data);
 
         HomePageModel model = HomePageModel.fromJson(data);

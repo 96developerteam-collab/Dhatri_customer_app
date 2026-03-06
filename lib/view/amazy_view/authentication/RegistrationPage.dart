@@ -200,6 +200,9 @@ class RegistrationPage extends GetView<LoginController> {
                     },
                   ),
 
+                  // Warehouse Selection
+                  _buildWarehouseSelectionField(),
+
                   SizedBox(height: 30.h),
 
                   // Sign Up Button
@@ -221,6 +224,10 @@ class RegistrationPage extends GetView<LoginController> {
                                   SnackBars().snackBarWarning("Please upload Shop Image".tr);
                                   return;
                                 }
+                                if (_accountController.selectedMerchant.value == null) {
+                                  SnackBars().snackBarWarning("Please select Warehouse".tr);
+                                  return;
+                                }
 
                                 Map<String, dynamic> data = {
                                   "first_name": _accountController.firstName.text.trim(),
@@ -228,6 +235,7 @@ class RegistrationPage extends GetView<LoginController> {
                                   "login": _accountController.registerEmail.text.trim(),
                                   "referral_code": _accountController.referralCode.text.trim(),
                                   "store_name": _accountController.storeName.text.trim(),
+                                  "warehouse_id": _accountController.selectedMerchant.value?.sellerWarehouseAddress?.id,
                                   "password": _accountController.registerPassword.text,
                                   "password_confirmation": _accountController.registerConfirmPassword.text,
                                   "user_type": "customer",
@@ -415,5 +423,101 @@ class RegistrationPage extends GetView<LoginController> {
         ),
       ),
     );
+  }
+
+  Widget _buildWarehouseSelectionField() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+      child: InkWell(
+        onTap: () => _showWarehouseSearchDialog(),
+        child: InputDecorator(
+          decoration: InputDecoration(
+            labelText: _accountController.selectedMerchant.value == null ? 'Select Warehouse'.tr + " *" : null,
+            labelStyle: AppStyles.appFontBook.copyWith(
+              fontSize: 14.sp,
+              color: _accountController.selectedMerchant.value == null ? Colors.grey[600] : AppStyles.pinkColor,
+            ),
+            prefixIcon: Container(
+              height: 10.w,
+              width: 10.w,
+              padding: EdgeInsets.all(12),
+              child: Icon(Icons.warehouse, color: AppStyles.pinkColor, size: 22.w),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: AppStyles.pinkColor),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey.withOpacity(0.4)),
+            ),
+            contentPadding: EdgeInsets.symmetric(vertical: 12.h),
+          ),
+          child: Obx(() => _accountController.selectedMerchant.value != null
+              ? Text(
+                  _accountController.selectedMerchant.value!.sellerWarehouseAddress?.warehouseName ?? "",
+                  style: AppStyles.appFontBook.copyWith(fontSize: 14.sp),
+                )
+              : const SizedBox.shrink()),
+        ),
+      ),
+    );
+  }
+
+  void _showWarehouseSearchDialog() {
+    TextEditingController _searchController = TextEditingController();
+    Get.bottomSheet(
+      Container(
+        height: Get.height * 0.7,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(16.w),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (value) => _accountController.searchMerchants(value),
+                decoration: InputDecoration(
+                  hintText: 'Search by name or address...'.tr,
+                  prefixIcon: Icon(Icons.search, color: AppStyles.pinkColor),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.r)),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Obx(() {
+                if (_accountController.isMerchantLoading.value) {
+                  return Center(child: CupertinoActivityIndicator());
+                }
+                if (_accountController.filteredMerchants.isEmpty) {
+                  return Center(child: Text('No warehouses found'.tr));
+                }
+                return ListView.separated(
+                  itemCount: _accountController.filteredMerchants.length,
+                  separatorBuilder: (context, index) => Divider(),
+                  itemBuilder: (context, index) {
+                    final merchant = _accountController.filteredMerchants[index];
+                    final warehouse = merchant.sellerWarehouseAddress;
+                    return ListTile(
+                      title: Text(warehouse?.warehouseName ?? '', style: AppStyles.appFontBold.copyWith(fontSize: 16.sp)),
+                      subtitle: Text(warehouse?.warehouseAddress ?? '', style: AppStyles.appFontBook.copyWith(fontSize: 14.sp)),
+                      onTap: () {
+                        _accountController.selectedMerchant.value = merchant;
+                        _accountController.filteredMerchants.value = _accountController.merchants;
+                        Get.back();
+                      },
+                    );
+                  },
+                );
+              }),
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+    ).then((_) {
+      _accountController.filteredMerchants.value = _accountController.merchants;
+    });
   }
 }

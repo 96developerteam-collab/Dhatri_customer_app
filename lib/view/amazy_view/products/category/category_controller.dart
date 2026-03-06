@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../../../../AppConfig/language/app_localizations.dart';
 import '../../../../config/config.dart';
@@ -134,8 +135,9 @@ class CategoryController extends GetxController {
     try {
       isProductsLoading(true);
       isMoreLoading(true);
-      await _dio.get(URLs.ALL_CATEGORY + '/$categoryId' + "?lang=${AppLocalizations.getLanguageCode()}", queryParameters: {
-        'page': pageNumber,
+      await _dio.get(URLs.ALL_CATEGORY + '/${categoryId.value}' + "?lang=${AppLocalizations.getLanguageCode()}", queryParameters: {
+        'page': pageNumber.value,
+        if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
       }).then((value) {
         print('URL: ${value.realUri}');
         final data = new Map<String, dynamic>.from(value.data);
@@ -226,8 +228,9 @@ class CategoryController extends GetxController {
     try {
       // isProductsLoading(true);
       // isMoreLoading(true);
-      await _dio.get(URLs.ALL_CATEGORY + '/$categoryId' + "?lang=${AppLocalizations.getLanguageCode()}", queryParameters: {
-        'page': pageNumber,
+      await _dio.get(URLs.ALL_CATEGORY + '/${categoryId.value}' + "?lang=${AppLocalizations.getLanguageCode()}", queryParameters: {
+        'page': pageNumber.value,
+        if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
       }).then((value) {
         print('URL: ${value.realUri.queryParameters}');
         print('URL: ${value.realUri}');

@@ -55,6 +55,7 @@ class UserClass {
     this.customerAddresses,
     this.storeName,
     this.storeImage,
+    this.warehouseId,
     this.document,
   });
 
@@ -80,6 +81,7 @@ class UserClass {
   String? name;
   String? storeName;
   String? storeImage;
+  int? warehouseId;
   String? document;
   List<CustomerAddress>? customerAddresses;
 
@@ -106,6 +108,7 @@ class UserClass {
     name: json['name'],
     storeName: json['store_name'],
     storeImage: json['store_image'],
+    warehouseId: json['warehouse_id'],
     document: json['document'],
         customerAddresses: List<CustomerAddress>.from(
             json["customer_addresses"].map((x) => CustomerAddress.fromJson(x))),
@@ -133,6 +136,7 @@ class UserClass {
         "updated_at": updatedAt?.toIso8601String(),
         "name": name,
         "store_name": storeName,
+        "warehouse_id": warehouseId,
         "store_image": storeImage,
         "document": document,
         "customer_addresses":

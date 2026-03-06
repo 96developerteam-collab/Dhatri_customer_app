@@ -227,7 +227,8 @@ mixin URLs {
   static const String inAppPurchaseAddToCart = "$API_URL/in-app-cart-store";
   static const String createInAppPurchaseOrder = "$API_URL/order-store/in-app-purchase";
   static const String deleteInAppPurchaseCart = "$API_URL/in-app-cart-delete";
-
+  
+  static const String MERCHANT_LIST = "$API_URL/customer/merchants";
 
 }
 

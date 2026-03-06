@@ -6,6 +6,7 @@ import 'package:amazcart/widgets/amazy_widget/single_product_widgets/GridViewPro
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 
 import '../../../../AppConfig/language/app_localizations.dart';
@@ -152,17 +153,25 @@ class AllTopPickProductsLoadMore extends LoadingMoreBase<ProductModel> {
     try {
       //to show loading more clearly, in your app,remove this
       // await Future.delayed(Duration(milliseconds: 500));
+      int? warehouseId = GetStorage().read('warehouse_id');
       var result;
       AllRecommendedModel source;
 
+      Map<String, dynamic> queryParams = {
+        "lang": AppLocalizations.getLanguageCode(),
+      };
+      if (warehouseId != null) {
+        queryParams["seller_id"] = warehouseId;
+      }
+
       if (this.length == 0) {
         result = await _dio.get(
-          URLs.ALL_TOP_PICKS + "?lang=${AppLocalizations.getLanguageCode()}",
+          URLs.ALL_TOP_PICKS,
+          queryParameters: queryParams,
         );
       } else {
-        result = await _dio.get(URLs.ALL_TOP_PICKS + "?lang=${AppLocalizations.getLanguageCode()}", queryParameters: {
-          'page': pageIndex,
-        });
+        queryParams['page'] = pageIndex;
+        result = await _dio.get(URLs.ALL_TOP_PICKS, queryParameters: queryParams);
       }
       print(result.realUri);
       final data = new Map<String, dynamic>.from(result.data);

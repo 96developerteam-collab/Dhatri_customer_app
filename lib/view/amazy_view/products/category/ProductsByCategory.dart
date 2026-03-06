@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 import '../../../../AppConfig/language/app_localizations.dart';
 import '../../../../config/config.dart';
@@ -455,11 +456,14 @@ class CategoryProductsLoadMore extends LoadingMoreBase<ProductModel> {
 
       if (!isSorted! && !isFilter!) {
         if (this.length == 0) {
-          result = await _dio.get(URLs.ALL_CATEGORY + '/$categoryId' + "?lang=${AppLocalizations.getLanguageCode()}");
+          result = await _dio.get(URLs.ALL_CATEGORY + '/$categoryId' + "?lang=${AppLocalizations.getLanguageCode()}", queryParameters: {
+            if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
+          });
         } else {
           result = await _dio
               .get(URLs.ALL_CATEGORY + '/$categoryId' + "?lang=${AppLocalizations.getLanguageCode()}", queryParameters: {
             'page': pageIndex,
+            if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
           });
         }
         print('URI IS ${result.realUri}');
@@ -475,6 +479,7 @@ class CategoryProductsLoadMore extends LoadingMoreBase<ProductModel> {
             'paginate': 9,
             'requestItem': categoryId,
             'requestItemType': 'category',
+            if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
           });
         } else {
           result = await _dio.get(URLs.SORT_PRODUCTS, queryParameters: {
@@ -483,6 +488,7 @@ class CategoryProductsLoadMore extends LoadingMoreBase<ProductModel> {
             'requestItem': categoryId,
             'requestItemType': 'category',
             'page': pageIndex,
+            if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
           });
         }
         print(result.realUri);
@@ -503,16 +509,22 @@ class CategoryProductsLoadMore extends LoadingMoreBase<ProductModel> {
         controller!.dataFilterCat.value.page = pageIndex.toString();
 
         if (this.length == 0) {
-          log(filterFromCatModelToJson(controller!.dataFilterCat.value));
           result = await _dio.post(
             URLs.FILTER_ALL_PRODUCTS,
             data: filterFromCatModelToJson(controller!.dataFilterCat.value),
+            queryParameters: {
+              'lang': AppLocalizations.getLanguageCode(),
+              if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
+            },
           );
         } else {
-          log(filterFromCatModelToJson(controller!.dataFilterCat.value));
           result = await _dio.post(
             URLs.FILTER_ALL_PRODUCTS,
             data: filterFromCatModelToJson(controller!.dataFilterCat.value),
+            queryParameters: {
+              'lang': AppLocalizations.getLanguageCode(),
+              if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
+            },
           );
         }
         print(result.realUri);

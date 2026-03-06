@@ -14,7 +14,9 @@ import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:loading_more_list/loading_more_list.dart';
+import '../../../../database/auth_database.dart';
 
 import '../../../../AppConfig/language/app_localizations.dart';
 import '../../../../config/config.dart';
@@ -158,7 +160,7 @@ class _ProductsByBrandsState extends State<ProductsByBrands> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 Expanded(
-                                  child: filterSelected!
+                                  child: !filterSelected!
                                       ? DropdownButton(
                                           isExpanded: false,
                                           isDense: false,
@@ -486,13 +488,26 @@ class BrandProductsLoadMore extends LoadingMoreBase<ProductModel> {
       var source;
 
       if (!isSorted! && !isFilter!) {
+        int? warehouseId = GetStorage().read('warehouse_id');
+
+        Map<String, dynamic> queryParams = {
+          'lang': AppLocalizations.getLanguageCode(),
+        };
+        if (warehouseId != null) {
+          queryParams['seller_id'] = warehouseId;
+        }
+
         if (this.length == 0) {
-          result = await _dio.get(URLs.ALL_BRAND + '/$brandId' + "?lang=${AppLocalizations.getLanguageCode()}");
+          result = await _dio.get(
+            URLs.ALL_BRAND + '/$brandId',
+            queryParameters: queryParams,
+          );
         } else {
-          result =
-              await _dio.get(URLs.ALL_BRAND + '/$brandId' + "?lang=${AppLocalizations.getLanguageCode()}", queryParameters: {
-            'page': pageIndex,
-          });
+          queryParams['page'] = pageIndex;
+          result = await _dio.get(
+            URLs.ALL_BRAND + '/$brandId',
+            queryParameters: queryParams,
+          );
         }
         print('URI IS ${result.realUri}');
         final data = new Map<String, dynamic>.from(result.data);
@@ -501,22 +516,25 @@ class BrandProductsLoadMore extends LoadingMoreBase<ProductModel> {
         print('INITIALIZED BRAND LENGTH $productsLength');
       }
       if (isSorted! && !isFilter!) {
-        if (this.length == 0) {
-          result = await _dio.get(URLs.SORT_PRODUCTS, queryParameters: {
-            'sort_by': sortKey,
-            'paginate': 9,
-            'requestItem': brandId,
-            'requestItemType': 'brand',
-          });
-        } else {
-          result = await _dio.get(URLs.SORT_PRODUCTS, queryParameters: {
-            'sort_by': sortKey,
-            'paginate': 9,
-            'requestItem': brandId,
-            'requestItemType': 'brand',
-            'page': pageIndex,
-          });
+        int? warehouseId = GetStorage().read('warehouse_id');
+
+        Map<String, dynamic> queryParams = {
+          'sort_by': sortKey,
+          'paginate': 9,
+          'requestItem': brandId,
+          'requestItemType': 'brand',
+        };
+        if (warehouseId != null) {
+          queryParams['seller_id'] = warehouseId;
         }
+
+        if (this.length == 0) {
+          result = await _dio.get(URLs.SORT_PRODUCTS, queryParameters: queryParams);
+        } else {
+          queryParams['page'] = pageIndex;
+          result = await _dio.get(URLs.SORT_PRODUCTS, queryParameters: queryParams);
+        }
+        print('URI IS ${result.realUri}');
         final data = new Map<String, dynamic>.from(result.data);
         source = AllProducts.fromJson(data);
         productsLength = data['meta']['total'];
@@ -532,19 +550,32 @@ class BrandProductsLoadMore extends LoadingMoreBase<ProductModel> {
 
         controller!.dataFilterCat.value.page = pageIndex.toString();
 
+        int? warehouseId = GetStorage().read('warehouse_id');
+        String body = filterFromCatModelToJson(controller!.dataFilterCat.value);
+        
+        Map<String, dynamic> queryParams = {
+          'lang': AppLocalizations.getLanguageCode(),
+          'requestItem': brandId,
+          'requestItemType': 'brand',
+        };
+        if (warehouseId != null) {
+          queryParams['seller_id'] = warehouseId;
+        }
+
         if (this.length == 0) {
-          log(filterFromCatModelToJson(controller!.dataFilterCat.value));
           result = await _dio.post(
             URLs.FILTER_ALL_PRODUCTS,
-            data: filterFromCatModelToJson(controller!.dataFilterCat.value),
+            data: body,
+            queryParameters: queryParams,
           );
         } else {
-          log(filterFromCatModelToJson(controller!.dataFilterCat.value));
           result = await _dio.post(
             URLs.FILTER_ALL_PRODUCTS,
-            data: filterFromCatModelToJson(controller!.dataFilterCat.value),
+            data: body,
+            queryParameters: queryParams,
           );
         }
+        print('URI IS ${result.realUri}');
         final data = new Map<String, dynamic>.from(result.data);
         source = AllProducts.fromJson(data);
         productsLength = data['meta']['total'];

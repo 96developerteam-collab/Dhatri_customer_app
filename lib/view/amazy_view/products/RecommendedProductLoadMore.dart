@@ -3,6 +3,7 @@ import 'package:amazcart/controller/home_controller.dart';
 
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 
 import '../../../AppConfig/language/app_localizations.dart';
@@ -46,14 +47,21 @@ class RecommendedProductsLoadMore extends LoadingMoreBase<ProductModel> {
       var result;
       AllRecommendedModel source;
 
+      int? warehouseId = GetStorage().read('warehouse_id');
+      Map<String, dynamic> queryParams = {
+        "lang": AppLocalizations.getLanguageCode()
+      };
+      if (warehouseId != null) {
+        queryParams["seller_id"] = warehouseId;
+      }
+
       if (this.length == 0) {
         result = await _dio.get(URLs.ALL_RECOMMENDED,
-            queryParameters: {"lang": AppLocalizations.getLanguageCode()});
+            queryParameters: queryParams);
       } else {
-        result = await _dio.get(URLs.ALL_RECOMMENDED, queryParameters: {
-          'page': pageIndex,
-          "lang": AppLocalizations.getLanguageCode()
-        });
+        queryParams['page'] = pageIndex;
+        result = await _dio.get(URLs.ALL_RECOMMENDED,
+            queryParameters: queryParams);
       }
       print("result ::: $result");
       final data = new Map<String, dynamic>.from(result.data);

@@ -2576,204 +2576,242 @@ Widget wholesalePriceWidget() {
                    ],
                  ),
                ),
-       bottomNavigationBar: Container(
-  height: 75.h,
-  alignment: Alignment.topCenter,
-  child: Row(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      SizedBox(width: 20),
-      
-      /// Cart Button
-      Obx(() {
-        return InkWell(
-          onTap: () {
-            Get.to(() => CartMain(true, true));
-          },
-          child: Container(
-            width: 50.w,
-            height: 46.w,
-            decoration: BoxDecoration(
-              gradient: AppStyles.gradient,
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: badges.Badge(
-              showBadge: _loginController.loggedIn.value ? true : false,
-              position: badges.BadgePosition.topEnd(end: 4.w, top: 0.h),
-              badgeAnimation: badges.BadgeAnimation.size(toAnimate: false),
-              badgeStyle: badges.BadgeStyle(
-                badgeColor: Colors.white,
-                padding: EdgeInsets.all(2),
-              ),
-              badgeContent: Text(
-                '${cartController.cartListSelectedCount.value.toString()}',
-                style: AppStyles.appFontBook.copyWith(
-                    color: AppStyles.pinkColor, fontSize: 12.fontSize),
-              ),
-              child: Center(
-                child: Image.asset(
-                  'assets/images/cart_icon.png',
-                  width: 30.w,
-                  height: 30.w,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        );
-      }),
-      
-      SizedBox(width: 15),
-      
-      /// Removed Store Button
-      // SizedBox.shrink(),  // No need, we just skip it
-      
-      Expanded(
-        child: Obx(() {
-          return controller.stockManage.value == 1
-              ? InkWell(
-                  child: Container(
-                    alignment: Alignment.center,
-                    width: Get.width,
-                    height: 46.h,
-                    decoration: BoxDecoration(
-                      color: AppStyles.pinkColor,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5.r),
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8.0,
-                        horizontal: 10,
-                      ),
-                      child: !cartController.isCartLoading.value
-                          ? Text(
-                              Platform.isIOS &&
-                                      _productDetailsModel
-                                              .data?.product?.isPhysical ==
-                                          0
-                                  ? "Buy now".tr
-                                  : "Add to Cart 1".tr,
-                              textAlign: TextAlign.center,
-                              style: AppStyles.appFontMedium.copyWith(
-                                color: AppStyles.pinkColor,
-                                fontSize: 14.fontSize,
-                              ),
-                            )
-                          : Container(
-                              width: 20.w,
-                              height: 20.w,
-                              child: CircularProgressIndicator(
-                                color: AppStyles.pinkColor,
-                              ),
-                            ),
-                    ),
-                  ),
-                  onTap: () async {
-                    if (cartController.isCartLoading.value) return;
+               bottomNavigationBar: Container(
+                 height: 75.h,
+                 alignment: Alignment.topCenter,
+                 child: Row(
+                   crossAxisAlignment: CrossAxisAlignment.center,
+                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                   children: [
+                     SizedBox(width: 20),
+                     Obx(() {
+                       return InkWell(
+                         onTap: () {
+                           Get.to(() => CartMain(true, true));
+                         },
+                         child: Container(
+                           width: 50.w,
+                           height: 46.w,
+                           decoration: BoxDecoration(
+                             gradient: AppStyles.gradient,
+                             shape: BoxShape.rectangle,
+                             borderRadius: BorderRadius.circular(5),
+                           ),
+                           child: badges.Badge(
+                             // toAnimate: false,
+                             showBadge: _loginController.loggedIn.value
+                                 ? true
+                                 : false,
+                             position: badges.BadgePosition.topEnd(
+                                 end: 4.w, top: 0.h),
+                             badgeAnimation: badges.BadgeAnimation.size(
+                                 toAnimate: false),
+                             badgeStyle: badges.BadgeStyle(
+                               badgeColor: Colors.white,
+                               padding: EdgeInsets.all(2),
+                             ),
+                             badgeContent: Text(
+                               '${cartController.cartListSelectedCount.value
+                                   .toString()}',
+                               style: AppStyles.appFontBook.copyWith(
+                                 color: AppStyles.pinkColor,
+                                   fontSize: 12.fontSize
+                               ),
+                             ),
+                             child: Center(
+                               child: Image.asset(
+                                 'assets/images/cart_icon.png',
+                                 width: 30.w,
+                                 height: 30.w,
+                                 color: Colors.white,
+                               ),
+                             ),
+                           ),
+                         ),
+                       );
+                     }),
+                     SizedBox(width: 15),
+                     _settingsController.vendorType.value == "single"
+                         ? SizedBox.shrink()
+                         : Padding(
+                           padding: EdgeInsets.only(left: 15),
+                           child: InkWell(
+                                                  onTap: () {
+                           Get.to(() =>
+                               StoreHome(
+                                   sellerId:
+                                   _productDetailsModel.data!.seller!.id!));
+                                                  },
+                                                  child: Container(
+                           width: 60.w,
+                           height: 46.w,
+                           margin: EdgeInsets.only(right: 15),
+                           padding: EdgeInsets.all(10),
+                           decoration: BoxDecoration(
+                             gradient: AppStyles.gradient,
+                             shape: BoxShape.rectangle,
+                             borderRadius: BorderRadius.circular(5.r),
+                           ),
+                           child: Image.asset(
+                             'assets/images/store.png',
+                             width: 5.w,
+                             height: 5.w,
+                             color: Colors.white,
+                           ),
+                                                  ),
+                                                ),
+                         ),
 
-                    if (controller.stockCount.value > 0) {
-                      if (controller.minOrder.value >
-                          controller.stockCount.value) {
-                        SnackBars().snackBarWarning('No more stock'.tr);
-                      } else {
-                        Map<String, dynamic> data = {
-                          'product_id': _productDetailsModel
-                              .data?.skus?.first.id,
-                          'qty': controller.itemQuantity.value,
-                          'price': getPriceForCart(),
-                          'seller_id':
-                              controller.products.value.data?.userId ?? 1,
-                          'shipping_method_id': controller.shippingID.value,
-                          'product_type': 'product',
-                          'checked': true,
-                          "in_app_purchase_id": _productDetailsModel
-                              .data?.skus?.first.inAppPurchaseId,
-                        };
+                     Expanded(
+                       child: Obx(() {
+                         return controller.stockManage.value == 1
+                             ? InkWell(
+                           child: Container(
+                             alignment: Alignment.center,
+                             width: Get.width,
+                             height: 46.h,
+                             decoration: BoxDecoration(
+                               color: Colors.green,
+                               borderRadius: BorderRadius.all(
+                                 Radius.circular(5.r),
+                               ),
+                             ),
+                             child: Padding(
+                               padding: const EdgeInsets.symmetric(
+                                 vertical: 8.0,
+                                 horizontal: 10,
+                               ),
+                               child: !cartController.isCartLoading.value
+                                   ? Text(
+                                 Platform.isIOS && _productDetailsModel.data?.product?.isPhysical == 0 ?  "Buy now".tr :"Add to Cart".tr,
+                                 textAlign: TextAlign.center,
+                                 style: AppStyles.appFontMedium
+                                     .copyWith(
+                                   color:  Colors.white,
+                                   fontSize: 14.fontSize,
+                                 ),
+                               )
+                                   : Container(
+                                 width: 20.w,
+                                 height: 20.w,
+                                 child: CircularProgressIndicator(
+                                   color:  Colors.white,
+                                 ),
+                               ),
+                             ),
+                           ),
+                           onTap: () async {
+                             if (cartController.isCartLoading.value) {
+                               return;
+                             } else {
+                               if (controller.stockCount.value > 0) {
+                                 if (controller.minOrder.value >
+                                     controller.stockCount.value) {
+                                   SnackBars().snackBarWarning(
+                                       'No more stock'.tr);
+                                 } else {
 
-                        if (Platform.isIOS &&
-                            _productDetailsModel.data?.product?.isPhysical ==
-                                0) {
-                          inAppPurchaseController
-                              .onInAppPurchaseProduct(productInfo: data);
-                        } else {
-                          final CartController cartController = Get.find();
-                          await cartController.addToCart(data);
-                        }
-                      }
-                    } else {
-                      SnackBars().snackBarWarning('No more stock'.tr);
-                    }
-                  },
-                )
-              : InkWell(
-                  child: Container(
-                    alignment: Alignment.center,
-                    width: Get.width,
-                    height: 46.h,
-                    decoration: BoxDecoration(
-                      color: AppStyles.pinkColor,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5.r),
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10.0,
-                        horizontal: 10,
-                      ),
-                      child: !cartController.isCartLoading.value
-                          ? Text(
-                              Platform.isIOS &&
-                                      _productDetailsModel
-                                              .data?.product?.isPhysical ==
-                                          0
-                                  ? "Buy now".tr
-                                  : "Add to Cart".tr,
-                              textAlign: TextAlign.center,
-                              style: AppStyles.appFontMedium.copyWith(
-                                color: Colors.white,
-                                fontSize: 14.fontSize,
-                              ),
-                            )
-                          : Container(
-                              width: 20.w,
-                              height: 20.w,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                            ),
-                    ),
-                  ),
-                  onTap: () async {
-                    if (cartController.isCartLoading.value) return;
 
-                    Map<String, dynamic> data = {
-                      'product_id': _productDetailsModel.data?.skus?.first.id,
-                      'qty': controller.itemQuantity.value,
-                      'price': getPriceForCart(),
-                      'seller_id':
-                          controller.products.value.data?.userId ?? 1,
-                      'shipping_method_id': controller.shippingID.value,
-                      'product_type': 'product',
-                      'checked': true,
-                      "in_app_purchase_id": _productDetailsModel
-                          .data?.skus?.first.inAppPurchaseId,
-                    };
+                                   Map<String, dynamic> data = {
+                                     'product_id':
+                                     _productDetailsModel
+                                         .data?.skus?.first.id,
+                                     'qty':
+                                     controller.itemQuantity.value,
+                                     'price': getPriceForCart(),
+                                     'seller_id': controller
+                                         .products.value.data?.userId??1,
+                                     'shipping_method_id':
+                                     controller.shippingID.value,
+                                     'product_type': 'product',
+                                     'checked': true,
+                                     "in_app_purchase_id" :  _productDetailsModel.data?.skus?.first.inAppPurchaseId,
+                                   };
 
-                    if (Platform.isIOS &&
-                        _productDetailsModel.data?.product?.isPhysical == 0) {
-                      inAppPurchaseController
-                          .onInAppPurchaseProduct(productInfo: data);
-                    } else {
-                      final CartController cartController = Get.find();
-                      await cartController.addToCart(data);
-                    }
-                  },
-                );
+                                   if(Platform.isIOS && _productDetailsModel.data?.product?.isPhysical == 0){
+
+                                     inAppPurchaseController.onInAppPurchaseProduct(productInfo: data);
+
+                                   }else {
+                                     final CartController cartController =
+                                     Get.find();
+                                     await cartController.addToCart(data);
+                                   }
+                                 }
+                               } else {
+                                 SnackBars().snackBarWarning(
+                                     'No more stock'.tr);
+                               }
+                             }
+                           },
+                         )
+                             : InkWell(
+                           child: Container(
+                             alignment: Alignment.center,
+                             width: Get.width,
+                             height: 46.h,
+                             decoration: BoxDecoration(
+                               color: Colors.green,
+                               borderRadius: BorderRadius.all(
+                                 Radius.circular(5.r),
+                               ),
+                             ),
+                             child: Padding(
+                               padding: const EdgeInsets.symmetric(
+                                 vertical: 10.0,
+                                 horizontal: 10,
+                               ),
+                               child: !cartController.isCartLoading.value
+                                   ? Text(
+                                 Platform.isIOS && _productDetailsModel.data?.product?.isPhysical == 0 ?  "Buy now".tr :"Add to  Cart".tr,
+                                 textAlign: TextAlign.center,
+                                 style: AppStyles.appFontMedium
+                                     .copyWith(
+                                   color: Colors.white,
+                                   fontSize: 14.fontSize,
+                                 ),
+                               )
+                                   : Container(
+                                 width: 20.w,
+                                 height: 20.w,
+                                 child: CircularProgressIndicator(
+                                   color: Colors.white,
+                                 ),
+                               ),
+                             ),
+                           ),
+                           onTap: () async {
+                             if (cartController.isCartLoading.value) {
+                               return;
+                             } else {
+                               Map<String, dynamic> data = {
+                                 'product_id':
+                                     _productDetailsModel.data?.skus?.first.id,
+                                 'qty': controller.itemQuantity.value,
+                                 'price': getPriceForCart(),
+                                 'seller_id': controller
+                                         .products.value.data?.userId ??
+                                     1,
+                                 'shipping_method_id':
+                                     controller.shippingID.value,
+                                 'product_type': 'product',
+                                 'checked': true,
+                                 "in_app_purchase_id": _productDetailsModel
+                                     .data?.skus?.first.inAppPurchaseId,
+                               };
+
+                               if (Platform.isIOS &&
+                                   _productDetailsModel.data?.product?.isPhysical ==
+                                       0) {
+                                 inAppPurchaseController.onInAppPurchaseProduct(
+                                     productInfo: data);
+                               } else {
+                                 final CartController cartController = Get.find();
+                                 await cartController.addToCart(data);
+                               }
+                             }
+                           },
+                         );
         }),
       ),
       

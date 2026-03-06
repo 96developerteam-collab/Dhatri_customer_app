@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import '../../../../database/auth_database.dart';
 
 import '../../../../AppConfig/language/app_localizations.dart';
 import '../../../../config/config.dart';
@@ -64,9 +66,17 @@ class BrandController extends GetxController {
     try {
       isBrandsProductsLoading(true);
       isMoreBrandLoading(true);
-      await _dio.get(URLs.ALL_BRAND + '/$brandId' + "?lang=${AppLocalizations.getLanguageCode()}", queryParameters: {
-        'page': brandPageNumber,
-      }).then((value) {
+      int? warehouseId = GetStorage().read('warehouse_id');
+
+      Map<String, dynamic> queryParams = {
+        'page': brandPageNumber.value,
+        'lang': AppLocalizations.getLanguageCode(),
+      };
+      if (warehouseId != null) {
+        queryParams['seller_id'] = warehouseId;
+      }
+
+      await _dio.get(URLs.ALL_BRAND + '/${brandId.value}', queryParameters: queryParams).then((value) {
         print('Brand Query: ${value.realUri}');
         final data = new Map<String, dynamic>.from(value.data);
 
@@ -141,9 +151,17 @@ class BrandController extends GetxController {
 
   Future<SingleBrandModel> getBrandFilterData() async {
     try {
-      await _dio.get(URLs.ALL_BRAND + '/$brandId' + "?lang=${AppLocalizations.getLanguageCode()}", queryParameters: {
-        'page': brandPageNumber,
-      }).then((value) {
+      int? warehouseId = GetStorage().read('warehouse_id');
+
+      Map<String, dynamic> queryParams = {
+        'page': brandPageNumber.value,
+        'lang': AppLocalizations.getLanguageCode(),
+      };
+      if (warehouseId != null) {
+        queryParams['seller_id'] = warehouseId;
+      }
+
+      await _dio.get(URLs.ALL_BRAND + '/${brandId.value}', queryParameters: queryParams).then((value) {
         print('URL: ${value.realUri.queryParameters}');
         brandAllData.value = SingleBrandModel.fromJson(value.data);
 
@@ -177,6 +195,8 @@ class BrandController extends GetxController {
 
     print(filterFromCatModelToJson(dataFilterCat.value));
 
+    int? warehouseId = GetStorage().read('warehouse_id');
+
     print(URLs.FILTER_ALL_PRODUCTS);
     AllProducts parentCategoryElement = AllProducts();
     try {
@@ -184,8 +204,15 @@ class BrandController extends GetxController {
       isMoreBrandLoading(true);
       await _dio
           .post(URLs.FILTER_ALL_PRODUCTS,
-              data: filterFromCatModelToJson(dataFilterCat.value))
+              data: filterFromCatModelToJson(dataFilterCat.value),
+              queryParameters: {
+                'lang': AppLocalizations.getLanguageCode(),
+                if (warehouseId != null) 'seller_id': warehouseId,
+                'requestItem': brandId.value,
+                'requestItemType': 'brand',
+              })
           .then((value) {
+        print('Filter URI: ${value.realUri}');
         parentCategoryElement = AllProducts.fromJson(value.data);
         print(parentCategoryElement.data!.length);
 

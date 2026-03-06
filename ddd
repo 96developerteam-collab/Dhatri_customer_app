@@ -1,0 +1,25 @@
+Endpoints (Currently Commented Out)
+If you look in HomeController.onInit(), a bunch of other individual API calls were commented out by the developer (presumably because the /api/homepage-data endpoint now returns everything in one go to save loading time).
+
+Here are the endpoints that the code can hit (or used to hit) individually on Home:
+
+2. Sliders
+
+URLs.ALL_SLIDERS (/api/appearance/sliders)
+3. Categories
+
+URLs.ALL_CATEGORY (/api/product/category)
+4. New User Zone
+
+URLs.NEW_USER_ZONE (/api/marketing/new-user-zone)
+5. Flash Deals
+
+URLs.FLASH_DEALS (/api/marketing/flash-deal)
+6. Brands
+
+URLs.ALL_BRAND (/api/product/brand)
+7. Top Picks / Recommended Products
+
+URLs.ALL_TOP_PICKS (/api/seller/product/top-picks)
+URLs.ALL_RECOMMENDED (/api/seller/product/recomanded-product)
+Summary: Currently, it's hitting /api/homepage-data combining all those elements into one single request.

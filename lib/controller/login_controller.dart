@@ -10,6 +10,7 @@ import 'package:amazcart/controller/my_wishlist_controller.dart';
 import 'package:amazcart/database/auth_database.dart';
 import 'package:amazcart/model/ErrorResponse.dart';
 import 'package:amazcart/model/UserModel.dart';
+import 'package:amazcart/model/NewModel/Merchant/MerchantModel.dart';
 import 'package:amazcart/widgets/amazcart_widget/custom_loading_widget.dart';
 import 'package:amazcart/widgets/amazcart_widget/snackbars.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,11 @@ class LoginController extends GetxController {
 
   Rx<File?> pickedDocument = Rx<File?>(null);
   Rx<File?> pickedShopImage = Rx<File?>(null);
+
+  var merchants = <Merchant>[].obs;
+  var filteredMerchants = <Merchant>[].obs;
+  var isMerchantLoading = false.obs;
+  var selectedMerchant = Rx<Merchant?>(null);
 
   String? loadToken;
 
@@ -113,6 +119,13 @@ class LoginController extends GetxController {
       var user = UserClass.fromJson(jsonString['user']);
 
       AuthDatabase.instance.saveUserId(userId: user.id!);
+      
+      if (user.warehouseId != null) {
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        await preferences.setInt('warehouse_id', user.warehouseId!);
+        GetStorage().write('warehouse_id', user.warehouseId!);
+      }
+      
       return user;
     } else {
       //show error message
@@ -352,6 +365,12 @@ class LoginController extends GetxController {
         token = loginData['token'];
         if (token.length > 5) {
           await saveToken(token);
+          if (loginData['user'] != null && loginData['user']['warehouse_id'] != null) {
+            int warehouseId = loginData['user']['warehouse_id'];
+            SharedPreferences preferences = await SharedPreferences.getInstance();
+            await preferences.setInt('warehouse_id', warehouseId);
+            await userToken.write('warehouse_id', warehouseId);
+          }
           await loadUserToken();
           await accountController.getAccountDetails();
           await cartController.getCartList();
@@ -446,6 +465,12 @@ class LoginController extends GetxController {
         await userToken.write("method", "${data['provider']}");
 
         await saveToken(token);
+        if (jsonString['user'] != null && jsonString['user']['warehouse_id'] != null) {
+          int warehouseId = jsonString['user']['warehouse_id'];
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          await preferences.setInt('warehouse_id', warehouseId);
+          await userToken.write('warehouse_id', warehouseId);
+        }
         await loadUserToken();
         await accountController.getAccountDetails();
         await cartController.getCartList();
@@ -517,7 +542,9 @@ class LoginController extends GetxController {
 
         SharedPreferences preferences = await SharedPreferences.getInstance();
         await preferences.remove(tokenKey);
+        await preferences.remove('warehouse_id');
         await userToken.remove(tokenKey);
+        await userToken.remove('warehouse_id');
         AuthDatabase.instance.saveUserId(userId: null);
 
         await _googleSignIn.signOut();
@@ -592,9 +619,45 @@ class LoginController extends GetxController {
 
   RxBool isPasswordHidden = true.obs;
 
+  Future<void> getMerchants() async {
+    isMerchantLoading(true);
+    try {
+      var response = await http.get(
+        Uri.parse(URLs.MERCHANT_LIST),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        var merchantModel = MerchantModel.fromJson(data);
+        merchants.value = merchantModel.merchants ?? [];
+        filteredMerchants.value = merchants;
+      }
+    } catch (e) {
+      debugPrint("Error fetching merchants: $e");
+    } finally {
+      isMerchantLoading(false);
+    }
+  }
+
+  void searchMerchants(String query) {
+    if (query.isEmpty) {
+      filteredMerchants.value = merchants;
+    } else {
+      filteredMerchants.value = merchants.where((merchant) {
+        final name = merchant.sellerWarehouseAddress?.warehouseName?.toLowerCase() ?? "";
+        final address = merchant.sellerWarehouseAddress?.warehouseAddress?.toLowerCase() ?? "";
+        return name.contains(query.toLowerCase()) || address.contains(query.toLowerCase());
+      }).toList();
+    }
+  }
+
   @override
   void onInit() {
     checkToken();
+    getMerchants();
     super.onInit();
   }
 }

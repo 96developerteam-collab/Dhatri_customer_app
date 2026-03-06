@@ -28,6 +28,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 
 import '../../../../AppConfig/language/app_localizations.dart';
@@ -557,14 +558,16 @@ class CategoryProductsLoadMore extends LoadingMoreBase<ProductModel> {
 
       if (!isSorted! && !isFilter!) {
         if (this.length == 0) {
-          result = await _dio.get(URLs.ALL_CATEGORY + '/$categoryId',
-              queryParameters: {"lang": AppLocalizations.getLanguageCode()});
+          result = await _dio.get(URLs.ALL_CATEGORY + '/$categoryId', queryParameters: {
+            "lang": AppLocalizations.getLanguageCode(),
+            if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
+          });
         } else {
-          result = await _dio.get(URLs.ALL_CATEGORY + '/$categoryId',
-              queryParameters: {
-                'page': pageIndex,
-                "lang": AppLocalizations.getLanguageCode()
-              });
+          result = await _dio.get(URLs.ALL_CATEGORY + '/$categoryId', queryParameters: {
+            'page': pageIndex,
+            "lang": AppLocalizations.getLanguageCode(),
+            if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
+          });
         }
         print('URI IS ${result.realUri}');
         final data = new Map<String, dynamic>.from(result.data);
@@ -582,6 +585,7 @@ class CategoryProductsLoadMore extends LoadingMoreBase<ProductModel> {
                 'paginate': 9,
                 'requestItem': categoryId,
                 'requestItemType': 'category',
+                if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
               });
         } else {
           result = await _dio.get(
@@ -593,9 +597,10 @@ class CategoryProductsLoadMore extends LoadingMoreBase<ProductModel> {
                 'requestItem': categoryId,
                 'requestItemType': 'category',
                 'page': pageIndex,
+                if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
               });
         }
-        print(result.realUri);
+        print('URI IS ${result.realUri}');
         final data = new Map<String, dynamic>.from(result.data);
         allProductsSource = AllProducts.fromJson(data);
         // productsLength = data['meta']['total'];
@@ -615,21 +620,25 @@ class CategoryProductsLoadMore extends LoadingMoreBase<ProductModel> {
         controller.dataFilterCat.value.page = pageIndex.toString();
 
         if (this.length == 0) {
-          log(filterFromCatModelToJson(controller.dataFilterCat.value));
           result = await _dio.post(
             URLs.FILTER_ALL_PRODUCTS +
                 '?lang=${AppLocalizations.getLanguageCode()}',
             data: filterFromCatModelToJson(controller.dataFilterCat.value),
+            queryParameters: {
+              if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
+            },
           );
         } else {
-          log(filterFromCatModelToJson(controller.dataFilterCat.value));
           result = await _dio.post(
             URLs.FILTER_ALL_PRODUCTS +
                 '?lang=${AppLocalizations.getLanguageCode()}',
             data: filterFromCatModelToJson(controller.dataFilterCat.value),
+            queryParameters: {
+              if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
+            },
           );
         }
-        print(result.realUri);
+        print('URI IS ${result.realUri}');
         final data = new Map<String, dynamic>.from(result.data);
         allProductsSource = AllProducts.fromJson(data);
         //productsLength = data['meta']['total'];
