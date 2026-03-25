@@ -7,6 +7,7 @@ import 'package:amazcart/config/config.dart';
 import 'package:amazcart/controller/account_controller.dart';
 import 'package:amazcart/controller/cart_controller.dart';
 import 'package:amazcart/controller/my_wishlist_controller.dart';
+import 'package:amazcart/controller/home_controller.dart';
 import 'package:amazcart/database/auth_database.dart';
 import 'package:amazcart/model/ErrorResponse.dart';
 import 'package:amazcart/model/UserModel.dart';
@@ -375,6 +376,12 @@ class LoginController extends GetxController {
           await accountController.getAccountDetails();
           await cartController.getCartList();
           await _myWishListController.getAllWishList();
+          try {
+            final HomeController homeController = Get.put(HomeController());
+            await homeController.getHomePage();
+          } catch (e) {
+            print(e);
+          }
           return true;
         } else {
           return false;
@@ -475,6 +482,12 @@ class LoginController extends GetxController {
         await accountController.getAccountDetails();
         await cartController.getCartList();
         await _myWishListController.getAllWishList();
+        try {
+          final HomeController homeController = Get.put(HomeController());
+          await homeController.getHomePage();
+        } catch (e) {
+          print(e);
+        }
 
         EasyLoading.dismiss();
         return true;
@@ -559,6 +572,12 @@ class LoginController extends GetxController {
         isLoading(false);
         cartController.getCartList();
         _myWishListController.getAllWishList();
+        try {
+          final HomeController homeController = Get.put(HomeController());
+          await homeController.getHomePage();
+        } catch (e) {
+          print(e);
+        }
         return jsonString;
       } else {
         EasyLoading.dismiss();

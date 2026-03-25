@@ -618,14 +618,14 @@ class _GatewaySelectionState extends State<GatewaySelection> {
       _checkoutController.orderData.addAll({
         'payment_method': controller.selectedGateway.value.id,
       });
-      // Get.bottomSheet(
-      //   RazorpaySheet(
-      //     orderData: _checkoutController.orderData,
-      //   ),
-      //   isScrollControlled: true,
-      //   backgroundColor: Colors.transparent,
-      //   persistent: true,
-      // );
+      Get.bottomSheet(
+        RazorpaySheet(
+          orderData: _checkoutController.orderData,
+        ),
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        persistent: true,
+      );
     }
 
     ///Bank Payment

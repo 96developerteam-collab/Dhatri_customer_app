@@ -19,6 +19,8 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'RegistrationPage.dart';
+import 'package:amazcart/view/amazcart_view/MainNavigation.dart' as amazcart;
+import 'package:amazcart/view/amazy_view/MainNavigation.dart' as amazy;
 
 // ignore: must_be_immutable
 class LoginPage extends GetView<LoginController> {
@@ -290,7 +292,7 @@ class LoginPage extends GetView<LoginController> {
                                             .text)
                                         .then((value) {
                                       if (value == true) {
-                                        Get.back(closeOverlays: true);
+                                        Get.offAll(() => AppConfig.isAmazCartTheme ? amazcart.MainNavigation(navIndex: 0) : amazy.MainNavigation());
                                       }
                                     });
                                     print(jsonString);
@@ -311,7 +313,7 @@ class LoginPage extends GetView<LoginController> {
                               _loginController.password.text)
                               .then((value) {
                             if (value == true) {
-                              Get.back(closeOverlays: true);
+                              Get.offAll(() => AppConfig.isAmazCartTheme ? amazcart.MainNavigation(navIndex: 0) : amazy.MainNavigation());
                             }
                           });
                           print(jsonString);

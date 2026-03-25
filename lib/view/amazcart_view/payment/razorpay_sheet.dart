@@ -41,8 +41,11 @@ class _RazorpaySheetState extends State<RazorpaySheet> {
   }
 
   Future createOrder() async {
+    print('RazorPay Key (Amazcart): ${razorPayKey.trim()}');
+    print('RazorPay Secret (Amazcart): ${razorPaySecret.trim()}');
     String basicAuth =
-        'Basic ' + base64Encode(utf8.encode('$razorPayKey:$razorPaySecret'));
+        'Basic ' + base64Encode(utf8.encode('${razorPayKey.trim()}:${razorPaySecret.trim()}'));
+    print('Basic Auth generated (Amazcart): $basicAuth');
     amount = (widget.orderData?['grand_total'] * 100).toInt();
     final receipt =
         'AMZ_${DateFormat("yyyyMMddHHmmss").format(DateTime.now())}';
@@ -56,24 +59,29 @@ class _RazorpaySheetState extends State<RazorpaySheet> {
     Uri orderCreate = Uri.parse('https://api.razorpay.com/v1/orders');
     var body = json.encode(bodyData);
 
-    await http
-        .post(
-      orderCreate,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'authorization': basicAuth,
-      },
-      body: body,
-    )
-        .then((response) {
+    try {
+      final response = await http.post(
+        orderCreate,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': basicAuth,
+        },
+        body: body,
+      );
       var jsonString = jsonDecode(response.body);
       print('JSR $jsonString');
+      if (jsonString['error'] != null) {
+        return jsonString['error']['description'] ?? "Unknown Razorpay error";
+      }
       setState(() {
-        orderId = jsonString['id'] ?? '';
+        orderId = jsonString['id'] ?? "";
       });
-      return jsonString;
-    }).catchError((err, t) => print('error from razorpay : ' + t.toString()));
+      return null;
+    } catch (err) {
+      print('error from razorpay : ' + err.toString());
+      return err.toString();
+    }
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
@@ -124,24 +132,29 @@ class _RazorpaySheetState extends State<RazorpaySheet> {
     setState(() {
       paymentProcessing = true;
     });
-    await createOrder().then((value) async {
-      var options = {
-        'key': razorPayKey,
-        'amount': amount,
-        'name': companyName,
-        'description': orderId.toString(),
-        'order_id': orderId.toString(),
-      };
+    final errorMsg = await createOrder();
+    if (errorMsg != null || orderId.isEmpty) {
+      SnackBars().snackBarError(errorMsg?.toString() ?? "Failed to create Razorpay order.");
+      Get.back();
+      return;
+    }
 
-      print('come to here-------->');
+    var options = {
+      'key': razorPayKey.trim(),
+      'amount': amount,
+      'name': companyName,
+      'description': orderId.toString(),
+      'order_id': orderId.toString(),
+    };
 
-      try {
-        _razorpay?.open(options);
-      } catch (e) {
-        debugPrint('Error: $e');
-        Get.back();
-      }
-    });
+    print('come to here-------->');
+
+    try {
+      _razorpay?.open(options);
+    } catch (e) {
+      debugPrint('Error: $e');
+      Get.back();
+    }
   }
 
   @override
