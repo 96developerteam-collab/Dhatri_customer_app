@@ -235,7 +235,7 @@ class RegistrationPage extends GetView<LoginController> {
                                   "login": _accountController.registerEmail.text.trim(),
                                   "referral_code": _accountController.referralCode.text.trim(),
                                   "store_name": _accountController.storeName.text.trim(),
-                                  "warehouse_id": _accountController.selectedMerchant.value?.sellerWarehouseAddress?.id,
+                                  "warehouse_id": _accountController.selectedMerchant.value?.sellerAccount?.userId,
                                   "password": _accountController.registerPassword.text,
                                   "password_confirmation": _accountController.registerConfirmPassword.text,
                                   "user_type": "customer",

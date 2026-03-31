@@ -103,6 +103,7 @@ class LoginController extends GetxController {
   }
 
   static Future<UserClass> getProfile(String token) async {
+    print("this the things - getProfile called");
     Uri userData = Uri.parse(URLs.GET_USER);
 
     var response = await http.get(
@@ -113,8 +114,9 @@ class LoginController extends GetxController {
         'Authorization': 'Bearer $token',
       },
     );
-    // print(response.body);
-    // print(response.statusCode.toString() + "By getx");
+    print("this the things - response body: ${response.body}");
+    print("this the things - status code: ${response.statusCode}");
+    
     var jsonString = jsonDecode(response.body);
     if (jsonString['message'] == 'success') {
       var user = UserClass.fromJson(jsonString['user']);
