@@ -15,6 +15,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../database/auth_database.dart';
+import '../MainNavigation.dart';
 
 class RegistrationPage extends GetView<LoginController> {
   final LoginController _accountController = Get.put(LoginController());
@@ -261,7 +262,15 @@ class RegistrationPage extends GetView<LoginController> {
                                           data: otpData,
                                           onSuccess: (verified) async {
                                             if (verified == true) {
-                                              await _accountController.registerUser(data);
+                                               var result = await _accountController.registerUser(data);
+                                               if (result == true) {
+                                                 // Close OTP page + Registration dialog
+                                                 Get.close(2);
+                                                 // Navigate to Profile tab after a small delay to ensure MainNavigation is mounted
+                                                 Future.delayed(const Duration(milliseconds: 500), () {
+                                                   MainNavigation.tabController?.jumpToTab(4);
+                                                 });
+                                               }
                                             }
                                           },
                                         ));
@@ -269,7 +278,15 @@ class RegistrationPage extends GetView<LoginController> {
                                     SnackBars().snackBarWarning("OTP generation failed".tr);
                                   }
                                 } else {
-                                  await _accountController.registerUser(data);
+                                   var result = await _accountController.registerUser(data);
+                                   if (result == true) {
+                                     // Close Registration dialog
+                                     Get.back();
+                                     // Navigate to Profile tab after a small delay to ensure MainNavigation is mounted
+                                     Future.delayed(const Duration(milliseconds: 500), () {
+                                       MainNavigation.tabController?.jumpToTab(4);
+                                     });
+                                   }
                                 }
                               },
                               child: Container(

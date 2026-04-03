@@ -40,9 +40,6 @@ class LoginPage extends GetView<LoginController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Obx(() {
-        if (_loginController.loggedIn.value == true) {
-          Get.back();
-        }
         return Container(
           height: Get.height - 79.w,
           child: SingleChildScrollView(
@@ -292,7 +289,7 @@ class LoginPage extends GetView<LoginController> {
                                             .text)
                                         .then((value) {
                                       if (value == true) {
-                                        Get.offAll(() => AppConfig.isAmazCartTheme ? amazcart.MainNavigation(navIndex: 0) : amazy.MainNavigation());
+                                        Get.back();
                                       }
                                     });
                                     print(jsonString);
@@ -313,7 +310,7 @@ class LoginPage extends GetView<LoginController> {
                               _loginController.password.text)
                               .then((value) {
                             if (value == true) {
-                              Get.offAll(() => AppConfig.isAmazCartTheme ? amazcart.MainNavigation(navIndex: 0) : amazy.MainNavigation());
+                              Get.back();
                             }
                           });
                           print(jsonString);

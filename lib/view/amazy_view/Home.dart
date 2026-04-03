@@ -193,1214 +193,1059 @@ LinearGradient? selectColor(int position) {
                 controller: scrollController,
                 slivers: [
                   CustomSliverAppBarWidget(false, false),
-                  SliverToBoxAdapter(
-                    child: ListView(
-                      padding: EdgeInsets.only(top: 4.h),
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      children: [
-                        ///** SLIDER */
-                        Obx(() =>
-                          _homeController.isHomePageLoading.value
-                            ? Container(
-                              padding: EdgeInsets.all(1),
-                              child: LoadingSkeleton(
-                                height: 200.h,
+                  SliverPadding(
+                    padding: EdgeInsets.only(top: 4.h),
+                    sliver: SliverToBoxAdapter(
+                      child: Obx(() {
+                        if (_homeController.isHomePageLoading.value) {
+                          return Container(
+                            padding: EdgeInsets.all(1),
+                            child: LoadingSkeleton(
+                              height: 200.h,
+                              width: Get.width,
+                              colors: [
+                                Colors.black.withOpacity(0.1),
+                                Colors.black.withOpacity(0.2),
+                              ],
+                            ),
+                          );
+                        }
+                        
+                        if (_homeController.homePageModel.value.sliders == null || 
+                            _homeController.homePageModel.value.sliders!.isEmpty) {
+                          return SizedBox.shrink();
+                        }
+
+                        return Container(
+                          height: 200.h,
+                          child: Swiper(
+                            itemCount: _homeController.homePageModel.value.sliders!.length,
+                            autoplay: true,
+                            autoplayDelay: 5000,
+                            itemBuilder: (BuildContext context, int sliderIndex) {
+                              HomePageSlider slider = _homeController.homePageModel.value.sliders![sliderIndex];
+                              return FancyShimmerImage(
+                                imageUrl: AppConfig.assetPath + '/' + slider.sliderImage!,
+                                boxFit: BoxFit.fill,
                                 width: Get.width,
-                                colors: [
-                                  Colors.black.withOpacity(0.1),
-                                  Colors.black.withOpacity(0.2),
-                                ],
-                              ),
-                            ) :
-                          _homeController.homePageModel.value.sliders == null || (_homeController.homePageModel.value.sliders??[]).isEmpty ? SizedBox.shrink() : Container(
                                 height: 200.h,
-                               // padding: EdgeInsets.only(top: 0),
-                                child: Swiper(
-                                  itemCount: _homeController
-                                      .homePageModel.value.sliders!.length,
-                                  autoplay: true,
-                                  autoplayDelay: 5000,
-                                  itemBuilder:
-                                      (BuildContext context, int sliderIndex) {
-                                    HomePageSlider slider = _homeController
-                                        .homePageModel
-                                        .value
-                                        .sliders![sliderIndex];
-                                    return FancyShimmerImage(
-                                      imageUrl: AppConfig.assetPath +
-                                          '/' +
-                                          slider.sliderImage!,
-                                      boxFit: BoxFit.fill,
-                                      width: Get.width,
-                                      height: 200.h,
-                                      errorWidget: FancyShimmerImage(
-
-                                        imageUrl:
-                                            "${AppConfig.assetPath}/backend/img/default.png",
-                                        boxFit: BoxFit.contain,
-                                        errorWidget: FancyShimmerImage(
-                                          imageUrl:
-                                              "${AppConfig.assetPath}/backend/img/default.png",
-                                          boxFit: BoxFit.contain,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  onTap: (sliderIndex) {
-                                    HomePageSlider slider = _homeController
-                                        .homePageModel
-                                        .value
-                                        .sliders![sliderIndex];
-                                    if (slider.dataType ==
-                                        SliderDataType.PRODUCT) {
-                                      Get.to(() => ProductDetails(
-                                            productID: slider.dataId,
-                                          ));
-                                    } else if (slider.dataType ==
-                                        SliderDataType.CATEGORY) {
-                                      Get.to(() => ProductsByCategory(
-                                            categoryId: slider.dataId,
-                                          ));
-                                    } else if (slider.dataType ==
-                                        SliderDataType.BRAND) {
-                                      Get.to(() => ProductsByBrands(
-                                            brandId: slider.dataId,
-                                          ));
-                                    } else if (slider.dataType ==
-                                        SliderDataType.TAG) {
-                                      Get.to(() => ProductsByTags(
-                                            tagName: slider.tag!.name,
-                                            tagId: slider.tag!.id,
-                                          ));
-                                    }
-                                  },
-                                  pagination: SwiperPagination(
-                                      margin: EdgeInsets.all(5.0.w),
-                                      builder: SwiperCustomPagination(builder:
-                                          (BuildContext context,
-                                              SwiperPluginConfig config) {
-                                        return Align(
-                                          alignment: Alignment.bottomCenter,
-                                          child: RectSwiperPaginationBuilder(
-                                            color:
-                                                Colors.white.withOpacity(0.5),
-                                            activeColor: Colors.white,
-                                            size: Size(5.0, 5.0),
-                                            activeSize: Size(20.0.w, 5.0.h),
-                                          ).build(context, config),
-                                        );
-                                      })),
+                                errorWidget: FancyShimmerImage(
+                                  imageUrl: "${AppConfig.assetPath}/backend/img/default.png",
+                                  boxFit: BoxFit.contain,
                                 ),
-                              )
-
-                        ),
-
-
-
-                        /// ** FEATURES*/
-
-                        // Padding(
-                        //   padding: EdgeInsets.only(
-                        //       top: 15.0.h, left: 15.w, right: 15.w),
-                        //   child: Row(
-                        //     crossAxisAlignment: CrossAxisAlignment.center,
-                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //     children: [
-                        //       Expanded(
-                        //         child: Row(
-                        //           children: [
-                        //             Image.asset(
-                        //               'assets/images/Shipping.png',
-                        //               width: 30.w,
-                        //               height: 30.w,
-                        //             ),
-                        //             SizedBox(width: 4.w),
-                        //             Expanded(
-                        //               child: Column(
-                        //                 mainAxisAlignment: MainAxisAlignment.start,
-                        //                 crossAxisAlignment:
-                        //                     CrossAxisAlignment.start,
-                        //                 children: [
-                        //                   Text(
-                        //                     "Free Shipping".tr,
-                        //                     style: AppStyles.appFontBold.copyWith(
-                        //                       fontSize: 11.fontSize,
-                        //                     ),
-                        //                     maxLines: 1,
-                        //                     overflow: TextOverflow.ellipsis,
-                        //                   ),
-                        //                   Text(
-                        //                     "Free All Shipping".tr,
-                        //                     style: AppStyles.appFontBook.copyWith(
-                        //                       fontSize: 9.fontSize,
-                        //                       color: Color(0xff5C7185),
-                        //                     ),
-                        //                     maxLines: 1,
-                        //                     overflow: TextOverflow.ellipsis,
-                        //                   ),
-                        //                 ],
-                        //               ),
-                        //             )
-                        //           ],
-                        //         ),
-                        //       ),
-                            
-                        //       Expanded(
-                        //         child: Row(
-                        //           children: [
-                        //             Image.asset(
-                        //               'assets/images/help.png',
-                        //               width: 30.w,
-                        //               height: 30.w,
-                        //             ),
-                        //             SizedBox(width: 4.w),
-                        //             Expanded(
-                        //               child: Column( 
-                        //                 mainAxisAlignment: MainAxisAlignment.start,
-                        //                 crossAxisAlignment:
-                        //                     CrossAxisAlignment.start,
-                        //                 children: [
-                        //                   Text(
-                        //                     "Help Center".tr,
-                        //                     style: AppStyles.appFontBold.copyWith(
-                        //                       fontSize: 11.fontSize,
-                        //                     ),
-                        //                     maxLines: 1,
-                        //                     overflow: TextOverflow.ellipsis,
-                        //                   ),
-                        //                   Text(
-                        //                     "24/7 Support".tr,
-                        //                     style: AppStyles.appFontBook.copyWith(
-                        //                       fontSize: 9.fontSize,
-                        //                       color: Color(0xff5C7185),
-                        //                     ),
-                        //                     maxLines: 1,
-                        //                     overflow: TextOverflow.ellipsis,
-                        //                   ),
-                        //                 ],
-                        //               ),
-                        //             )
-                        //           ],
-                        //         ),
-                        //       ), 
-                             
-                        //       Expanded(
-                        //         child: Row(
-                        //           children: [
-                        //             Image.asset(
-                        //               'assets/images/money.png',
-                        //               width: 30.w,
-                        //               height: 30.w,
-                        //             ),
-                        //             SizedBox(
-                        //               width: 4.w,
-                        //             ),
-                        //             Expanded(
-                        //               child: Column(
-                        //                 mainAxisAlignment: MainAxisAlignment.start,
-                        //                 crossAxisAlignment:
-                        //                     CrossAxisAlignment.start,
-                        //                 children: [
-                        //                   Text(
-                        //                     "Money Back".tr,
-                        //                     style: AppStyles.appFontBold.copyWith(
-                        //                       fontSize: 11.fontSize,
-                        //                     ),
-                        //                     maxLines: 1,
-                        //                     overflow: TextOverflow.ellipsis,
-                        //                   ),
-                        //                   Text(
-                        //                     "Back in 30 days".tr,
-                        //                     style: AppStyles.appFontBook.copyWith(
-                        //                       fontSize: 9.fontSize,
-                        //                       color: Color(0xff5C7185),
-                        //                     ),
-                        //                     maxLines: 1,
-                        //                     overflow: TextOverflow.ellipsis,
-                        //                   ),
-                        //                 ],
-                        //               ),
-                        //             )
-                        //           ],
-                        //         ),
-                        //       ), 
-                        //     ],
-                        //   ),
-                        // ),
-
-                        ///** CATEGORY */
-
-               Container(
-  padding: EdgeInsets.only(
-    left: 10.0.w, 
-    right: 10.0.w, 
-    top: 30.0.h
-  ),
-  child: Obx(() =>
-    !_homeController.isHomePageLoading.value && _homeController.homePageModel.value.topCategories != null &&
-        _homeController.homePageModel.value.topCategories!.length > 0 ? Container(
-        height: 100.w,
-        child: ListView.separated(
-          separatorBuilder: (context, index) {
-            return SizedBox(
-              width: 15.w,
-            );
-          },
-          physics: BouncingScrollPhysics(),
-          scrollDirection: Axis.horizontal,
-          shrinkWrap: true,
-          padding: EdgeInsets.zero,
-          itemCount: _homeController.homePageModel.value
-              .topCategories!.length,
-          itemBuilder: (context, index) {
-            CategoryBrand category = _homeController
-                .homePageModel
-                .value
-                .topCategories![index];
-
-            return Container(
-              alignment: Alignment.center,
-              height: 50.w,
-              width: 50.w,
-              child: ListView(
-                padding: EdgeInsets.zero,
-                physics: NeverScrollableScrollPhysics(),
-                children: [
-                  Container(
-                    height: 50.w,
-                    width: 50.w,
-                    child: InkWell(
-                      customBorder: CircleBorder(),
-                      onTap: () async {
-                        Get.to(() => ProductsByCategory(
-                              categoryId: category.id,
-                            ));
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12.r),
-                          // Removed gradient for better image visibility
-                          color: Colors.grey[100], // Fallback color
-                        ),
-                        child: category.image != null 
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(12.r),
-                                child: FancyShimmerImage(
-                                  imageUrl: AppConfig.assetPath + '/' + category.image!,
-                                  boxFit: BoxFit.cover,
-                                  width: 50.w,
-                                  height: 50.w,
-                                  errorWidget: Container(
-                                    decoration: BoxDecoration(
-                                      gradient: selectColor(index),
-                                      borderRadius: BorderRadius.circular(12.r),
-                                    ),
-                                    child: Icon(
-                                      category.icon != null
-                                          ? FaCustomIcon.getFontAwesomeIcon(category.icon!)
-                                          : Icons.list_alt_outlined,
-                                      color: Colors.white,
-                                      size: 20.w,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : category.icon != null
-                                ? Container(
-                                    decoration: BoxDecoration(
-                                      gradient: selectColor(index),
-                                      borderRadius: BorderRadius.circular(12.r),
-                                    ),
-                                    child: Icon(
-                                      FaCustomIcon.getFontAwesomeIcon(category.icon!),
-                                      color: Colors.white,
-                                      size: 20.w,
-                                    ),
-                                  )
-                                : Container(
-                                    decoration: BoxDecoration(
-                                      gradient: selectColor(index),
-                                      borderRadius: BorderRadius.circular(12.r),
-                                    ),
-                                    child: Icon(
-                                      Icons.list_alt_outlined,
-                                      color: Colors.white,
-                                      size: 20.w,
-                                    ),
-                                  ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    category.name!,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    style: AppStyles.appFontMedium
-                        .copyWith(
-                      fontSize: 14.fontSize,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      )
-      : Container(
-          child: GridView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            gridDelegate:
-                SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 5,
-              mainAxisSpacing: 10.0,
-              crossAxisSpacing: 10.0,
-              mainAxisExtent: 80.w,
-            ),
-            itemCount: 5,
-            itemBuilder: (context, index) {
-              return Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.all(
-                        Radius.circular(12.r)),
-                    child: LoadingSkeleton(
-                      width: 50.w,
-                      height: 50.w,
-                      child: SizedBox(),
-                      colors: [
-                        Colors.black.withOpacity(0.1),
-                        Colors.black.withOpacity(0.2),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        )
-  ),
-),
-                        /// ** FLASH SALE
-                        Container(
-                          padding:  EdgeInsets.only(
-                              left: 10.0.w, right: 10.0.w, top: 0.0),
-                          child: Obx(() {
-                            if (_homeController.isHomePageLoading.value) {
-                              return ListView(
-                                shrinkWrap: true,
-                                padding: EdgeInsets.zero,
-                                physics: NeverScrollableScrollPhysics(),
-                                children: [
-                                  Container(
-                                    height: 240.h,
-                                    child: ListView.separated(
-                                        itemCount: 4,
-                                        shrinkWrap: true,
-                                        padding: EdgeInsets.zero,
-                                        scrollDirection: Axis.horizontal,
-                                        separatorBuilder: (context, index) {
-                                          return SizedBox(
-                                            width: 5.w,
-                                          );
-                                        },
-                                        itemBuilder: (context, flashIndex) {
-                                          return Container(
-                                            width: 150.w,
-                                            margin: EdgeInsets.symmetric(
-                                                horizontal: 5.w, vertical: 10.h),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.r),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Color(0x1a000000),
-                                                  offset: Offset(0, 3),
-                                                  blurRadius: 6.r,
-                                                  spreadRadius: 0,
-                                                )
-                                              ],
-                                            ),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.r),
-                                              child: LoadingSkeleton(
-                                                height: 210.h,
-                                                width: 150.w,
-                                                child: SizedBox(),
-                                                colors: [
-                                                  Colors.white.withOpacity(0.1),
-                                                  Colors.black.withOpacity(0.1),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        }),
-                                  ),
-                                  SizedBox(
-                                    height: 5.h,
-                                  ),
-                                ],
                               );
-                            } else {
-                              if (_homeController.hasDeal.value) {
-                                return ListView(
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.zero,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  children: [
-                                    HomeTitlesWidget(
-                                      title: 'Flash Sale'.tr,
-                                      btnOnTap: () {
-                                        Get.to(() => FlashDealView());
-                                      },
-                                      dealDuration: _homeController.dealDuration.value,
-                                      showDeal: true,
-                                    ),
-                                    Container(
-                                      height: 240.h,
-                                      child: ListView.separated(
-                                          itemCount: _homeController
-                                              .homePageModel
-                                              .value
-                                              .flashDeal!
-                                              .allProducts!
-                                              .length,
-                                          shrinkWrap: true,
-                                          padding: EdgeInsets.zero,
-                                          scrollDirection: Axis.horizontal,
-                                          separatorBuilder: (context, index) {
-                                            return SizedBox(
-                                              width: 5.w,
-                                            );
-                                          },
-                                          itemBuilder: (context, flashIndex) {
-                                            FlashDealAllProduct flashDeal =
-                                                _homeController
-                                                    .homePageModel
-                                                    .value
-                                                    .flashDeal!
-                                                    .allProducts![flashIndex];
-
-                                            int totalRating = 0;
-                                            double averageRating = 0.0;
-
-                                            if((flashDeal.product?.reviews??[]).isNotEmpty){
-                                              for(int i = 0; i < flashDeal.product!.reviews!.length; i++){
-                                                totalRating += flashDeal.product!.reviews?[i].rating ?? 0;
-                                              }
-                                              averageRating = totalRating/flashDeal.product!.reviews!.length;
-                                            }
-
-                                            return HorizontalProductWidget(
-                                              productModel: flashDeal.product!,
-                                              averageRating: averageRating,
-                                            );
-                                          }),
-                                    ),
-                                    SizedBox(
-                                      height: 5.h,
-                                    ),
-                                  ],
-                                );
-                              } else {
-                                return Container();
+                            },
+                            onTap: (sliderIndex) {
+                              HomePageSlider slider = _homeController.homePageModel.value.sliders![sliderIndex];
+                              if (slider.dataType == SliderDataType.PRODUCT) {
+                                Get.to(() => ProductDetails(productID: slider.dataId));
+                              } else if (slider.dataType == SliderDataType.CATEGORY) {
+                                Get.to(() => ProductsByCategory(categoryId: slider.dataId));
+                              } else if (slider.dataType == SliderDataType.BRAND) {
+                                Get.to(() => ProductsByBrands(brandId: slider.dataId));
+                              } else if (slider.dataType == SliderDataType.TAG) {
+                                Get.to(() => ProductsByTags(tagName: slider.tag!.name, tagId: slider.tag!.id));
                               }
-                            }
-                          }),
-                        ),
+                            },
+                            pagination: SwiperPagination(
+                              margin: EdgeInsets.all(5.0.w),
+                              builder: SwiperCustomPagination(
+                                builder: (BuildContext context, SwiperPluginConfig config) {
+                                  return Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: RectSwiperPaginationBuilder(
+                                      color: Colors.white.withOpacity(0.5),
+                                      activeColor: Colors.white,
+                                      size: Size(5.0, 5.0),
+                                      activeSize: Size(20.0.w, 5.0.h),
+                                    ).build(context, config),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
 
-                        /// ** NEW USER ZONE
-                        Container(
-                          padding: EdgeInsets.only(
-                              left: 10.0.w, right: 10.0.w, top: 10.0.h),
-                          child: Obx(() {
+                  ///** CATEGORY */
+                  SliverToBoxAdapter(
+                    child: Container(
+                      padding: EdgeInsets.only(
+                        left: 10.0.w, 
+                        right: 10.0.w, 
+                        top: 30.0.h
+                      ),
+                      child: Obx(() =>
+                        !_homeController.isHomePageLoading.value && _homeController.homePageModel.value.topCategories != null &&
+                            _homeController.homePageModel.value.topCategories!.length > 0 ? Container(
+                            height: 100.w,
+                            child: ListView.separated(
+                              separatorBuilder: (context, index) {
+                                return SizedBox(
+                                  width: 15.w,
+                                );
+                              },
+                              physics: BouncingScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              itemCount: _homeController.homePageModel.value
+                                  .topCategories!.length,
+                              itemBuilder: (context, index) {
+                                CategoryBrand category = _homeController
+                                    .homePageModel
+                                    .value
+                                    .topCategories![index];
 
-                            if (_homeController.homePageModel.value.newUserZone != null) {
-
-                                return Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        Get.to(() => NewUserZonePage());
-                                      },
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5.r)),
-                                        clipBehavior: Clip.antiAlias,
-                                        child: Container(
-                                          height: 85.h,
-                                          padding:
-                                          EdgeInsets.symmetric(vertical: 5.h),
-                                          alignment: Alignment.center,
-                                          color: AppStyles.pinkColor,
-                                          child: Row(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                            children: [
-                                              15.horizontalSpace,
-                                              Container(
-                                                width: 50.w,
-                                                height: 50.w,
-                                                child: Image.asset(
-                                                  'assets/images/icon_gift_alt.png',
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              ),
-                                              15.horizontalSpace,
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      'New Users Zone!'.tr,
-                                                      maxLines: 1,
-                                                      style: AppStyles
-                                                          .kFontWhite14w5
-                                                          .copyWith(
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize:
-                                                          17.fontSize,
-                                                          overflow:
-                                                          TextOverflow
-                                                              .ellipsis),
-                                                    ),
-                                                    Text(
-                                                      '${_homeController.homePageModel.value.newUserZone?.title ?? ""}',
-                                                      maxLines: 1,
-                                                      style: AppStyles
-                                                          .kFontWhite14w5
-                                                          .copyWith(
-                                                        fontSize: 12.fontSize,
+                                return Container(
+                                  alignment: Alignment.center,
+                                  height: 50.w,
+                                  width: 50.w,
+                                  child: ListView(
+                                    padding: EdgeInsets.zero,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    children: [
+                                      Container(
+                                        height: 50.w,
+                                        width: 50.w,
+                                        child: InkWell(
+                                          customBorder: CircleBorder(),
+                                          onTap: () async {
+                                            Get.to(() => ProductsByCategory(
+                                                  categoryId: category.id,
+                                                ));
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(12.r),
+                                              // Removed gradient for better image visibility
+                                              color: Colors.grey[100], // Fallback color
+                                            ),
+                                            child: category.image != null 
+                                                ? ClipRRect(
+                                                    borderRadius: BorderRadius.circular(12.r),
+                                                    child: FancyShimmerImage(
+                                                      imageUrl: AppConfig.assetPath + '/' + category.image!,
+                                                      boxFit: BoxFit.cover,
+                                                      width: 50.w,
+                                                      height: 50.w,
+                                                      errorWidget: Container(
+                                                        decoration: BoxDecoration(
+                                                          gradient: selectColor(index),
+                                                          borderRadius: BorderRadius.circular(12.r),
+                                                        ),
+                                                        child: Icon(
+                                                          category.icon != null
+                                                              ? FaCustomIcon.getFontAwesomeIcon(category.icon!)
+                                                              : Icons.list_alt_outlined,
+                                                          color: Colors.white,
+                                                          size: 20.w,
+                                                        ),
                                                       ),
-                                                      overflow:
-                                                      TextOverflow.ellipsis,
                                                     ),
-                                                  ],
-                                                ),
-                                              ),
-                                              5.horizontalSpace,
-                                              Container(
-                                                height: 35.w,
-                                                width: 35.w,
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Colors.white,
-                                                ),
-                                                child: Icon(
-                                                  Icons.arrow_forward_ios,
-                                                  size: 14.w,
-                                                  color: AppStyles.pinkColor,
-                                                ),
-                                              ),
-                                              15.horizontalSpace,
-                                            ],
+                                                  )
+                                                : category.icon != null
+                                                    ? Container(
+                                                        decoration: BoxDecoration(
+                                                          gradient: selectColor(index),
+                                                          borderRadius: BorderRadius.circular(12.r),
+                                                        ),
+                                                        child: Icon(
+                                                          FaCustomIcon.getFontAwesomeIcon(category.icon!),
+                                                          color: Colors.white,
+                                                          size: 20.w,
+                                                        ),
+                                                      )
+                                                    : Container(
+                                                        decoration: BoxDecoration(
+                                                          gradient: selectColor(index),
+                                                          borderRadius: BorderRadius.circular(12.r),
+                                                        ),
+                                                        child: Icon(
+                                                          Icons.list_alt_outlined,
+                                                          color: Colors.white,
+                                                          size: 20.w,
+                                                        ),
+                                                      ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    10.verticalSpace,
-                                    ClipRRect(
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(5.r)),
-                                      child: Container(
-                                        height: 150.h,
-                                        padding: EdgeInsets.all(4.w),
-                                        color: AppStyles.lightBlueColorAlt,
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              flex: 2,
-                                              child: Row(
-                                                children: List.generate(
-                                                    _homeController
-                                                        .homePageModel
-                                                        .value
-                                                        .newUserZone!
-                                                        .allProducts!
-                                                        .length, (index) {
-                                                  return Expanded(
-                                                    child: GestureDetector(
-                                                      behavior: HitTestBehavior
-                                                          .translucent,
-                                                      onTap: () async {
-                                                        final ProductDetailsController
-                                                        productDetailsController =
-                                                        Get.put(
-                                                            ProductDetailsController());
-                                                        await productDetailsController
-                                                            .getProductDetails2(
-                                                            _homeController
-                                                                .homePageModel
-                                                                .value
-                                                                .newUserZone!
-                                                                .allProducts![
-                                                            index]
-                                                                .product!
-                                                                .id);
-                                                        Get.to(() => ProductDetails(
-                                                            productID: _homeController
-                                                                .homePageModel
-                                                                .value
-                                                                .newUserZone!
-                                                                .allProducts![
-                                                            index]
-                                                                .product!
-                                                                .id ??
-                                                                0));
-                                                      },
-                                                      child: Padding(
-                                                        padding:
-                                                        EdgeInsets.symmetric(
-                                                          horizontal: 4.w,
-                                                        ),
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  5.r)),
-                                                          child: Container(
-                                                            decoration:
-                                                            BoxDecoration(
-                                                              color: Colors.white,
-                                                            ),
-                                                            child: Column(
-                                                              children: [
-                                                                10.verticalSpace,
-                                                                Expanded(
-                                                                  flex: 2,
-                                                                  child:
-                                                                  FancyShimmerImage(
-                                                                    imageUrl:
-                                                                    '${AppConfig.assetPath}/${_homeController.homePageModel.value.newUserZone!.allProducts![index].product!.product!.thumbnailImageSource}',
-                                                                    boxFit: BoxFit
-                                                                        .contain,
-                                                                    errorWidget:
-                                                                    FancyShimmerImage(
-                                                                      imageUrl:
-                                                                      "${AppConfig.assetPath}/backend/img/default.png",
-                                                                      boxFit: BoxFit
-                                                                          .contain,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                10.verticalSpace,
-                                                                Expanded(
-                                                                  flex: 1,
-                                                                  child: Wrap(
-                                                                    crossAxisAlignment:
-                                                                    WrapCrossAlignment
-                                                                        .center,
-                                                                    children: [
-                                                                      if (_homeController
-                                                                              .homePageModel
-                                                                              .value
-                                                                              .newUserZone
-                                                                              ?.allProducts?[index]
-                                                                              .product
-                                                                              ?.mrp !=
-                                                                          null &&
-                                                                          _homeController
-                                                                                  .homePageModel
-                                                                                  .value
-                                                                                  .newUserZone!
-                                                                                  .allProducts![index]
-                                                                                  .product!
-                                                                                  .mrp! >
-                                                                              0)
-                                                                        Text(
-                                                                          '${_settingsController.setCurrentSymbolPosition(amount:  (_homeController.homePageModel.value.newUserZone!.allProducts![index].product!.mrp! * _settingsController.conversionRate.value).toStringAsFixed(2))}',
-                                                                          style: AppStyles.kFontGrey12w5.copyWith(
-                                                                            decoration: TextDecoration.lineThrough,
-                                                                            fontSize: 10.fontSize,
-                                                                          ),
-                                                                        ),
-                                                                      if (_homeController
-                                                                              .homePageModel
-                                                                              .value
-                                                                              .newUserZone
-                                                                              ?.allProducts?[index]
-                                                                              .product
-                                                                              ?.mrp !=
-                                                                          null &&
-                                                                          _homeController
-                                                                                  .homePageModel
-                                                                                  .value
-                                                                                  .newUserZone!
-                                                                                  .allProducts![index]
-                                                                                  .product!
-                                                                                  .mrp! >
-                                                                              0)
-                                                                        SizedBox(width: 5.w),
-                                                                      Text(
-                                                                        _settingsController.calculatePrice(_homeController
-                                                                            .homePageModel
-                                                                            .value
-                                                                            .newUserZone
-                                                                            ?.allProducts?[index]
-                                                                            .product ??
-                                                                            ProductModel()),
-                                                                        overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                        style: AppStyles
-                                                                            .kFontPink15w5
-                                                                            .copyWith(
-                                                                            fontSize: 12.fontSize),
-                                                                      ),
-                                                                      3.horizontalSpace,
-                                                                      if (!(_homeController
-                                                                          .homePageModel
-                                                                          .value
-                                                                          .newUserZone!
-                                                                          .allProducts![index]
-                                                                          .product!
-                                                                          .hasDiscount ==
-                                                                          'no'))
-                                                                        Text(
-                                                                          _settingsController.calculateMainPrice(_homeController
-                                                                              .homePageModel
-                                                                              .value
-                                                                              .newUserZone!
-                                                                              .allProducts![index]
-                                                                              .product!),
-                                                                          style: AppStyles
-                                                                              .kFontGrey12w5
-                                                                              .copyWith(
-                                                                            decoration:
-                                                                            TextDecoration.lineThrough,
-                                                                            fontSize:
-                                                                            12.fontSize,
-                                                                          ),
-                                                                        ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                5.verticalSpace,
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                }),
-                                              ),
-                                            ),
-                                            2.horizontalSpace,
-                                            ClipRRect(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5.r)),
-                                              child: GestureDetector(
-                                                behavior:
-                                                HitTestBehavior.translucent,
-                                                onTap: () {
-                                                  Get.to(() => NewUserZonePage());
-                                                },
-                                                child: Container(
-                                                  width: Get.width * 0.35,
-                                                  decoration: BoxDecoration(
-                                                    color: AppStyles.pinkColor,
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                    MainAxisSize.max,
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                    children: [
-                                                      Text(
-                                                        '${_homeController.homePageModel.value.newUserZone!.coupon!.discount}% ' +
-                                                            'OFF'.tr,
-                                                        textAlign:
-                                                        TextAlign.center,
-                                                        style: AppStyles
-                                                            .kFontWhite14w5
-                                                            .copyWith(
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                          fontSize: 14.fontSize,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        '${_homeController.homePageModel.value.newUserZone!.coupon!.title}',
-                                                        textAlign:
-                                                        TextAlign.center,
-                                                        style: AppStyles.appFont
-                                                            .copyWith(
-                                                          fontSize: 12.fontSize,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                      5.verticalSpace,
-                                                      InkWell(
-                                                        onTap: () {
-                                                          Get.to(() =>
-                                                              NewUserZonePage());
-                                                        },
-                                                        child: Container(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                              horizontal:
-                                                              2.w),
-                                                          alignment:
-                                                          Alignment.center,
-                                                          height: 30.h,
-                                                          width: 85.w,
-                                                          decoration: BoxDecoration(
-                                                              color: Color(
-                                                                  0xffFFD600),
-                                                              borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius.circular(
-                                                                      25.r))),
-                                                          child: Text(
-                                                            'Shop Now'.tr,
-                                                            textAlign:
-                                                            TextAlign.center,
-                                                            style: AppStyles
-                                                                .appFont
-                                                                .copyWith(
-                                                              fontSize:
-                                                              12.fontSize,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        category.name!,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        style: AppStyles.appFontMedium
+                                            .copyWith(
+                                          fontSize: 14.fontSize,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                          : Container(
+                              child: GridView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                padding: EdgeInsets.zero,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 5,
+                                  mainAxisSpacing: 10.0,
+                                  crossAxisSpacing: 10.0,
+                                  mainAxisExtent: 80.w,
+                                ),
+                                itemCount: 5,
+                                itemBuilder: (context, index) {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(12.r)),
+                                        child: LoadingSkeleton(
+                                          width: 50.w,
+                                          height: 50.w,
+                                          child: SizedBox(),
+                                          colors: [
+                                            Colors.black.withOpacity(0.1),
+                                            Colors.black.withOpacity(0.2),
                                           ],
                                         ),
                                       ),
-                                    ),
-                                    5.verticalSpace,
-                                  ],
-                                );
-
-                              }
-                              else {
-                                return SizedBox.shrink();
-                              }
-
-                          }),
-                        ),
-
-                        ///** BRANDS
-///** BRANDS
-Container(
-  padding: EdgeInsets.only(
-    left: 10.0.w,
-    right: 10.0.w,
-    top: 10.0.h,
-  ),
-  child: Obx(() {
-    if (_homeController.isHomePageLoading.value) {
-      return ListView(
-        shrinkWrap: true,
-        padding: EdgeInsets.zero,
-        physics: NeverScrollableScrollPhysics(),
-        children: [
-          HomeTitlesWidget(
-            title: 'Brands'.tr,
-            btnOnTap: () {
-              // Get.to(() => AllBrandsPage());
-            },
-            showDeal: false,
-          ),
-          ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(10.r)),
-            child: Container(
-              color: AppStyles.lightBlueColorAlt,
-              child: Container(
-                padding: EdgeInsets.all(8.w),
-                child: Container(
-                  child: GridView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      mainAxisSpacing: 8.0,
-                      crossAxisSpacing: 8.0,
-                      mainAxisExtent: 110.h,
-                    ),
-                    itemCount: 8,
-                    itemBuilder: (context, index) {
-                      return ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(8.r)),
-                        child: LoadingSkeleton(
-                          width: 65.w,
-                          height: 55.w,
-                          colors: [
-                            Colors.black.withOpacity(0.1),
-                            Colors.black.withOpacity(0.2),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      );
-    } else {
-      return ListView(
-        shrinkWrap: true,
-        padding: EdgeInsets.zero,
-        physics: NeverScrollableScrollPhysics(),
-        children: [
-          HomeTitlesWidget(
-            title: 'Brands'.tr,
-            btnOnTap: () {
-              Get.to(() => AllBrandsPage());
-            },
-            showDeal: false,
-          ),
-          ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(10.r)),
-            child: Container(
-              color: AppStyles.lightBlueColorAlt,
-              child: Container(
-                height: _homeController.chunkedBrands.length > 4
-                    ? 240.h
-                    : 140.h,
-                padding: EdgeInsets.all(8.w),
-                child: Container(
-                  child: Swiper.children(
-                    children: _homeController
-                        .chunkedBrands
-                        .chunked(8)
-                        .map((e) {
-                      return GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        padding: EdgeInsets.zero,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                          mainAxisSpacing: 8.0,
-                          crossAxisSpacing: 8.0,
-                          mainAxisExtent: 110.h, // Reduced from 110.h to 100.h
-                        ),
-                        itemBuilder: (context, index) {
-                          CategoryBrand brand = e[index];
-                          return InkWell(
-                            onTap: () {
-                              Get.to(() => ProductsByBrands(
-                                brandId: brand.id!,
-                              ));
-                            },
-                            borderRadius: BorderRadius.circular(8.r),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.r),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color(0x0D000000),
-                                    offset: Offset(0, 2),
-                                    blurRadius: 4.r,
-                                    spreadRadius: 0,
-                                  )
-                                ],
+                                    ],
+                                  );
+                                },
                               ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  // Image container
-                                  Container(
-                                    height: 60.h, // Reduced from 65.h
-                                    width: 60.w,  // Reduced from 65.w
-                                    margin: EdgeInsets.only(top: 10.h, bottom: 4.h), // Reduced margins
-                                    padding: EdgeInsets.all(4.w),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade50,
-                                      borderRadius: BorderRadius.circular(6.r),
-                                    ),
-                                    child: brand.logo != null
-                                        ? FancyShimmerImage(
-                                            imageUrl: AppConfig.assetPath + '/' + brand.logo!,
-                                            boxFit: BoxFit.contain,
-                                            errorWidget: FancyShimmerImage(
-                                              imageUrl: "${AppConfig.assetPath}/backend/img/default.png",
-                                              boxFit: BoxFit.contain,
-                                            ),
-                                          )
-                                        : Container(
-                                            alignment: Alignment.center,
-                                            child: Icon(
-                                              Icons.business,
-                                              size: 24.w, // Reduced from 28.w
-                                              color: AppStyles.greyColorDark,
-                                            ),
-                                          ),
-                                  ),
-                                  
-                                  // Text container with constraints
-                                  ConstrainedBox(
-                                    constraints: BoxConstraints(
-                                      maxHeight: 28.h, // Set max height for text
-                                    ),
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 2.w), // Reduced padding
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        brand.name!,
-                                        textAlign: TextAlign.center,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: AppStyles.appFontMedium.copyWith(
-                                          fontSize: 10.fontSize, // Reduced from 12.fontSize
-                                          color: AppStyles.blackColor,
-                                          fontWeight: FontWeight.w500,
-                                          height: 1.2,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 6.h), // Reduced from 8.h
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                        itemCount: e.length,
-                      );
-                    }).toList(),
-                    loop: false,
-                    pagination: SwiperPagination(
-                      margin: EdgeInsets.zero,
-                      builder: SwiperCustomPagination(
-                        builder: (BuildContext context, SwiperPluginConfig config) {
-                          return Align(
-                            alignment: Alignment.bottomCenter,
-                            child: RectSwiperPaginationBuilder(
-                              color: Colors.white.withOpacity(0.5),
-                              activeColor: Colors.pink,
-                              size: Size(5.0, 5.0),
-                              activeSize: Size(20.0.w, 5.0.h),
-                            ).build(context, config),
-                          );
-                        },
+                            )
                       ),
                     ),
                   ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      );
-    }
-  }),
-),
 
-                        ///** TOP PICKS
-                        Container(
-                          padding: EdgeInsets.only(
-                              left: 10.0.w, right: 10.0.w, top: 10.0.h),
-                          child: Obx(() {
-                            if (_homeController.isHomePageLoading.value ||
-                                _homeController.homePageModel.value == null) {
-                              return Column(
-                                children: [
-                                  SizedBox(
-                                    height: 30.h,
-                                  ),
-                                  ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5.r)),
+                  ///** FLASH SALE
+                  SliverToBoxAdapter(
+                    child: Container(
+                      padding:  EdgeInsets.only(
+                          left: 10.0.w, right: 10.0.w, top: 0.0),
+                      child: Obx(() {
+                        if (_homeController.isHomePageLoading.value) {
+                          return ListView(
+                            shrinkWrap: true,
+                            padding: EdgeInsets.zero,
+                            physics: NeverScrollableScrollPhysics(),
+                            children: [
+                              Container(
+                                height: 240.h,
+                                child: ListView.separated(
+                                    itemCount: 4,
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets.zero,
+                                    scrollDirection: Axis.horizontal,
+                                    separatorBuilder: (context, index) {
+                                      return SizedBox(
+                                        width: 5.w,
+                                      );
+                                    },
+                                    itemBuilder: (context, flashIndex) {
+                                      return Container(
+                                        width: 150.w,
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 5.w, vertical: 10.h),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5.r),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Color(0x1a000000),
+                                              offset: Offset(0, 3),
+                                              blurRadius: 6.r,
+                                              spreadRadius: 0,
+                                            )
+                                          ],
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(5.r),
+                                          child: LoadingSkeleton(
+                                            height: 210.h,
+                                            width: 150.w,
+                                            child: SizedBox(),
+                                            colors: [
+                                              Colors.white.withOpacity(0.1),
+                                              Colors.black.withOpacity(0.1),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                              ),
+                              SizedBox(
+                                height: 5.h,
+                              ),
+                            ],
+                          );
+                        } else {
+                          if (_homeController.hasDeal.value) {
+                            return ListView(
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              physics: NeverScrollableScrollPhysics(),
+                              children: [
+                                HomeTitlesWidget(
+                                  title: 'Flash Sale'.tr,
+                                  btnOnTap: () {
+                                    Get.to(() => FlashDealView());
+                                  },
+                                  dealDuration: _homeController.dealDuration.value,
+                                  showDeal: true,
+                                ),
+                                Container(
+                                  height: 240.h,
+                                  child: ListView.separated(
+                                      itemCount: _homeController
+                                          .homePageModel
+                                          .value
+                                          .flashDeal!
+                                          .allProducts!
+                                          .length,
+                                      shrinkWrap: true,
+                                      padding: EdgeInsets.zero,
+                                      scrollDirection: Axis.horizontal,
+                                      separatorBuilder: (context, index) {
+                                        return SizedBox(
+                                          width: 5.w,
+                                        );
+                                      },
+                                      itemBuilder: (context, flashIndex) {
+                                        FlashDealAllProduct flashDeal =
+                                            _homeController
+                                                .homePageModel
+                                                .value
+                                                .flashDeal!
+                                                .allProducts![flashIndex];
+
+                                        int totalRating = 0;
+                                        double averageRating = 0.0;
+
+                                        if((flashDeal.product?.reviews??[]).isNotEmpty){
+                                          for(int i = 0; i < flashDeal.product!.reviews!.length; i++){
+                                            totalRating += flashDeal.product!.reviews?[i].rating ?? 0;
+                                          }
+                                          averageRating = totalRating/flashDeal.product!.reviews!.length;
+                                        }
+
+                                        return HorizontalProductWidget(
+                                          productModel: flashDeal.product!,
+                                          averageRating: averageRating,
+                                        );
+                                      }),
+                                ),
+                                SizedBox(
+                                  height: 5.h,
+                                ),
+                              ],
+                            );
+                          } else {
+                            return Container();
+                          }
+                        }
+                      }),
+                    ),
+                  ),
+
+                  ///** NEW USER ZONE
+                  SliverToBoxAdapter(
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          left: 10.0.w, right: 10.0.w, top: 10.0.h),
+                      child: Obx(() {
+
+                        if (_homeController.homePageModel.value.newUserZone != null) {
+
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    Get.to(() => NewUserZonePage());
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(5.r)),
+                                    clipBehavior: Clip.antiAlias,
                                     child: Container(
-                                      child: LoadingSkeleton(
-                                        height: 150.h,
-                                        width: Get.width,
-                                        colors: [
-                                          Colors.black.withOpacity(0.1),
-                                          Colors.black.withOpacity(0.2),
+                                      height: 85.h,
+                                      padding:
+                                      EdgeInsets.symmetric(vertical: 5.h),
+                                      alignment: Alignment.center,
+                                      color: AppStyles.pinkColor,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                        children: [
+                                          15.horizontalSpace,
+                                          Container(
+                                            width: 50.w,
+                                            height: 50.w,
+                                            child: Image.asset(
+                                              'assets/images/icon_gift_alt.png',
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ),
+                                          15.horizontalSpace,
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  'New Users Zone!'.tr,
+                                                  maxLines: 1,
+                                                  style: AppStyles
+                                                      .kFontWhite14w5
+                                                      .copyWith(
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize:
+                                                      17.fontSize,
+                                                      overflow:
+                                                      TextOverflow
+                                                          .ellipsis),
+                                                ),
+                                                Text(
+                                                  '${_homeController.homePageModel.value.newUserZone?.title ?? ""}',
+                                                  maxLines: 1,
+                                                  style: AppStyles
+                                                      .kFontWhite14w5
+                                                      .copyWith(
+                                                    fontSize: 12.fontSize,
+                                                  ),
+                                                  overflow:
+                                                  TextOverflow.ellipsis,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          5.horizontalSpace,
+                                          Container(
+                                            height: 35.w,
+                                            width: 35.w,
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.white,
+                                            ),
+                                            child: Icon(
+                                              Icons.arrow_forward_ios,
+                                              size: 14.w,
+                                              color: AppStyles.pinkColor,
+                                            ),
+                                          ),
+                                          15.horizontalSpace,
                                         ],
                                       ),
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 15,
+                                ),
+                                10.verticalSpace,
+                                ClipRRect(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(5.r)),
+                                  child: Container(
+                                    height: 150.h,
+                                    padding: EdgeInsets.all(4.w),
+                                    color: AppStyles.lightBlueColorAlt,
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                          child: Row(
+                                            children: List.generate(
+                                                _homeController
+                                                    .homePageModel
+                                                    .value
+                                                    .newUserZone!
+                                                    .allProducts!
+                                                    .length, (index) {
+                                              return Expanded(
+                                                child: GestureDetector(
+                                                  behavior: HitTestBehavior
+                                                      .translucent,
+                                                  onTap: () async {
+                                                    final ProductDetailsController
+                                                    productDetailsController =
+                                                    Get.put(
+                                                        ProductDetailsController());
+                                                    await productDetailsController
+                                                        .getProductDetails2(
+                                                        _homeController
+                                                            .homePageModel
+                                                            .value
+                                                            .newUserZone!
+                                                            .allProducts![
+                                                        index]
+                                                            .product!
+                                                            .id);
+                                                    Get.to(() => ProductDetails(
+                                                        productID: _homeController
+                                                            .homePageModel
+                                                            .value
+                                                            .newUserZone!
+                                                            .allProducts![
+                                                        index]
+                                                            .product!
+                                                            .id ??
+                                                            0));
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                    EdgeInsets.symmetric(
+                                                      horizontal: 4.w,
+                                                    ),
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              5.r)),
+                                                      child: Container(
+                                                        decoration:
+                                                        BoxDecoration(
+                                                          color: Colors.white,
+                                                        ),
+                                                        child: Column(
+                                                          children: [
+                                                            10.verticalSpace,
+                                                            Expanded(
+                                                              flex: 2,
+                                                              child:
+                                                              FancyShimmerImage(
+                                                                imageUrl:
+                                                                '${AppConfig.assetPath}/${_homeController.homePageModel.value.newUserZone!.allProducts![index].product!.product!.thumbnailImageSource}',
+                                                                boxFit: BoxFit
+                                                                    .contain,
+                                                                errorWidget:
+                                                                FancyShimmerImage(
+                                                                  imageUrl:
+                                                                  "${AppConfig.assetPath}/backend/img/default.png",
+                                                                  boxFit: BoxFit
+                                                                      .contain,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            10.verticalSpace,
+                                                            Expanded(
+                                                              flex: 1,
+                                                              child: Wrap(
+                                                                crossAxisAlignment:
+                                                                WrapCrossAlignment
+                                                                    .center,
+                                                                children: [
+                                                                  if (_homeController
+                                                                          .homePageModel
+                                                                          .value
+                                                                          .newUserZone
+                                                                          ?.allProducts?[index]
+                                                                          .product
+                                                                          ?.mrp !=
+                                                                      null &&
+                                                                      _homeController
+                                                                              .homePageModel
+                                                                              .value
+                                                                              .newUserZone!
+                                                                              .allProducts![index]
+                                                                              .product!
+                                                                              .mrp! >
+                                                                          0)
+                                                                    Text(
+                                                                      '${_settingsController.setCurrentSymbolPosition(amount:  (_homeController.homePageModel.value.newUserZone!.allProducts![index].product!.mrp! * _settingsController.conversionRate.value).toStringAsFixed(2))}',
+                                                                      style: AppStyles.kFontGrey12w5.copyWith(
+                                                                        decoration: TextDecoration.lineThrough,
+                                                                        fontSize: 10.fontSize,
+                                                                      ),
+                                                                    ),
+                                                                  if (_homeController
+                                                                          .homePageModel
+                                                                          .value
+                                                                          .newUserZone
+                                                                          ?.allProducts?[index]
+                                                                          .product
+                                                                          ?.mrp !=
+                                                                      null &&
+                                                                      _homeController
+                                                                              .homePageModel
+                                                                              .value
+                                                                              .newUserZone!
+                                                                              .allProducts![index]
+                                                                              .product!
+                                                                              .mrp! >
+                                                                          0)
+                                                                    SizedBox(width: 5.w),
+                                                                  Text(
+                                                                    _settingsController.calculatePrice(_homeController
+                                                                        .homePageModel
+                                                                        .value
+                                                                        .newUserZone
+                                                                        ?.allProducts?[index]
+                                                                        .product ??
+                                                                        ProductModel()),
+                                                                    overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                    style: AppStyles
+                                                                        .kFontPink15w5
+                                                                        .copyWith(
+                                                                        fontSize: 12.fontSize),
+                                                                  ),
+                                                                  3.horizontalSpace,
+                                                                  if (!(_homeController
+                                                                      .homePageModel
+                                                                      .value
+                                                                      .newUserZone!
+                                                                      .allProducts![index]
+                                                                      .product!
+                                                                      .hasDiscount ==
+                                                                      'no'))
+                                                                    Text(
+                                                                      _settingsController.calculateMainPrice(_homeController
+                                                                          .homePageModel
+                                                                          .value
+                                                                          .newUserZone!
+                                                                          .allProducts![index]
+                                                                          .product!),
+                                                                      style: AppStyles
+                                                                          .kFontGrey12w5
+                                                                          .copyWith(
+                                                                        decoration:
+                                                                        TextDecoration.lineThrough,
+                                                                        fontSize:
+                                                                        12.fontSize,
+                                                                      ),
+                                                                    ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            5.verticalSpace,
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                          ),
+                                        ),
+                                        2.horizontalSpace,
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5.r)),
+                                          child: GestureDetector(
+                                            behavior:
+                                            HitTestBehavior.translucent,
+                                            onTap: () {
+                                              Get.to(() => NewUserZonePage());
+                                            },
+                                            child: Container(
+                                              width: Get.width * 0.35,
+                                              decoration: BoxDecoration(
+                                                color: AppStyles.pinkColor,
+                                              ),
+                                              child: Column(
+                                                mainAxisSize:
+                                                MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    '${_homeController.homePageModel.value.newUserZone!.coupon!.discount}% ' +
+                                                        'OFF'.tr,
+                                                    textAlign:
+                                                    TextAlign.center,
+                                                    style: AppStyles
+                                                        .kFontWhite14w5
+                                                        .copyWith(
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 14.fontSize,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    '${_homeController.homePageModel.value.newUserZone!.coupon!.title}',
+                                                    textAlign:
+                                                    TextAlign.center,
+                                                    style: AppStyles.appFont
+                                                        .copyWith(
+                                                      fontSize: 12.fontSize,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  5.verticalSpace,
+                                                  InkWell(
+                                                    onTap: () {
+                                                      Get.to(() =>
+                                                          NewUserZonePage());
+                                                    },
+                                                    child: Container(
+                                                      padding: EdgeInsets
+                                                          .symmetric(
+                                                          horizontal:
+                                                          2.w),
+                                                      alignment:
+                                                      Alignment.center,
+                                                      height: 30.h,
+                                                      width: 85.w,
+                                                      decoration: BoxDecoration(
+                                                          color: Color(
+                                                              0xffFFD600),
+                                                          borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  25.r))),
+                                                      child: Text(
+                                                        'Shop Now'.tr,
+                                                        textAlign:
+                                                        TextAlign.center,
+                                                        style: AppStyles
+                                                            .appFont
+                                                            .copyWith(
+                                                          fontSize:
+                                                          12.fontSize,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ],
-                              );
-                            } else {
-                              return Column(
-                                children: [
-                                  HomeTitlesWidget(
-                                    title: 'Top Picks'.tr,
-                                    btnOnTap: () {
-                                      Get.to(() => AllTopPickProducts());
-                                    },
-                                    showDeal: false,
-                                  ),
-                                  Container(
-                                    height: 220.h,
-                                    child: _homeController.homePageModel.value.topPicks == null || _homeController.homePageModel.value.topPicks!.isEmpty ? SizedBox() : ListView.separated(
-                                        itemCount: _homeController
-                                            .homePageModel.value.topPicks!
-                                            .take(8)
-                                            .length,
+                                ),
+                                5.verticalSpace,
+                              ],
+                            );
+
+                          }
+                          else {
+                            return SizedBox.shrink();
+                          }
+
+                      }),
+                    ),
+                  ),
+
+                  ///** BRANDS
+                  SliverToBoxAdapter(
+                    child: Container(
+                      padding: EdgeInsets.only(
+                        left: 10.0.w,
+                        right: 10.0.w,
+                        top: 10.0.h,
+                      ),
+                      child: Obx(() {
+                        if (_homeController.isHomePageLoading.value) {
+                          return ListView(
+                            shrinkWrap: true,
+                            padding: EdgeInsets.zero,
+                            physics: NeverScrollableScrollPhysics(),
+                            children: [
+                              HomeTitlesWidget(
+                                title: 'Brands'.tr,
+                                btnOnTap: () {
+                                  // Get.to(() => AllBrandsPage());
+                                },
+                                showDeal: false,
+                              ),
+                              ClipRRect(
+                                borderRadius: BorderRadius.all(Radius.circular(10.r)),
+                                child: Container(
+                                  color: AppStyles.lightBlueColorAlt,
+                                  child: Container(
+                                    padding: EdgeInsets.all(8.w),
+                                    child: Container(
+                                      child: GridView.builder(
+                                        physics: NeverScrollableScrollPhysics(),
                                         shrinkWrap: true,
-                                        scrollDirection: Axis.horizontal,
-                                        physics: BouncingScrollPhysics(),
-                                        padding: EdgeInsets.zero,
-                                        separatorBuilder: (context, index) {
-                                          return SizedBox(
-                                            width: 5.w,
+                                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 4,
+                                          mainAxisSpacing: 8.0,
+                                          crossAxisSpacing: 8.0,
+                                          mainAxisExtent: 110.h,
+                                        ),
+                                        itemCount: 8,
+                                        itemBuilder: (context, index) {
+                                          return ClipRRect(
+                                            borderRadius: BorderRadius.all(Radius.circular(8.r)),
+                                            child: LoadingSkeleton(
+                                              width: 65.w,
+                                              height: 55.w,
+                                              colors: [
+                                                Colors.black.withOpacity(0.1),
+                                                Colors.black.withOpacity(0.2),
+                                              ],
+                                            ),
                                           );
                                         },
-                                        itemBuilder: (context, topPickIndex) {
-                                          ProductModel prod = _homeController
-                                              .homePageModel
-                                              .value
-                                              .topPicks![topPickIndex];
-
-                                          double totalRating = 0;
-                                          double averageRating = 0.0;
-
-                                          if((prod.reviews??[]).isNotEmpty){
-                                            for(int i = 0; i < prod.reviews!.length; i++){
-                                              totalRating += prod.reviews?[i].rating ?? 0;
-                                          }
-                                            averageRating = totalRating/prod.reviews!.length;
-                                          }
-
-                                          return HorizontalProductWidget(
-                                            productModel: prod,
-                                            averageRating: averageRating,
-                                          );
-                                        }),
+                                      ),
+                                    ),
                                   ),
-                                ],
-                              );
-                            }
-                          }),
-                        ),
-                      ],
+                                ),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return ListView(
+                            shrinkWrap: true,
+                            padding: EdgeInsets.zero,
+                            physics: NeverScrollableScrollPhysics(),
+                            children: [
+                              HomeTitlesWidget(
+                                title: 'Brands'.tr,
+                                btnOnTap: () {
+                                  Get.to(() => AllBrandsPage());
+                                },
+                                showDeal: false,
+                              ),
+                              ClipRRect(
+                                borderRadius: BorderRadius.all(Radius.circular(10.r)),
+                                child: Container(
+                                  color: AppStyles.lightBlueColorAlt,
+                                  child: Container(
+                                    height: _homeController.chunkedBrands.length > 4
+                                        ? 240.h
+                                        : 140.h,
+                                    padding: EdgeInsets.all(8.w),
+                                    child: Container(
+                                      child: Swiper.children(
+                                        children: _homeController
+                                            .chunkedBrands
+                                            .chunked(8)
+                                            .map((e) {
+                                          return GridView.builder(
+                                            physics: NeverScrollableScrollPhysics(),
+                                            padding: EdgeInsets.zero,
+                                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 4,
+                                              mainAxisSpacing: 8.0,
+                                              crossAxisSpacing: 8.0,
+                                              mainAxisExtent: 110.h, // Reduced from 110.h to 100.h
+                                            ),
+                                            itemBuilder: (context, index) {
+                                              CategoryBrand brand = e[index];
+                                              return InkWell(
+                                                onTap: () {
+                                                  Get.to(() => ProductsByBrands(
+                                                    brandId: brand.id!,
+                                                  ));
+                                                },
+                                                borderRadius: BorderRadius.circular(8.r),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.circular(8.r),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Color(0x0D000000),
+                                                        offset: Offset(0, 2),
+                                                        blurRadius: 4.r,
+                                                        spreadRadius: 0,
+                                                      )
+                                                    ],
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: <Widget>[
+                                                      // Image container
+                                                      Container(
+                                                        height: 60.h, // Reduced from 65.h
+                                                        width: 60.w,  // Reduced from 65.w
+                                                        margin: EdgeInsets.only(top: 10.h, bottom: 4.h), // Reduced margins
+                                                        padding: EdgeInsets.all(4.w),
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.grey.shade50,
+                                                          borderRadius: BorderRadius.circular(6.r),
+                                                        ),
+                                                        child: brand.logo != null
+                                                            ? FancyShimmerImage(
+                                                                imageUrl: AppConfig.assetPath + '/' + brand.logo!,
+                                                                boxFit: BoxFit.contain,
+                                                                errorWidget: FancyShimmerImage(
+                                                                  imageUrl: "${AppConfig.assetPath}/backend/img/default.png",
+                                                                  boxFit: BoxFit.contain,
+                                                                ),
+                                                              )
+                                                            : Container(
+                                                                alignment: Alignment.center,
+                                                                child: Icon(
+                                                                  Icons.business,
+                                                                  size: 24.w, // Reduced from 28.w
+                                                                  color: AppStyles.greyColorDark,
+                                                                ),
+                                                              ),
+                                                      ),
+                                                      
+                                                      // Text container with constraints
+                                                      ConstrainedBox(
+                                                        constraints: BoxConstraints(
+                                                          maxHeight: 28.h, // Set max height for text
+                                                        ),
+                                                        child: Container(
+                                                          padding: EdgeInsets.symmetric(horizontal: 2.w), // Reduced padding
+                                                          alignment: Alignment.center,
+                                                          child: Text(
+                                                            brand.name!,
+                                                            textAlign: TextAlign.center,
+                                                            maxLines: 2,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: AppStyles.appFontMedium.copyWith(
+                                                              fontSize: 10.fontSize, // Reduced from 12.fontSize
+                                                              color: AppStyles.blackColor,
+                                                              fontWeight: FontWeight.w500,
+                                                              height: 1.2,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 6.h), // Reduced from 8.h
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            itemCount: e.length,
+                                          );
+                                        }).toList(),
+                                        loop: false,
+                                        pagination: SwiperPagination(
+                                          margin: EdgeInsets.zero,
+                                          builder: SwiperCustomPagination(
+                                            builder: (BuildContext context, SwiperPluginConfig config) {
+                                              return Align(
+                                                alignment: Alignment.bottomCenter,
+                                                child: RectSwiperPaginationBuilder(
+                                                  color: Colors.white.withOpacity(0.5),
+                                                  activeColor: Colors.pink,
+                                                  size: Size(5.0, 5.0),
+                                                  activeSize: Size(20.0.w, 5.0.h),
+                                                ).build(context, config),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                      }),
+                    ),
+                  ),
+
+                  ///** TOP PICKS
+                  SliverToBoxAdapter(
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          left: 10.0.w, right: 10.0.w, top: 10.0.h),
+                      child: Obx(() {
+                        if (_homeController.isHomePageLoading.value ||
+                            _homeController.homePageModel.value == null) {
+                          return Column(
+                            children: [
+                              SizedBox(
+                                height: 30.h,
+                              ),
+                              ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.r)),
+                                child: Container(
+                                  child: LoadingSkeleton(
+                                    height: 150.h,
+                                    width: Get.width,
+                                    colors: [
+                                      Colors.black.withOpacity(0.1),
+                                      Colors.black.withOpacity(0.2),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                            ],
+                          );
+                        } else {
+                          return Column(
+                            children: [
+                              HomeTitlesWidget(
+                                title: 'Top Picks'.tr,
+                                btnOnTap: () {
+                                  Get.to(() => AllTopPickProducts());
+                                },
+                                showDeal: false,
+                              ),
+                              Container(
+                                height: 220.h,
+                                child: _homeController.homePageModel.value.topPicks == null || _homeController.homePageModel.value.topPicks!.isEmpty ? SizedBox() : ListView.separated(
+                                    itemCount: _homeController
+                                        .homePageModel.value.topPicks!
+                                        .take(8)
+                                        .length,
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    physics: BouncingScrollPhysics(),
+                                    padding: EdgeInsets.zero,
+                                    separatorBuilder: (context, index) {
+                                      return SizedBox(
+                                        width: 5.w,
+                                      );
+                                    },
+                                    itemBuilder: (context, topPickIndex) {
+                                      ProductModel prod = _homeController
+                                          .homePageModel
+                                          .value
+                                          .topPicks![topPickIndex];
+
+                                      double totalRating = 0;
+                                      double averageRating = 0.0;
+
+                                      if((prod.reviews??[]).isNotEmpty){
+                                        for(int i = 0; i < prod.reviews!.length; i++){
+                                          totalRating += prod.reviews?[i].rating ?? 0;
+                                      }
+                                        averageRating = totalRating/prod.reviews!.length;
+                                      }
+
+                                      return HorizontalProductWidget(
+                                        productModel: prod,
+                                        averageRating: averageRating,
+                                      );
+                                    }),
+                              ),
+                            ],
+                          );
+                        }
+                      }),
                     ),
                   ),
 
                   ///** RECOMMENDED
-
                   SliverToBoxAdapter(
                     child: Padding(
                       padding:
@@ -1455,7 +1300,6 @@ Container(
                       },
                       sourceList: _homeController.source!,
                     ),
-                    key: const Key('homePageLoadMoreKey'),
                   ),
                   SliverToBoxAdapter(
                     child: SizedBox(

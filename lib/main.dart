@@ -6,6 +6,9 @@ import 'package:amazcart/AppConfig/app_config.dart';
 import 'package:amazcart/controller/in-app-purchase_controller.dart';
 import 'package:amazcart/view/amazcart_view/MainNavigation.dart' as amazcart;
 import 'package:amazcart/view/amazy_view/MainNavigation.dart' as amazy;
+import 'package:amazcart/view/amazcart_view/authentication/LoginPage.dart' as amazcartLogin;
+import 'package:amazcart/view/amazy_view/authentication/LoginPage.dart' as amazyLogin;
+import 'package:amazcart/controller/login_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -31,6 +34,7 @@ Future<void> main() async {
   //await Firebase.initializeApp();
 
   final CartController controller = Get.put(CartController());
+  final LoginController loginController = Get.put(LoginController());
   TabbySDK().setup(
     withApiKey:
         'pk_test_ec208bef-3e27-45aa-a6b5-1807d238e950', // Put here your Api key
@@ -110,11 +114,15 @@ class _MyAppState extends State<MyApp> {
                       }),
                     ),
                   )),
-              home: child,
+              home: Obx(() {
+                final LoginController loginController = Get.find<LoginController>();
+                if (loginController.loggedIn.value) {
+                  return AppConfig.isAmazCartTheme ? amazcart.MainNavigation(navIndex: 0) : amazy.MainNavigation();
+                } else {
+                  return AppConfig.isAmazCartTheme ? amazcartLogin.LoginPage() : amazyLogin.LoginPage();
+                }
+              }),
             )),
-        child: AppConfig.isAmazCartTheme ?  amazcart.MainNavigation(
-          navIndex: 0,
-        ) : amazy.MainNavigation(),
       );
     } catch (e, tr) {
       log(e.toString());

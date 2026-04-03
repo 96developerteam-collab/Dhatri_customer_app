@@ -75,8 +75,12 @@ class LoginController extends GetxController {
     // }
     if (token.isNotEmpty) {
       print("Logged in");
-      loggedIn.value = true;
-      update();
+      // Add a small delay to allow any pending UI transitions/dialog closures to finish
+      // before triggering the reactive root switch in main.dart
+      Future.delayed(const Duration(milliseconds: 200), () {
+        loggedIn.value = true;
+        update();
+      });
       await getProfileData();
       return true;
     } else {
@@ -368,22 +372,31 @@ class LoginController extends GetxController {
         token = loginData['token'];
         if (token.length > 5) {
           await saveToken(token);
-          if (loginData['user'] != null && loginData['user']['warehouse_id'] != null) {
-            int warehouseId = loginData['user']['warehouse_id'];
-            SharedPreferences preferences = await SharedPreferences.getInstance();
-            await preferences.setInt('warehouse_id', warehouseId);
-            await userToken.write('warehouse_id', warehouseId);
+          if (loginData['user'] != null) {
+            if (loginData['user']['warehouse_id'] != null) {
+              int warehouseId = loginData['user']['warehouse_id'];
+              SharedPreferences preferences = await SharedPreferences.getInstance();
+              await preferences.setInt('warehouse_id', warehouseId);
+              await userToken.write('warehouse_id', warehouseId);
+            }
+            if (loginData['user']['id'] != null) {
+              AuthDatabase.instance.saveUserId(userId: loginData['user']['id']);
+            }
           }
           await loadUserToken();
-          await accountController.getAccountDetails();
-          await cartController.getCartList();
-          await _myWishListController.getAllWishList();
+          
+          // Non-blocking calls to refresh background data
+          accountController.getAccountDetails();
+          cartController.getCartList();
+          _myWishListController.getAllWishList();
           try {
             final HomeController homeController = Get.put(HomeController());
-            await homeController.getHomePage();
+            homeController.getHomePage();
+            homeController.source?.refresh(true);
           } catch (e) {
             print(e);
           }
+          
           return true;
         } else {
           return false;
@@ -474,19 +487,27 @@ class LoginController extends GetxController {
         await userToken.write("method", "${data['provider']}");
 
         await saveToken(token);
-        if (jsonString['user'] != null && jsonString['user']['warehouse_id'] != null) {
-          int warehouseId = jsonString['user']['warehouse_id'];
-          SharedPreferences preferences = await SharedPreferences.getInstance();
-          await preferences.setInt('warehouse_id', warehouseId);
-          await userToken.write('warehouse_id', warehouseId);
+        if (jsonString['user'] != null) {
+          if (jsonString['user']['warehouse_id'] != null) {
+            int warehouseId = jsonString['user']['warehouse_id'];
+            SharedPreferences preferences = await SharedPreferences.getInstance();
+            await preferences.setInt('warehouse_id', warehouseId);
+            await userToken.write('warehouse_id', warehouseId);
+          }
+          if (jsonString['user']['id'] != null) {
+            AuthDatabase.instance.saveUserId(userId: jsonString['user']['id']);
+          }
         }
         await loadUserToken();
-        await accountController.getAccountDetails();
-        await cartController.getCartList();
-        await _myWishListController.getAllWishList();
+        
+        // Non-blocking calls
+        accountController.getAccountDetails();
+        cartController.getCartList();
+        _myWishListController.getAllWishList();
         try {
           final HomeController homeController = Get.put(HomeController());
-          await homeController.getHomePage();
+          homeController.getHomePage();
+          homeController.source?.refresh(true);
         } catch (e) {
           print(e);
         }
@@ -572,11 +593,13 @@ class LoginController extends GetxController {
         loginMsg.value = 'Logged out';
         update();
         isLoading(false);
+        // Non-blocking calls after logout
         cartController.getCartList();
         _myWishListController.getAllWishList();
         try {
           final HomeController homeController = Get.put(HomeController());
-          await homeController.getHomePage();
+          homeController.getHomePage();
+          homeController.source?.refresh(true);
         } catch (e) {
           print(e);
         }
@@ -643,6 +666,7 @@ class LoginController extends GetxController {
   Future<void> getMerchants() async {
     isMerchantLoading(true);
     try {
+      debugPrint("Fetching merchants from: ${URLs.MERCHANT_LIST}");
       var response = await http.get(
         Uri.parse(URLs.MERCHANT_LIST),
         headers: {
@@ -650,11 +674,17 @@ class LoginController extends GetxController {
           'Accept': 'application/json',
         },
       );
+      debugPrint("Merchants Response Status: ${response.statusCode}");
+      debugPrint("Merchants Response Body: ${response.body}");
+
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         var merchantModel = MerchantModel.fromJson(data);
         merchants.value = merchantModel.merchants ?? [];
         filteredMerchants.value = merchants;
+        debugPrint("Successfully loaded ${merchants.length} merchants");
+      } else {
+        debugPrint("Failed to load merchants. Status: ${response.statusCode}");
       }
     } catch (e) {
       debugPrint("Error fetching merchants: $e");

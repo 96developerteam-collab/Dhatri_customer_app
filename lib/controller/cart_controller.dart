@@ -48,8 +48,10 @@ class CartController extends GetxController {
 
     var jsonString = jsonDecode(response.body);
     if (response.statusCode == 200) {
+      print('getCart success: ${response.body}');
       return MyCartModel.fromJson(jsonString);
     } else {
+      print('getCart error: code ${response.statusCode}, body: ${response.body}');
       cartListSelectedCount.value = 0;
       //show error message
       return MyCartModel();

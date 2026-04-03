@@ -1,6 +1,7 @@
 import 'package:amazcart/config/config.dart';
 import 'package:amazcart/controller/address_book_controller.dart';
 import 'package:amazcart/controller/home_controller.dart';
+import 'package:amazcart/controller/login_controller.dart';
 import 'package:amazcart/network/logging_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
@@ -29,6 +30,7 @@ class HomeBindings implements Bindings {
     Get.lazyPut(() => BaseOptions());
     // Get.lazyPut(() => ProductDetailsController());
     Get.lazyPut(() => HomeController());
+    Get.lazyPut(() => LoginController());
     Get.lazyPut(() => AddressController());
   }
 }
