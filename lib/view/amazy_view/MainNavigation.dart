@@ -103,6 +103,8 @@ class HexagonBorderPainter extends CustomPainter {
 }
 
 class MainNavigation extends StatefulWidget {
+  static PersistentTabController? tabController;
+
   @override
   State<MainNavigation> createState() => _MainNavigationState();
 }
@@ -115,9 +117,17 @@ class _MainNavigationState extends State<MainNavigation> {
   final CartController _cartController = Get.find<CartController>();
   @override
   void initState() {
+    scaffoldkey.value = GlobalKey<ScaffoldState>();
     LanguageAPIService().getLocalizationLanguage(langCode: AppLocalizations.getLanguageCode());
     _controller = PersistentTabController(initialIndex: 0);
+    MainNavigation.tabController = _controller;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    MainNavigation.tabController = null;
+    super.dispose();
   }
 
   @override

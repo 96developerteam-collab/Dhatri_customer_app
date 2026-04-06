@@ -101,89 +101,114 @@ class _OrderDetailsState extends State<OrderDetails> {
                 ),
 
                 ///BILL TO
-                Container(
-                  color: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 10.0.h, horizontal: 20.w),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text(
-                        'Bill to'.tr,
-                        style: AppStyles.kFontGrey12w5,
-                      ),
-                      Text(
-                        '${widget.order?.orderAddress?.billingName ?? ""}',
-                        style: AppStyles.kFontBlack14w5,
-                      ),
-                      Text(
-                        '${widget.order?.orderAddress?.billingEmail ?? ""}',
-                        style: AppStyles.kFontBlack12w4,
-                      ),
-                      Text(
-                        '${widget.order?.orderAddress?.billingPhone ?? ""}',
-                        style: AppStyles.kFontBlack12w4,
-                      ),
-                      Text(
-                        "Address".tr +
-                            ': ${widget.order?.orderAddress?.billingAddress ?? ""}',
-                        style: AppStyles.kFontBlack12w4,
-                      ),
-                      Text(
-                        "State".tr +
-                            ': ${widget.order?.orderAddress?.getBillingState?.name ?? ""}',
-                        style: AppStyles.kFontBlack12w4,
-                      ),
-                      Text(
-                        '${widget.order?.orderAddress?.getBillingCity?.name ?? ""}, ${widget.order?.orderAddress?.getBillingCountry?.name ?? ""}',
-                        style: AppStyles.kFontBlack12w4,
-                      ),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      //SHIP TO
-                      Text(
-                        widget.order?.deliveryType == "home_delivery"
-                            ? 'Ship to'.tr
-                            : "Collect from".tr,
-                        style: AppStyles.kFontGrey12w5,
-                      ),
-                      Text(
-                        '${widget.order?.orderAddress?.shippingName ?? ""}',
-                        style: AppStyles.kFontBlack14w5,
-                      ),
-                      Text(
-                        '${widget.order?.orderAddress?.shippingEmail ?? ""}',
-                        style: AppStyles.kFontBlack12w4,
-                      ),
-                      Text(
-                        '${widget.order?.orderAddress?.shippingPhone ?? ""}',
-                        style: AppStyles.kFontBlack12w4,
-                      ),
-                      Text(
-                        "Address".tr +
-                            ': ${widget.order?.orderAddress?.shippingAddress ?? ""}',
-                        style: AppStyles.kFontBlack12w4,
-                      ),
+                ///BILL TO AND SHIP TO
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
+                  child: Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    color: Colors.white,
+                    child: Padding(
+                      padding: EdgeInsets.all(15.w),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.receipt_long, color: AppStyles.pinkColor, size: 20.w),
+                              SizedBox(width: 8.w),
+                              Text(
+                                'Bill to'.tr,
+                                style: AppStyles.kFontPink15w5.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10.h),
+                          Text(
+                            '${widget.order?.orderAddress?.billingName ?? ""}',
+                            style: AppStyles.kFontBlack14w5,
+                          ),
+                          Text(
+                            '${widget.order?.orderAddress?.billingEmail ?? ""}',
+                            style: AppStyles.kFontBlack12w4,
+                          ),
+                          Text(
+                            '${widget.order?.orderAddress?.billingPhone ?? ""}',
+                            style: AppStyles.kFontBlack12w4,
+                          ),
+                          SizedBox(height: 5.h),
+                          Text(
+                            "Address".tr +
+                                ': ${widget.order?.orderAddress?.billingAddress ?? ""}',
+                            style: AppStyles.kFontBlack12w4,
+                          ),
+                          Text(
+                            "State".tr +
+                                ': ${widget.order?.orderAddress?.getBillingState?.name ?? ""}',
+                            style: AppStyles.kFontBlack12w4,
+                          ),
+                          Text(
+                            '${widget.order?.orderAddress?.getBillingCity?.name ?? ""}, ${widget.order?.orderAddress?.getBillingCountry?.name ?? ""}',
+                            style: AppStyles.kFontBlack12w4,
+                          ),
+                          
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            child: Divider(color: Colors.grey.shade200, thickness: 1),
+                          ),
 
-                      Text(
-                        "State".tr +
-                            ': ${widget.order?.orderAddress?.getShippingState?.name ?? ""}',
-                        style: AppStyles.kFontBlack12w4,
+                          Row(
+                            children: [
+                              Icon(Icons.local_shipping_outlined, color: AppStyles.pinkColor, size: 20.w),
+                              SizedBox(width: 8.w),
+                              Text(
+                                widget.order?.deliveryType == "home_delivery"
+                                    ? 'Ship to'.tr
+                                    : "Collect from".tr,
+                                style: AppStyles.kFontPink15w5.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10.h),
+                          Text(
+                            '${widget.order?.orderAddress?.shippingName ?? ""}',
+                            style: AppStyles.kFontBlack14w5,
+                          ),
+                          Text(
+                            '${widget.order?.orderAddress?.shippingEmail ?? ""}',
+                            style: AppStyles.kFontBlack12w4,
+                          ),
+                          Text(
+                            '${widget.order?.orderAddress?.shippingPhone ?? ""}',
+                            style: AppStyles.kFontBlack12w4,
+                          ),
+                          SizedBox(height: 5.h),
+                          Text(
+                            "Address".tr +
+                                ': ${widget.order?.orderAddress?.shippingAddress ?? ""}',
+                            style: AppStyles.kFontBlack12w4,
+                          ),
+                          Text(
+                            "State".tr +
+                                ': ${widget.order?.orderAddress?.getShippingState?.name ?? ""}',
+                            style: AppStyles.kFontBlack12w4,
+                          ),
+                          Text(
+                            '${widget.order?.orderAddress?.getShippingCity?.name ?? ""}, ${widget.order?.orderAddress?.getShippingCountry?.name ?? ""}',
+                            style: AppStyles.kFontBlack12w4,
+                          ),
+                        ],
                       ),
-                      Text(
-                        '${widget.order?.orderAddress?.getShippingCity?.name ?? ""}, ${widget.order?.orderAddress?.getShippingCountry?.name ?? ""}',
-                        style: AppStyles.kFontBlack12w4,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
 
                 /// PACKAGE
-                Container(
-                  color: Colors.white,
-                  padding:  EdgeInsets.symmetric(horizontal: 20.w),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
                   child: ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
@@ -195,79 +220,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding:  EdgeInsets.only(right: 8.0.w),
-                                    child: Image.asset(
-                                      'assets/images/icon_delivery-parcel.png',
-                                      width: 17.w,
-                                      height: 17.w,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Package'.tr +
-                                              ': ' +
-                                              '${widget.order?.packages?[packageIndex].packageCode}',
-                                          style: AppStyles.kFontBlack14w5,
-                                        ),
-                                        SizedBox(
-                                          height: 8.h,
-                                        ),
-                                        currencyController.vendorType.value ==
-                                            "single"
-                                            ? SizedBox.shrink()
-                                            : Column(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Sold by'.tr +
-                                                  ': ' +
-                                                  '${widget.order?.packages?[packageIndex].seller?.firstName}',
-                                              style: AppStyles
-                                                  .kFontBlack12w4,
-                                            ),
-                                            SizedBox(
-                                              height: 8.h,
-                                            ),
-                                          ],
-                                        ),
-                                        Text(
-                                          widget.order?.packages?[packageIndex]
-                                              .shippingDate ??
-                                              '',
-                                          style: AppStyles.kFontBlack12w4,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  // Container(
-                                  //   child: Text(
-                                  //     deliverStateName(widget.order!.packages![packageIndex]),
-                                  //     textAlign: TextAlign.center,
-                                  //     style: AppStyles.kFontDarkBlue12w5
-                                  //         .copyWith(
-                                  //             fontStyle: FontStyle.italic),
-                                  //   ),
-                                  // ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 15.h,
-                              ),
+
                               ListView.builder(
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
@@ -281,14 +234,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     if (widget.order?.packages?[packageIndex]
                                         .products?[productIndex].type ==
                                         ProductType.GIFT_CARD) {
-                                      return Container(
+                                      return Card(
+                                        elevation: 1,
                                         margin:
-                                        EdgeInsets.only(left: 20.w, top: 5.h),
-                                        decoration: BoxDecoration(
-                                          color: AppStyles.appBackgroundColor,
+                                        EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
+                                        shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(5.r)),
+                                              Radius.circular(10.r)),
                                         ),
+                                        color: Colors.white,
                                         child: Column(
                                           children: [
                                             Padding(
@@ -395,14 +349,15 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                 0,
                                           ));
                                         },
-                                        child: Container(
+                                        child: Card(
+                                          elevation: 1,
                                           margin:
-                                          EdgeInsets.only(left: 20.w, top: 5.h),
-                                          decoration: BoxDecoration(
-                                            color: AppStyles.appBackgroundColor,
+                                          EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
+                                          shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.all(
-                                                Radius.circular(5.r)),
+                                                Radius.circular(10.r)),
                                           ),
+                                          color: Colors.white,
                                           child: Column(
                                             children: [
                                               Padding(
@@ -593,222 +548,78 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     }
                                   }),
 
-                              ///Order cancellation
-
+                              ///Action Buttons Bar
                               Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 20.w, vertical: 15.h),
-                                  child: Obx(() {
-                                    if (nowOrderIsCanceled.value) {
-                                      return Container(
-                                        alignment: Alignment.center,
-                                        width: 122.w,
-                                        height: 32.h,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(5.r),
-                                            ),
-                                            border: Border.all(
-                                                color:
-                                                AppStyles.greyColorDark)),
-                                        child: Text('Order Cancelled'.tr,
-                                            textAlign: TextAlign.center,
-                                            style: AppStyles.kFontGrey14w5),
-                                      );
-                                    } else if (widget.order?.isConfirmed == 1 &&
-                                        widget.order?.isCompleted == 0) {
-                                      return Container(
-                                        alignment: Alignment.center,
-                                        width: 122.w,
-                                        height: 32.h,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(5.r),
-                                            ),
-                                            border: Border.all(
-                                                color:
-                                                AppStyles.greyColorDark)),
-                                        child: Text('Confirmed'.tr,
-                                            textAlign: TextAlign.center,
-                                            style: AppStyles.kFontGrey14w5),
-                                      );
-                                    } else if (widget.order?.isConfirmed == 1 &&
-                                        widget.order?.isCompleted == 1) {
-                                      return Container(
-                                        alignment: Alignment.center,
-                                        width: 122.w,
-                                        height: 32.h,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(5.r),
-                                            ),
-                                            border: Border.all(
-                                                color:
-                                                AppStyles.greyColorDark)),
-                                        child: Text('Completed'.tr,
-                                            textAlign: TextAlign.center,
-                                            style: AppStyles.kFontGrey14w5),
-                                      );
-                                    }
-                                    return InkWell(
-                                      onTap: () async {
-                                        log("Before nowOrderIsCanceled ::: ${nowOrderIsCanceled.value}");
-
-                                        var result = await Get.bottomSheet(
-                                          OrderCancelWidget(
-                                            packageId: widget.order
-                                                ?.packages?[packageIndex].id,
-                                            order: widget.order,
-                                          ),
-                                          isScrollControlled: true,
-                                          backgroundColor: Colors.transparent,
-                                          persistent: true,
-                                        );
-                                        if (result == true) {
-                                          nowOrderIsCanceled.value = true;
-                                        }
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        width: 122.w,
-                                        height: 32.h,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(5.r),
-                                            ),
-                                            border: Border.all(
-                                                color:
-                                                AppStyles.greyColorDark)),
-                                        child: Text('Cancel'.tr,
-                                            textAlign: TextAlign.center,
-                                            style: AppStyles.kFontGrey14w5),
-                                      ),
-                                    );
-                                  })),
-
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 25.0.w),
+                                padding: EdgeInsets.only(top: 15.h, bottom: 5.h),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    SizedBox(
-                                      width: 10.w,
-                                    ),
-                                    widget.order?.packages?[packageIndex]
-                                        .isReviewed ==
-                                        0
-                                        ? checkReview(widget
-                                        .order!.packages![packageIndex])
-                                        ? InkWell(
-                                      onTap: () {
-                                        Get.to(() => WriteReview(
-                                          package: widget.order!
-                                              .packages![
-                                          packageIndex],
-                                          sellerID: widget
-                                              .order!
-                                              .packages![
-                                          packageIndex]
-                                              .sellerId,
-                                          orderID: widget
-                                              .order
-                                              ?.packages?[
-                                          packageIndex]
-                                              .orderId,
-                                          packageID: widget
-                                              .order
-                                              ?.packages?[
-                                          packageIndex]
-                                              .id,
-                                        ));
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        width: 122.w,
-                                        height: 32.h,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.all(
-                                              Radius.circular(5.r),
-                                            ),
-                                            border: Border.all(
-                                                color: AppStyles
-                                                    .pinkColor)),
-                                        child: Text(
-                                          'Write a Review'.tr,
-                                          textAlign: TextAlign.center,
-                                          style:
-                                          AppStyles.kFontPink15w5,
-                                        ),
-                                      ),
-                                    )
-                                        : Container()
-                                        : Container(),
-                                  ],
-                                ),
-                              ),
+                                    /// Left side: Open Dispute / Cancel / Review
+                                    Row(
+                                      children: [
+                                        // Open Dispute Button (if confirmed)
+                                        widget.order?.isConfirmed == 1
+                                            ? _buildActionButton('Open Dispute'.tr, () async {
+                                          List<OrderProductElement> products = [];
+                                          widget.order?.packages?.forEach((element) {
+                                            products.addAll(element.products!);
+                                          });
+                                          Get.to(() => OrderToReturn(
+                                            products: products,
+                                            orderId: widget.order?.id,
+                                          ));
+                                        }, color: AppStyles.pinkColor)
+                                            : Container(),
+                                        SizedBox(width: 8.w),
+                                        
+                                        // Cancellation / Status Chip
+                                        Obx(() {
+                                          if (nowOrderIsCanceled.value) {
+                                            return _buildStatusChip('Order Cancelled'.tr, AppStyles.greyColorDark);
+                                          } else if (widget.order?.isConfirmed == 1 && widget.order?.isCompleted == 0) {
+                                            return _buildStatusChip('Confirmed'.tr, AppStyles.greyColorDark);
+                                          } else if (widget.order?.isConfirmed == 1 && widget.order?.isCompleted == 1) {
+                                            return _buildStatusChip('Completed'.tr, AppStyles.greyColorDark);
+                                          }
+                                          return _buildActionButton('Cancel'.tr, () async {
+                                            var result = await Get.bottomSheet(
+                                              OrderCancelWidget(
+                                                packageId: widget.order?.packages?[packageIndex].id,
+                                                order: widget.order,
+                                              ),
+                                              isScrollControlled: true,
+                                              backgroundColor: Colors.transparent,
+                                              persistent: true,
+                                            );
+                                            if (result == true) {
+                                              nowOrderIsCanceled.value = true;
+                                            }
+                                          });
+                                        }),
+                                        SizedBox(width: 8.w),
 
-                              ///Track
-                              Container(
-                                height: 30.h,
-                                margin: EdgeInsets.only(top: 10.h),
-                                alignment: Alignment.center,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 20.w,
+                                        // Write Review Button
+                                        widget.order?.packages?[packageIndex].isReviewed == 0 && checkReview(widget.order!.packages![packageIndex])
+                                            ? _buildActionButton('Write Review'.tr, () {
+                                          Get.to(() => WriteReview(
+                                            package: widget.order!.packages![packageIndex],
+                                            sellerID: widget.order!.packages![packageIndex].sellerId,
+                                            orderID: widget.order?.packages?[packageIndex].orderId,
+                                            packageID: widget.order?.packages?[packageIndex].id,
+                                          ));
+                                        }, color: AppStyles.pinkColor)
+                                            : Container(),
+                                      ],
                                     ),
-                                    InkWell(
-                                      onTap: () {
-                                        Get.to(() => OrderTrack(
-                                          order: widget.order!,
-                                          package: widget.order!
-                                              .packages![packageIndex],
-                                          processes:
-                                          DeliveryProcess.delivery,
-                                        ));
-                                      },
-                                      child: Container(
-                                        height: 30.h,
-                                        child: Row(
-                                          children: [
-                                            Image.asset(
-                                              'assets/images/icon_delivery-parcel_pink.png',
-                                              width: 18.w,
-                                            ),
-                                            SizedBox(
-                                              width: 5.w,
-                                            ),
-                                            Text('Track your order'.tr,
-                                                textAlign: TextAlign.center,
-                                                style: AppStyles.kFontGrey14w5),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    // SizedBox(
-                                    //   width: 10,
-                                    // ),
-                                    // InkWell(
-                                    //   onTap: () {},
-                                    //   child: Row(
-                                    //     children: [
-                                    //       Image.asset(
-                                    //         'assets/images/icon_chat_bot_pink.png',
-                                    //         width: 18,
-                                    //       ),
-                                    //       SizedBox(
-                                    //         width: 5,
-                                    //       ),
-                                    //       Text('Chat now'.tr,
-                                    //           textAlign: TextAlign.center,
-                                    //           style: AppStyles.kFontGrey14w5),
-                                    //     ],
-                                    //   ),
-                                    // ),
+
+                                    /// Right side: Track Order
+                                    _buildActionButton('Track Order'.tr, () {
+                                      Get.to(() => OrderTrack(
+                                        order: widget.order!,
+                                        package: widget.order!.packages![packageIndex],
+                                        processes: DeliveryProcess.delivery,
+                                      ));
+                                    }, color: AppStyles.pinkColor, isFilled: true),
                                   ],
                                 ),
                               ),
@@ -823,16 +634,23 @@ class _OrderDetailsState extends State<OrderDetails> {
                 ),
 
                 ///ORDER DETAILS
-                Container(
-                  color: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 20.0.w, horizontal: 15.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.order?.orderNumber?.capitalizeFirst ?? '',
-                        style: AppStyles.kFontDarkBlue14w5,
-                      ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
+                  child: Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    color: Colors.white,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20.0.w, horizontal: 15.h),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.order?.orderNumber?.capitalizeFirst ?? '',
+                            style: AppStyles.kFontDarkBlue14w5.copyWith(fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
                       SizedBox(
                         height: 5.h,
                       ),
@@ -841,49 +659,26 @@ class _OrderDetailsState extends State<OrderDetails> {
                             ': ${CustomDate().formattedDateTime(widget.order?.createdAt)}',
                         style: AppStyles.kFontGrey12w5,
                       ),
-                      SizedBox(
-                        height: 10.h,
+                        ],
                       ),
-                      widget.order?.isConfirmed == 1
-                          ? InkWell(
-                        onTap: () async {
-                          List<OrderProductElement> products = [];
-
-                          widget.order?.packages?.forEach((element) {
-                            products.addAll(element.products!);
-                          });
-                          Get.to(() => OrderToReturn(
-                            products: products,
-                            orderId: widget.order?.id,
-                          ));
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: 122.w,
-                          height: 32.h,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(5),
-                              ),
-                              border: Border.all(
-                                  color: AppStyles.greyColorDark)),
-                          child: Text('Open Dispute'.tr,
-                              textAlign: TextAlign.center,
-                              style: AppStyles.kFontGrey14w5),
-                        ),
-                      )
-                          : Container(),
-                    ],
+                    ),
                   ),
                 ),
                 SizedBox(
                   height: 10.h,
                 ),
-                Container(
-                  color: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 10.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
+                  child: Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    color: Colors.white,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 15.h),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 15.w),
@@ -959,7 +754,11 @@ class _OrderDetailsState extends State<OrderDetails> {
                         ),
                       ),
                       SizedBox(
-                        height: 10.h,
+                        height: 5.h,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Divider(color: Colors.grey.shade300, thickness: 1),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
@@ -1007,7 +806,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                           ],
                         ),
                       ),
-                    ],
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -1094,5 +895,42 @@ class _OrderDetailsState extends State<OrderDetails> {
     } else if (order.paymentType == 14) {
       return 'FlutterWave';
     }
+  }
+
+  Widget _buildActionButton(String label, VoidCallback onTap, {Color? color, bool isFilled = false}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.all(Radius.circular(8.r)),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: isFilled ? (color ?? AppStyles.pinkColor) : Colors.transparent,
+          borderRadius: BorderRadius.all(Radius.circular(8.r)),
+          border: isFilled ? null : Border.all(color: color ?? AppStyles.greyColorDark),
+        ),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          style: isFilled 
+              ? AppStyles.appFontMedium.copyWith(color: Colors.white, fontSize: 13.sp)
+              : AppStyles.kFontGrey14w5.copyWith(color: color, fontSize: 13.sp),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusChip(String label, Color color) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.all(Radius.circular(8.r)),
+        border: Border.all(color: color.withOpacity(0.5)),
+      ),
+      child: Text(
+        label,
+        style: AppStyles.kFontGrey14w5.copyWith(color: color, fontSize: 12.sp),
+      ),
+    );
   }
 }

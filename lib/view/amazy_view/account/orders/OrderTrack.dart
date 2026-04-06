@@ -70,35 +70,44 @@ class _OrderTrackState extends State<OrderTrack> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    PinkButtonWidget(
-                      btnText:
-                          "${widget.package?.shippingDate?.replaceAll("Est. Arrival Date: ", "")}",
-                      height: 40,
+                    Expanded(
+                      flex: 6,
+                      child: PinkButtonWidget(
+                        btnText:
+                            "${widget.package?.shippingDate?.replaceAll("Est. Arrival Date: ", "")}",
+                        height: 40,
+                      ),
                     ),
                     SizedBox(
-                      width: 10,
+                      width: 15,
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          "Amount".tr + ":",
-                          style: AppStyles.appFontBook.copyWith(
-                            fontSize: 14,
-                            color: AppStyles.pinkColor,
+                    Flexible(
+                      flex: 4,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            "Amount".tr + ":",
+                            style: AppStyles.appFontBook.copyWith(
+                              fontSize: 14,
+                              color: AppStyles.pinkColor,
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          "${(widget.order?.grandTotal??0) * _settingsController.conversionRate.value} ${_settingsController.appCurrency.value}",
-                          style: AppStyles.appFontBold.copyWith(
-                            fontSize: 17,
+                          SizedBox(
+                            height: 2,
                           ),
-                        ),
-                      ],
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              "${(widget.order?.grandTotal??0) * _settingsController.conversionRate.value} ${_settingsController.appCurrency.value}",
+                              style: AppStyles.appFontBold.copyWith(
+                                fontSize: 17,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -113,46 +122,47 @@ class _OrderTrackState extends State<OrderTrack> {
                   ),
                 ),
                 SizedBox(
-                  height: 5,
+                  height: 12,
                 ),
                 Row(
                   children: [
-                    Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                              text: '${"Order ID".tr}:',
-                              style: AppStyles.appFontMedium
-                                  .copyWith(fontSize: 16)),
-                          TextSpan(
-                            text: ' ${widget.order!.orderNumber}',
-                            style: AppStyles.appFontMedium.copyWith(
-                              fontSize: 16,
-                              color: AppStyles.pinkColor,
-                            ),
-                          ),
-                        ],
-                      ),
+                    Text(
+                      '${"Track Code".tr}:',
+                      style: AppStyles.appFontMedium.copyWith(fontSize: 14),
                     ),
-                    SizedBox(
-                      width: 5,
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '${widget.package?.packageCode ?? ""}',
+                        overflow: TextOverflow.ellipsis,
+                        style: AppStyles.appFontMedium.copyWith(
+                          fontSize: 14,
+                          color: AppStyles.pinkColor,
+                        ),
+                      ),
                     ),
                     GestureDetector(
                       onTap: () {
-                        FlutterClipboard.copy('${widget.package?.packageCode??''}')
-                            .then((value) =>
-                                print('copied: ${widget.package?.packageCode??''}'));
+                        FlutterClipboard.copy('${widget.package?.packageCode ?? ''}').then((value) {
+                          Get.snackbar("Success".tr, "Copied to clipboard".tr,
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: AppStyles.pinkColor,
+                              colorText: Colors.white);
+                        });
                       },
-                      child: Image.asset(
-                        "assets/images/copy.png",
-                        width: 20,
-                        height: 20,
+                      child: Icon(
+                        Icons.copy,
+                        size: 20,
+                        color: AppStyles.greyColorAlt,
                       ),
                     ),
                   ],
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 15,
+                ),
+                SizedBox(
+                  height: 15,
                 ),
                 // ** Shipping Address //
                 Column(
@@ -162,7 +172,7 @@ class _OrderTrackState extends State<OrderTrack> {
                     Text(
                       "Shipping Address".tr,
                       style: AppStyles.appFontMedium.copyWith(
-                        fontSize: 16,
+                        fontSize: 15,
                       ),
                     ),
                     SizedBox(
@@ -171,7 +181,7 @@ class _OrderTrackState extends State<OrderTrack> {
                     Text(
                       '${widget.order?.shippingAddress?.name ?? ""}',
                       style: AppStyles.appFontBook.copyWith(
-                        fontSize: 14,
+                        fontSize: 13,
                         color: AppStyles.greyColorAlt,
                       ),
                     ),
@@ -181,7 +191,7 @@ class _OrderTrackState extends State<OrderTrack> {
                     Text(
                       '${widget.order?.shippingAddress?.email ?? ""}',
                       style: AppStyles.appFontBook.copyWith(
-                        fontSize: 14,
+                        fontSize: 13,
                         color: AppStyles.greyColorAlt,
                       ),
                     ),
@@ -191,7 +201,7 @@ class _OrderTrackState extends State<OrderTrack> {
                     Text(
                       '${widget.order?.shippingAddress?.phone ?? ""}',
                       style: AppStyles.appFontBook.copyWith(
-                        fontSize: 14,
+                        fontSize: 13,
                         color: AppStyles.greyColorAlt,
                       ),
                     ),
@@ -201,7 +211,7 @@ class _OrderTrackState extends State<OrderTrack> {
                     Text(
                       '${widget.order?.shippingAddress?.address ?? ""}',
                       style: AppStyles.appFontBook.copyWith(
-                        fontSize: 14,
+                        fontSize: 13,
                         color: AppStyles.greyColorAlt,
                       ),
                     ),
@@ -310,6 +320,8 @@ class _OrderTrackState extends State<OrderTrack> {
                                     Text(
                                       getDeliveryStateName(
                                           widget.package!.processes!),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                       style: AppStyles.appFontMedium.copyWith(
                                         color: Color(0xff5C7185),
                                       ),
@@ -319,6 +331,8 @@ class _OrderTrackState extends State<OrderTrack> {
                                               .note ??
                                           getDeliveryStateName(
                                               widget.package!.processes!),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
                                       style: AppStyles.appFontBook.copyWith(
                                         fontSize: 12,
                                         color: Color(0xff969599),
