@@ -140,9 +140,11 @@ class _AddAddressState extends State<AddAddress> {
     try {
       allCountryNew = await getCountries();
 
-      if (allCountryNew!.countries != null) {
-        selectedCountryName = allCountryNew!.countries?[0].name;
-        selectedCountryId = allCountryNew!.countries?[0].id;
+      if (allCountryNew!.countries != null && allCountryNew!.countries!.isNotEmpty) {
+        int countryIndex = allCountryNew!.countries?.indexWhere((element) => element.name?.toLowerCase() == 'india') ?? -1;
+        if (countryIndex == -1) countryIndex = 0;
+        selectedCountryName = allCountryNew!.countries?[countryIndex].name;
+        selectedCountryId = allCountryNew!.countries?[countryIndex].id;
       }
 
       setState(() {
@@ -151,18 +153,25 @@ class _AddAddressState extends State<AddAddress> {
 
       allStatesNew = await getStates(selectedCountryId);
 
-      if (allStatesNew!.states != null) {
-        selectedStateName = allStatesNew!.states?[0].name;
-        selectedStateId = allStatesNew!.states?[0].id;
+      if (allStatesNew!.states != null && allStatesNew!.states!.isNotEmpty) {
+        int stateIndex = allStatesNew!.states?.indexWhere((element) => element.name?.toLowerCase() == 'karnataka') ?? -1;
+        if (stateIndex == -1) stateIndex = 0;
+        selectedStateName = allStatesNew!.states?[stateIndex].name;
+        selectedStateId = allStatesNew!.states?[stateIndex].id;
       }
       setState(() {
         loadingAllStates = false;
       });
 
       allCitiesNew = await getCities(selectedStateId); //
-      if (allCountryNew!.countries != null) {
-        selectedCityName = allCitiesNew!.cities?[0].name;
-        selectedCityId = allCitiesNew!.cities?[0].id;
+      if (allCitiesNew!.cities != null && allCitiesNew!.cities!.isNotEmpty) {
+        int cityIndex = allCitiesNew!.cities?.indexWhere((element) {
+          String? name = element.name?.toLowerCase();
+          return name == 'bengaluru' || name == 'bangalore' || name == 'bengalore';
+        }) ?? -1;
+        if (cityIndex == -1) cityIndex = 0;
+        selectedCityName = allCitiesNew!.cities?[cityIndex].name;
+        selectedCityId = allCitiesNew!.cities?[cityIndex].id;
       }
       setState(() {
         loadingAllCities = false;
@@ -179,7 +188,7 @@ class _AddAddressState extends State<AddAddress> {
     return Scaffold(
       backgroundColor: AppStyles.appBackgroundColor,
       appBar: AppBarWidget(
-        title: 'Add Address'.tr,
+        title: 'Add Address ddded'.tr,
         showCart: false,
       ),
       body: Padding(
