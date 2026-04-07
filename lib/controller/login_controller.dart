@@ -74,17 +74,13 @@ class LoginController extends GetxController {
     //   print('Token NOT ${checkToken()}');
     // }
     if (token.isNotEmpty) {
-      print("Logged in");
-      // Add a small delay to allow any pending UI transitions/dialog closures to finish
-      // before triggering the reactive root switch in main.dart
-      Future.delayed(const Duration(milliseconds: 200), () {
-        loggedIn.value = true;
-        update();
-      });
-      await getProfileData();
+      print("Logged in with token: $token");
+      loggedIn.value = true;
+      update();
+      getProfileData();
       return true;
     } else {
-      print("Login Fail");
+      print("No token found");
       loggedIn.value = false;
       update();
       return false;

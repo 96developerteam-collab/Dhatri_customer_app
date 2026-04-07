@@ -24,6 +24,7 @@ import 'AppConfig/language/app_localizations.dart';
 import 'AppConfig/language/language_controller.dart';
 import 'AppConfig/language/localization_initializer.dart';
 import 'controller/cart_controller.dart';
+import 'controller/app_config_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,8 +34,9 @@ Future<void> main() async {
   await Stripe.instance.applySettings();
   //await Firebase.initializeApp();
 
-  final CartController controller = Get.put(CartController());
-  final LoginController loginController = Get.put(LoginController());
+  await LocalizationInitializer.init();
+  await Hive.initFlutter();
+
   TabbySDK().setup(
     withApiKey:
         'pk_test_ec208bef-3e27-45aa-a6b5-1807d238e950', // Put here your Api key
@@ -50,8 +52,9 @@ Future<void> main() async {
     inAppPurchaseController.initialize();
   }
 
-  await LocalizationInitializer.init();
-  await Hive.initFlutter();
+  Get.put(AppConfigController());
+  Get.put(CartController());
+  Get.put(LoginController());
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: AppStyles.lightBlueColor,
@@ -79,6 +82,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final AppConfigController configController = Get.put(AppConfigController());
     try {
       return ScreenUtilInit(
         designSize: const Size(375, 812),
@@ -92,7 +96,7 @@ class _MyAppState extends State<MyApp> {
                   isRtl.value ? TextDirection.rtl : TextDirection.ltr,
               translations: LanguageController(),
               fallbackLocale: Locale(AppLocalizations.getLanguageCode()),
-              title: AppConfig.appName,
+              title: configController.appName.value,
               initialBinding: HomeBindings(),
               // getPages: routes,
               defaultTransition: Transition.fadeIn,
@@ -117,9 +121,9 @@ class _MyAppState extends State<MyApp> {
               home: Obx(() {
                 final LoginController loginController = Get.find<LoginController>();
                 if (loginController.loggedIn.value) {
-                  return AppConfig.isAmazCartTheme ? amazcart.MainNavigation(navIndex: 0) : amazy.MainNavigation();
+                  return configController.isAmazCartTheme.value ? amazcart.MainNavigation(navIndex: 0) : amazy.MainNavigation();
                 } else {
-                  return AppConfig.isAmazCartTheme ? amazcartLogin.LoginPage() : amazyLogin.LoginPage();
+                  return configController.isAmazCartTheme.value ? amazcartLogin.LoginPage() : amazyLogin.LoginPage();
                 }
               }),
             )),
