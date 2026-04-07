@@ -210,7 +210,7 @@ class _AccountPageState extends State<AccountPage> {
                                         },
                                         child: _file != null
                                             ? CircleAvatar(
-                                                radius: 70.r,
+                                                radius: 35.w,
                                                 backgroundImage: FileImage(
                                                   _file!,
                                                 ),
@@ -266,58 +266,66 @@ class _AccountPageState extends State<AccountPage> {
                                   SizedBox(
                                     width: 20,
                                   ),
-                                  Obx(
-                                    () => Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '${loginController.profileData.value.storeName ?? loginController.profileData.value.name ?? ""}',
-                                          textAlign: TextAlign.left,
-                                          style: AppStyles.appFontMedium
-                                              .copyWith(
-                                                  fontSize: 18.fontSize,
-                                                  color: Colors.white),
-                                        ),
-                                        Text(
-                                          '${loginController.profileData.value.email ?? ""}',
-                                          textAlign: TextAlign.left,
-                                          style: AppStyles.appFontBook.copyWith(
-                                              fontSize: 14.fontSize,
-                                              color: Colors.white),
-                                        ),
-                                        InkWell(
-                                          onTap: () async {
-                                            await loginController
-                                                .accountController
-                                                .getAccountDetails();
-                                          },
-                                          child: Container(
-                                            height: 25.h,
-                                            // color: Colors.blue,
-                                            alignment: Alignment.center,
-                                            child: loginController
-                                                        .accountController
-                                                        .customerData
-                                                        .value
-                                                        .walletRunningBalance !=
-                                                    null
-                                                ? Text(
-                                                    'Wallet'.tr +
-                                                        ': ${(loginController.accountController.customerData.value.walletRunningBalance! * currencyController.conversionRate.value).toStringAsFixed(2)}${currencyController.appCurrency.value}',
-                                                    textAlign: TextAlign.left,
-                                                    style: AppStyles.appFontBook
-                                                        .copyWith(
-                                                      fontSize: 14.fontSize,
-                                                      color: Colors.white,
-                                                    ),
-                                                  )
-                                                : Container(),
+                                  Expanded(
+                                    child: Obx(
+                                      () => Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '${loginController.profileData.value.storeName ?? loginController.profileData.value.name ?? ""}',
+                                            textAlign: TextAlign.left,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: AppStyles.appFontMedium
+                                                .copyWith(
+                                                    fontSize: 18.fontSize,
+                                                    color: Colors.white),
                                           ),
-                                        ),
-                                      ],
+                                          Text(
+                                            '${loginController.profileData.value.email ?? ""}',
+                                            textAlign: TextAlign.left,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: AppStyles.appFontBook.copyWith(
+                                                fontSize: 14.fontSize,
+                                                color: Colors.white),
+                                          ),
+                                          InkWell(
+                                            onTap: () async {
+                                              await loginController
+                                                  .accountController
+                                                  .getAccountDetails();
+                                            },
+                                            child: Container(
+                                              height: 25.h,
+                                              // color: Colors.blue,
+                                              alignment: Alignment.centerLeft,
+                                              child: loginController
+                                                          .accountController
+                                                          .customerData
+                                                          .value
+                                                          .walletRunningBalance !=
+                                                      null
+                                                  ? Text(
+                                                      'Wallet'.tr +
+                                                          ': ${(loginController.accountController.customerData.value.walletRunningBalance! * currencyController.conversionRate.value).toStringAsFixed(2)}${currencyController.appCurrency.value}',
+                                                      textAlign: TextAlign.left,
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: AppStyles.appFontBook
+                                                          .copyWith(
+                                                        fontSize: 14.fontSize,
+                                                        color: Colors.white,
+                                                      ),
+                                                    )
+                                                  : Container(),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   Expanded(child: Container()),

@@ -237,13 +237,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                 });
                               }
                             },
-                            child: _file != null
-                                ? CircleAvatar(
-                                    radius: 100.w,
-                                    backgroundImage: FileImage(
-                                      _file!,
-                                    ),
-                                  )
+                                child: _file != null
+                                    ? CircleAvatar(
+                                        radius: 50.w,
+                                        backgroundImage: FileImage(
+                                          _file!,
+                                        ),
+                                      )
                                 : CachedNetworkImage(
                                     imageUrl:
                                         '${AppConfig.assetPath}/${loginController.profileData.value.avatar}',
