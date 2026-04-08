@@ -5,7 +5,6 @@ import 'package:amazcart/controller/login_controller.dart';
 import 'package:amazcart/network/logging_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:amazcart/controller/app_config_controller.dart';
 
 class HomeBindings implements Bindings {
   Dio _dio() {
@@ -33,6 +32,5 @@ class HomeBindings implements Bindings {
     Get.lazyPut(() => HomeController());
     Get.lazyPut(() => LoginController());
     Get.lazyPut(() => AddressController());
-    Get.lazyPut(() => AppConfigController());
   }
 }
