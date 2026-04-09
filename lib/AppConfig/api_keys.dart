@@ -17,8 +17,8 @@ final String paypalClientSecret =
 //**RAZORPAY
 ///
 //**:: Change Razor Pay API Key and API Secret for Razor Pay Payment
-final String razorPayKey = 'rzp_test_SVMs64KYzTx3rQ';
-final String razorPaySecret = 'CUkhNHouqw6GLauuCLW5RhJh';
+final String razorPayKey = 'rzp_live_SbGUueyxJ8pTNF';
+final String razorPaySecret = 'lgrF02a2rUU6BWE0k5McoGrF';
 //**:: Change Company Name to show on Payment pages
 final String companyName = "Amazcart";
 

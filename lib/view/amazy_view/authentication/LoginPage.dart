@@ -342,24 +342,24 @@ class LoginPage extends GetView<LoginController> {
                 SizedBox(
                   height: 30,
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Get.to(() => ForgotPasswordPage());
-                  },
-                  child: Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    child: Text(
-                      'Forgot password?'.tr,
-                      style: AppStyles.appFontMedium.copyWith(
-                        fontSize: 16.fontSize,
-                        decoration: TextDecoration.underline,
-                        color: AppStyles.pinkColor,
-                      ),
-                    ),
-                  ),
-                ),
+                // GestureDetector(
+                //   onTap: () {
+                //     Get.to(() => ForgotPasswordPage());
+                //   },
+                //   child: Container(
+                //     alignment: Alignment.center,
+                //     padding: const EdgeInsets.symmetric(
+                //         horizontal: 20, vertical: 10),
+                //     child: Text(
+                //       'Forgot password?'.tr,
+                //       style: AppStyles.appFontMedium.copyWith(
+                //         fontSize: 16.fontSize,
+                //         decoration: TextDecoration.underline,
+                //         color: AppStyles.pinkColor,
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 AppConfig.appleLogin ||
                     AppConfig.googleLogin ||
                     AppConfig.facebookLogin

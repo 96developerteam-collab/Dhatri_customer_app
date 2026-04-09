@@ -411,21 +411,21 @@ class LoginPage extends GetView<LoginController> {
                                 ),
                               ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          print('Forget url: ${URLs.FORGOT_PASSWORD}');
-                          Get.to(() => ForgotPasswordPage());
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 20.w, vertical: 10.h),
-                          child: Text(
-                            'Forgot password?'.tr,
-                            style: AppStyles.kFontWhite14w5,
-                          ),
-                        ),
-                      ),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     print('Forget url: ${URLs.FORGOT_PASSWORD}');
+                      //     Get.to(() => ForgotPasswordPage());
+                      //   },
+                      //   child: Container(
+                      //     alignment: Alignment.center,
+                      //     padding: EdgeInsets.symmetric(
+                      //         horizontal: 20.w, vertical: 10.h),
+                      //     child: Text(
+                      //       'Forgot password?'.tr,
+                      //       style: AppStyles.kFontWhite14w5,
+                      //     ),
+                      //   ),
+                      // ),
                       SizedBox(
                         height: Get.height * 0.03,
                       ),
