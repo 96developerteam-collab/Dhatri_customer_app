@@ -67,20 +67,23 @@ class LoginController extends GetxController {
 
   Future<bool> checkToken() async {
     String token = userToken.read(tokenKey) ?? '';
-    // await userToken.erase();
-    // if (token.isNotEmpty) {
-    //   print('Token OK ${checkToken()}');
-    // } else {
-    //   print('Token NOT ${checkToken()}');
-    // }
+
+    // Fallback: if GetStorage lost the token, try recovering from SharedPreferences
+    if (token.isEmpty) {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String spToken = preferences.getString(tokenKey) ?? '';
+      if (spToken.isNotEmpty) {
+        // Re-sync token back to GetStorage
+        await userToken.write(tokenKey, spToken);
+        token = spToken;
+        print("Token recovered from SharedPreferences");
+      }
+    }
+
     if (token.isNotEmpty) {
       print("Logged in");
-      // Add a small delay to allow any pending UI transitions/dialog closures to finish
-      // before triggering the reactive root switch in main.dart
-      Future.delayed(const Duration(milliseconds: 200), () {
-        loggedIn.value = true;
-        update();
-      });
+      loggedIn.value = true;
+      update();
       await getProfileData();
       return true;
     } else {

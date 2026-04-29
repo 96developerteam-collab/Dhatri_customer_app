@@ -33,6 +33,10 @@ Future<void> main() async {
   await Stripe.instance.applySettings();
   //await Firebase.initializeApp();
 
+  // Initialize storage FIRST so token persistence works on cold start
+  await LocalizationInitializer.init();
+  await Hive.initFlutter();
+
   final CartController controller = Get.put(CartController());
   final LoginController loginController = Get.put(LoginController());
   TabbySDK().setup(
@@ -49,9 +53,6 @@ Future<void> main() async {
     var inAppPurchaseController = Get.put(InAppPurchaseController());
     inAppPurchaseController.initialize();
   }
-
-  await LocalizationInitializer.init();
-  await Hive.initFlutter();
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: AppStyles.lightBlueColor,

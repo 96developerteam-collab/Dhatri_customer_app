@@ -13,7 +13,7 @@ class AuthDatabase {
 
   static AuthDatabase get instance => _instance ?? AuthDatabase._();
 
-  void init() async {
+  Future<void> init() async {
     await GetStorage.init(AuthDBKeys.dbName);
     generateDeviceUniqueId();
   }

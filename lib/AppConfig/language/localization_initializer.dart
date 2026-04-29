@@ -13,7 +13,7 @@ class LocalizationInitializer{
 
     // await GetStorage.init(AuthDBKeys.dbName);
 
-    AuthDatabase.instance.init();
+    await AuthDatabase.instance.init();
 
     final languageController = LanguageController();
     Get.put(languageController);
