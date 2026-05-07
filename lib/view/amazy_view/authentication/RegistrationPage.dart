@@ -164,6 +164,14 @@ class RegistrationPage extends GetView<LoginController> {
                     validator: (value) => value?.trim().isEmpty ?? true ? 'Please enter store name'.tr : null,
                   ),
 
+                  // GST Number
+                  _buildTextField(
+                    controller: _accountController.gstNumber,
+                    hint: 'GST Number'.tr + " *",
+                    icon: Icons.confirmation_number,
+                    validator: (value) => value?.trim().isEmpty ?? true ? 'Please enter GST number'.tr : null,
+                  ),
+
                   // Store Documents (PDF Picker)
                   _buildFilePickerField(
                     label: 'Store Documents (GST, MSME, STORE DOCS, COMPANY PAN)'.tr + " *",
@@ -236,6 +244,7 @@ class RegistrationPage extends GetView<LoginController> {
                                   "login": _accountController.registerEmail.text.trim(),
                                   "referral_code": _accountController.referralCode.text.trim(),
                                   "store_name": _accountController.storeName.text.trim(),
+                                  "gst_number": _accountController.gstNumber.text.trim(),
                                   "warehouse_id": _accountController.selectedMerchant.value?.sellerAccount?.userId,
                                   "password": _accountController.registerPassword.text,
                                   "password_confirmation": _accountController.registerConfirmPassword.text,

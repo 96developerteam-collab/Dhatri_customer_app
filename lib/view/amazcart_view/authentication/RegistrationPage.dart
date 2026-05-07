@@ -30,8 +30,7 @@ class RegistrationPage extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(() {
-        return Container(
+      body: Container(
           height: Get.height,
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -444,6 +443,50 @@ class RegistrationPage extends GetView<LoginController> {
                       },
                     ),
                   ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                    child: TextFormField(
+                      controller: _accountController.gstNumber,
+                      decoration: InputDecoration(
+                        hintText: 'GST Number'.tr + " *",
+                        hintStyle: AppStyles.kFontWhite14w5,
+                        prefixIcon: Icon(Icons.confirmation_number, color: Colors.white, size: 20.w),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: AppStyles.textFieldFillColor,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: AppStyles.textFieldFillColor,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        errorStyle: AppStyles.kFontWhite12w5.copyWith(
+                          color: Colors.white,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: AppStyles.textFieldFillColor,
+                          ),
+                        ),
+                      ),
+                      keyboardType: TextInputType.text,
+                      style: AppStyles.kFontWhite14w5
+                          .copyWith(fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      validator: (value) {
+                        if (value?.isEmpty ?? true) {
+                          return 'Please enter GST number'.tr;
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
                   Obx(() => Container(
                     padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                     child: InkWell(
@@ -529,15 +572,17 @@ class RegistrationPage extends GetView<LoginController> {
                       ),
                     ),
                   )),
-                  AnimatedSwitcher(
+                  Obx(() => AnimatedSwitcher(
                     duration: Duration(milliseconds: 500),
                     child: _accountController.isLoading.value
                         ? Center(
+                            key: ValueKey('loading'),
                             child: Container(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 20.w, vertical: 20.h),
                                 child: CupertinoActivityIndicator()))
                         : Container(
+                            key: ValueKey('registration_button'),
                             padding: EdgeInsets.symmetric(
                                 horizontal: 20.w, vertical: 10.h),
                             child: InkWell(
@@ -547,15 +592,14 @@ class RegistrationPage extends GetView<LoginController> {
                                     "first_name": controller.firstName.text,
                                     "last_name": controller.lastName.text,
                                     "login": controller.registerEmail.text,
-                                    "referral_code":
-                                        controller.referralCode.text,
+                                    "referral_code": controller.referralCode.text,
                                     "store_name": controller.storeName.text,
-                                    "password":
-                                        controller.registerPassword.text,
+                                    "gst_number": controller.gstNumber.text,
+                                    "password": controller.registerPassword.text,
                                     "password_confirmation":
                                         controller.registerConfirmPassword.text,
                                     "user_type": "customer",
-                                    "device_token" : AuthDatabase.instance.getDeviceUniqueId()
+                                    "device_token": AuthDatabase.instance.getDeviceUniqueId()
                                   };
 
                                   if (controller.pickedDocument.value == null) {
@@ -569,7 +613,6 @@ class RegistrationPage extends GetView<LoginController> {
 
                                   log("_settingsController.otpOnCustomerRegistration.value ::: ${_settingsController.otpOnCustomerRegistration.value}");
                                   if (_settingsController.otpOnCustomerRegistration.value) {
-
                                     Map data = {
                                       "type": "otp_on_customer_registration",
                                       "login": controller.registerEmail.text,
@@ -580,25 +623,19 @@ class RegistrationPage extends GetView<LoginController> {
 
                                     _accountController.isLoading.value = true;
 
-                                    await otpController.generateOtp(data).then((value) {
-                                      if (value == true) {
-                                        _accountController.isLoading.value = false;
-                                        Get.to(() => OtpVerificationPage(
-                                              data: data,
-                                              onSuccess: (result) async {
-                                                if (result == true) {
-                                                  log("After OTP completed :::::: ");
-                                                  await _accountController.registerUser(registrationData);
-                                                }
-                                              },
-                                            ));
-                                      } else {
-                                        _accountController.isLoading.value = false;
-                                        SnackBars().snackBarWarning(value.toString());
+                                    var otpResult = await otpController.generateOtp(data);
+                                    _accountController.isLoading.value = false;
+
+                                    if (otpResult == true) {
+                                      var verified = await Get.to(() => OtpVerificationPage(data: data));
+                                      if (verified == true) {
+                                        log("After OTP completed :::::: ");
+                                        await _accountController.registerUser(registrationData);
                                       }
-                                    });
-                                  }
-                                  else {
+                                    } else {
+                                      SnackBars().snackBarWarning(otpResult.toString());
+                                    }
+                                  } else {
                                     await _accountController.registerUser(registrationData);
                                   }
                                 }
@@ -609,8 +646,7 @@ class RegistrationPage extends GetView<LoginController> {
                                 height: 50.h,
                                 decoration: BoxDecoration(
                                     color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5))),
+                                    borderRadius: BorderRadius.all(Radius.circular(5))),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text('Sign Up'.tr,
@@ -620,7 +656,7 @@ class RegistrationPage extends GetView<LoginController> {
                               ),
                             ),
                           ),
-                  ),
+                  )),,
                   // GestureDetector(
                   //   onTap: () => Get.to(() => ForgotPasswordPage()),
                   //   child: Container(
@@ -640,8 +676,8 @@ class RegistrationPage extends GetView<LoginController> {
               ),
             ),
           ),
-        );
-      }),
+        ),
+      ),
     );
   }
 }

@@ -52,6 +52,7 @@ class LoginController extends GetxController {
   final TextEditingController registerConfirmPassword = TextEditingController();
   final TextEditingController referralCode = TextEditingController();
   final TextEditingController storeName = TextEditingController();
+  final TextEditingController gstNumber = TextEditingController();
 
   Rx<File?> pickedDocument = Rx<File?>(null);
   Rx<File?> pickedShopImage = Rx<File?>(null);
@@ -242,6 +243,7 @@ class LoginController extends GetxController {
             registerConfirmPassword.clear();
             referralCode.clear();
             storeName.clear();
+            gstNumber.clear();
             pickedDocument.value = null;
             pickedShopImage.value = null;
           }

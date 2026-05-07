@@ -238,7 +238,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                   bool isCorrectOTP = _otpController.resultChecker(int.parse(enteredOtp));
 
                   if (isCorrectOTP) {
-                    Get.back(result: widget.onSuccess!(true));
+                    Get.back(result: true);
                   } else {
                     SnackBars().snackBarWarning(
                       "OTP does not match".tr,

@@ -1,0 +1,1776 @@
+{
+  "info": {
+    "name": "Amazkart API Collection",
+    "description": "Module-based Postman collection for Amazkart App.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth & Profile",
+      "item": [
+        {
+          "name": "LOGIN",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "SOCIAL_LOGIN",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/social-login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "social-login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "REGISTER",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "LOGOUT",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "logout"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET_USER",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/get-user",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "get-user"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ADDRESS_LIST",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/address-list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "address-list"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ADD_ADDRESS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/address-store",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "address-store"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ADDRESS_SET_DEFAULT_BILLING",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/default-billing-address",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "default-billing-address"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ADDRESS_SET_DEFAULT_SHIPPING",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/default-shipping-address",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "default-shipping-address"
+              ]
+            }
+          }
+        },
+        {
+          "name": "DELETE_ADDRESS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/address-delete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "address-delete"
+              ]
+            }
+          }
+        },
+        {
+          "name": "UPDATE_USER_PROFILE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/update-information",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "update-information"
+              ]
+            }
+          }
+        },
+        {
+          "name": "UPDATE_PROFILE_PHOTO",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/update-photo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "update-photo"
+              ]
+            }
+          }
+        },
+        {
+          "name": "CHANGE_PASSWORD",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "change-password"
+              ]
+            }
+          }
+        },
+        {
+          "name": "USER_DELETE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/customer-delete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customer-delete"
+              ]
+            }
+          }
+        },
+        {
+          "name": "CUSTOMER_GET_DATA",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/get-customer-data",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "get-customer-data"
+              ]
+            }
+          }
+        },
+        {
+          "name": "OTP_SEND",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/general-setting/send-otp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "general-setting",
+                "send-otp"
+              ]
+            }
+          }
+        },
+        {
+          "name": "FORGOT_PASSWORD",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "forgot-password"
+              ]
+            }
+          }
+        },
+        {
+          "name": "MERCHANT_LIST",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/customer/merchants",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customer",
+                "merchants"
+              ]
+            }
+          }
+        },
+        {
+          "name": "editAddress",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/address-update/:addressId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "address-update",
+                ":addressId"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products & Categories",
+      "item": [
+        {
+          "name": "ALL_PRODUCTS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/seller/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "seller",
+                "products"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PRODUCT_PRICE_SKU_WISE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/seller/product/get-sku-wise-price",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "seller",
+                "product",
+                "get-sku-wise-price"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ALL_CATEGORY",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/product/category",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "product",
+                "category"
+              ]
+            }
+          }
+        },
+        {
+          "name": "TOP_CATEGORY",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/product/category/filter/top",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "product",
+                "category",
+                "filter",
+                "top"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ALL_RECOMMENDED",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/seller/product/recomanded-product",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "seller",
+                "product",
+                "recomanded-product"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ALL_TOP_PICKS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/seller/product/top-picks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "seller",
+                "product",
+                "top-picks"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ALL_BRAND",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/product/brand",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "product",
+                "brand"
+              ]
+            }
+          }
+        },
+        {
+          "name": "SINGLE_TAG_PRODUCTS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/product/tag",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "product",
+                "tag"
+              ]
+            }
+          }
+        },
+        {
+          "name": "SORT_PRODUCTS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/seller/product/sort-before-filter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "seller",
+                "product",
+                "sort-before-filter"
+              ]
+            }
+          }
+        },
+        {
+          "name": "SORT_ALL_PRODUCTS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/seller/product/filter/fetch-data",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "seller",
+                "product",
+                "filter",
+                "fetch-data"
+              ]
+            }
+          }
+        },
+        {
+          "name": "FILTER_ALL_PRODUCTS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/seller/product/filter/filter-product-page-by-type",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "seller",
+                "product",
+                "filter",
+                "filter-product-page-by-type"
+              ]
+            }
+          }
+        },
+        {
+          "name": "FILTER_SELLER_PRODUCTS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/seller/filter-by-type",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "seller",
+                "filter-by-type"
+              ]
+            }
+          }
+        },
+        {
+          "name": "LIVE_SEARCH",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/live-search",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "live-search"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart & Checkout",
+      "item": [
+        {
+          "name": "CART",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/cart",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart"
+              ]
+            }
+          }
+        },
+        {
+          "name": "CART_QUANTITY_UPDATE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/update-qty",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "update-qty"
+              ]
+            }
+          }
+        },
+        {
+          "name": "CART_SELECT_UNSELECT_ALL",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/select-all",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "select-all"
+              ]
+            }
+          }
+        },
+        {
+          "name": "CART_SELECT_UNSELECT_SELLER_WISE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/select-seller-item",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "select-seller-item"
+              ]
+            }
+          }
+        },
+        {
+          "name": "CART_SELECT_UNSELECT_SINGLE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/select-item",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "select-item"
+              ]
+            }
+          }
+        },
+        {
+          "name": "CART_REMOVE_ALL",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/remove-all",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "remove-all"
+              ]
+            }
+          }
+        },
+        {
+          "name": "CART_REMOVE_CART_ITEM",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/remove",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "remove"
+              ]
+            }
+          }
+        },
+        {
+          "name": "CART_UPDATE_SHIPPING",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/update-shipping-method",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "update-shipping-method"
+              ]
+            }
+          }
+        },
+        {
+          "name": "CHECKOUT",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/checkout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checkout"
+              ]
+            }
+          }
+        },
+        {
+          "name": "TABBYURL",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/tabby-checkout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tabby-checkout"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ORDER_STORE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-store",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-store"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ORDER_PAYMENT_STORE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-payment-info-store",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-payment-info-store"
+              ]
+            }
+          }
+        },
+        {
+          "name": "CHECK_PRICE_UPDATE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/checkout/check-price-update",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checkout",
+                "check-price-update"
+              ]
+            }
+          }
+        },
+        {
+          "name": "APPLY_COUPON",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/checkout/coupon-apply",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checkout",
+                "coupon-apply"
+              ]
+            }
+          }
+        },
+        {
+          "name": "inAppPurchaseAddToCart",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/in-app-cart-store",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "in-app-cart-store"
+              ]
+            }
+          }
+        },
+        {
+          "name": "createInAppPurchaseOrder",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-store/in-app-purchase",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-store",
+                "in-app-purchase"
+              ]
+            }
+          }
+        },
+        {
+          "name": "deleteInAppPurchaseCart",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/in-app-cart-delete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "in-app-cart-delete"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders & Reviews",
+      "item": [
+        {
+          "name": "ALL_ORDER_LIST",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-list"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ALL_ORDER_DELIVERY_PROCESS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/delivery-processes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "delivery-processes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ALL_ORDER_PENDING_LIST",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-pending-list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-pending-list"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ALL_ORDER_CANCEL_LIST",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-cancel-list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-cancel-list"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ALL_ORDER_REFUND_LIST",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-refund-list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-refund-list"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ORDER_TO_SHIP",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-to-ship",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-to-ship"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ORDER_TO_RECEIVE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-to-receive",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-to-receive"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ORDER_REVIEW",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-review"
+              ]
+            }
+          }
+        },
+        {
+          "name": "WAITING_FOR_REVIEW",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-review/waiting-for-review-list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-review",
+                "waiting-for-review-list"
+              ]
+            }
+          }
+        },
+        {
+          "name": "MY_REVIEWS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-review/list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-review",
+                "list"
+              ]
+            }
+          }
+        },
+        {
+          "name": "CANCEL_REASONS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-manage/cancel-reason-list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-manage",
+                "cancel-reason-list"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ORDER_CANCEL_STORE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-manage/cancel-store",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-manage",
+                "cancel-store"
+              ]
+            }
+          }
+        },
+        {
+          "name": "REFUND_REASONS_LIST",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/refund/reason-list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "refund",
+                "reason-list"
+              ]
+            }
+          }
+        },
+        {
+          "name": "REFUND_STORE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-refund/store",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-refund",
+                "store"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ALL_ORDER_LIST_BY_STATUS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/order-by-delivery-status?status=:id&lang=:AppLocalizations.getLanguageCode()}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-by-delivery-status?status=:id&lang=:AppLocalizations.getLanguageCode()}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Gift Cards & Wishlist",
+      "item": [
+        {
+          "name": "ALL_GIFT_CARDS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/gift-card/list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "gift-card",
+                "list"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GIFT_CARD",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/gift-card",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "gift-card"
+              ]
+            }
+          }
+        },
+        {
+          "name": "MY_PURCHASED_GIFT_CARDS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/gift-card/my-purchased/list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "gift-card",
+                "my-purchased",
+                "list"
+              ]
+            }
+          }
+        },
+        {
+          "name": "MY_WISHLIST",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/wishlist",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "wishlist"
+              ]
+            }
+          }
+        },
+        {
+          "name": "MY_WISHLIST_DELETE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/wishlist/delete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "wishlist",
+                "delete"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Marketing & Coupons",
+      "item": [
+        {
+          "name": "NEW_USER_ZONE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/marketing/new-user-zone",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marketing",
+                "new-user-zone"
+              ]
+            }
+          }
+        },
+        {
+          "name": "MY_COUPONS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/coupon",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "coupon"
+              ]
+            }
+          }
+        },
+        {
+          "name": "MY_COUPON_DELETE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/coupon/delete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "coupon",
+                "delete"
+              ]
+            }
+          }
+        },
+        {
+          "name": "FLASH_DEALS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/marketing/flash-deal",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marketing",
+                "flash-deal"
+              ]
+            }
+          }
+        },
+        {
+          "name": "fetchNewUserProductData",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/marketing/new-user-zone/:slug/fetch-product-data?lang=:AppLocalizations.getLanguageCode()}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marketing",
+                "new-user-zone",
+                ":slug",
+                "fetch-product-data?lang=:AppLocalizations.getLanguageCode()}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "fetchNewUserCategoryAllProducts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/marketing/new-user-zone/:slug/fetch-all-category-data?lang=:AppLocalizations.getLanguageCode()}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marketing",
+                "new-user-zone",
+                ":slug",
+                "fetch-all-category-data?lang=:AppLocalizations.getLanguageCode()}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "fetchNewUserCouponAllProducts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/marketing/new-user-zone/:slug/fetch-all-coupon-category-data?lang=:AppLocalizations.getLanguageCode()}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marketing",
+                "new-user-zone",
+                ":slug",
+                "fetch-all-coupon-category-data?lang=:AppLocalizations.getLanguageCode()}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "fetchNewUserCategoryProducts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/marketing/new-user-zone/:slug/fetch-category-data?lang=:AppLocalizations.getLanguageCode()}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marketing",
+                "new-user-zone",
+                ":slug",
+                "fetch-category-data?lang=:AppLocalizations.getLanguageCode()}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "fetchNewUserCouponProducts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/marketing/new-user-zone/:slug/fetch-coupon-category-data?lang=:AppLocalizations.getLanguageCode()}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "marketing",
+                "new-user-zone",
+                ":slug",
+                "fetch-coupon-category-data?lang=:AppLocalizations.getLanguageCode()}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Settings & General",
+      "item": [
+        {
+          "name": "HOME_PAGE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/homepage-data",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "homepage-data"
+              ]
+            }
+          }
+        },
+        {
+          "name": "SELLER_PROFILE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/seller-profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "seller-profile"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ALL_SLIDERS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/appearance/sliders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "appearance",
+                "sliders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "COUNTRY",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/location/country",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "location",
+                "country"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PAYMENT_GATEWAY",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/payment-gateway",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payment-gateway"
+              ]
+            }
+          }
+        },
+        {
+          "name": "BANK_INFO",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/payment-gateway/bank/bank-info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payment-gateway",
+                "bank",
+                "bank-info"
+              ]
+            }
+          }
+        },
+        {
+          "name": "BANK_PAYMENT_DATA_STORE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/payment-gateway/bank/payment-data-store",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payment-gateway",
+                "bank",
+                "payment-data-store"
+              ]
+            }
+          }
+        },
+        {
+          "name": "USER_NOTIFICATIONS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/user-notifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "user-notifications"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GENERAL_SETTINGS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/general-settings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "general-settings"
+              ]
+            }
+          }
+        },
+        {
+          "name": "CURRENCY_LIST",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/currency-list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "currency-list"
+              ]
+            }
+          }
+        },
+        {
+          "name": "SHIPPING_LIST",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/shipping-lists",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "shipping-lists"
+              ]
+            }
+          }
+        },
+        {
+          "name": "NOTIFICATION_SETTINGS",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/user-notifications-setting",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "user-notifications-setting"
+              ]
+            }
+          }
+        },
+        {
+          "name": "NOTIFICATION_SETTINGS_UPDATE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/user-notifications-setting/update",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "user-notifications-setting",
+                "update"
+              ]
+            }
+          }
+        },
+        {
+          "name": "getLang",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/get-lang",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "get-lang"
+              ]
+            }
+          }
+        },
+        {
+          "name": "setLang",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/set-lang",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "set-lang"
+              ]
+            }
+          }
+        },
+        {
+          "name": "stateByCountry",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/location/country/:countryId/states",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "location",
+                "country",
+                ":countryId",
+                "states"
+              ]
+            }
+          }
+        },
+        {
+          "name": "cityByState",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/location/state/:stateId/cities",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "location",
+                "state",
+                ":stateId",
+                "cities"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Support Tickets",
+      "item": [
+        {
+          "name": "TICKET_LIST",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/ticket-list-get-data",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ticket-list-get-data"
+              ]
+            }
+          }
+        },
+        {
+          "name": "TICKET_LIST",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/ticket-list-get-data",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ticket-list-get-data"
+              ]
+            }
+          }
+        },
+        {
+          "name": "TICKET_CATEGORIES",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/ticket/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ticket",
+                "categories"
+              ]
+            }
+          }
+        },
+        {
+          "name": "TICKET_PRIORITIES",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/ticket/priorities",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ticket",
+                "priorities"
+              ]
+            }
+          }
+        },
+        {
+          "name": "TICKET_STORE",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/ticket-store",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ticket-store"
+              ]
+            }
+          }
+        },
+        {
+          "name": "TICKET_SHOW",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/ticket-show",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ticket-show"
+              ]
+            }
+          }
+        },
+        {
+          "name": "TICKET_REPLY",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/ticket-show/reply",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ticket-show",
+                "reply"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://your-domain.com",
+      "type": "string"
+    }
+  ]
+}

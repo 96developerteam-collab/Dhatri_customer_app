@@ -332,64 +332,36 @@ class LoginPage extends GetView<LoginController> {
                                       if (_settingsController.otpOnLogin.value) {
                                         Map data = {
                                           "type": "otp_on_login",
-                                          "email":
-                                              _loginController.email.value.text,
+                                          "email": _loginController.email.value.text,
                                         };
 
-                                        final OtpController otpController =
-                                            Get.put(OtpController());
+                                        final OtpController otpController = Get.put(OtpController());
 
                                         _loginController.isLoading.value = true;
 
-                                        await otpController
-                                            .generateOtp(data)
-                                            .then((value) {
-                                          if (value == true) {
-                                            _loginController.isLoading.value =
-                                                false;
-                                            Get.to(() => OtpVerificationPage(
-                                                  data: data,
-                                                  onSuccess: (result) async {
-                                                    if (result == true) {
-                                                      var jsonString =
-                                                          await _loginController
-                                                              .fetchUserLogin(
-                                                                  emailOrPhone:
-                                                                      _loginController
-                                                                          .email
-                                                                          .text,
-                                                                  password:
-                                                                      _loginController
-                                                                          .password
-                                                                          .text)
-                                                              .then((value) {
-                                                        if (value == true) {
-                                                          Get.back();
-                                                        }
-                                                      });
-                                                      print(jsonString);
-                                                    }
-                                                  },
-                                                ));
-                                          } else {
-                                            _loginController.isLoading.value =
-                                                false;
-                                            SnackBars()
-                                                .snackBarWarning(value.toString());
-                                          }
-                                        });
-                                      } else {
-                                        var jsonString = await _loginController
-                                            .fetchUserLogin(
+                                        var otpResult = await otpController.generateOtp(data);
+                                        _loginController.isLoading.value = false;
+
+                                        if (otpResult == true) {
+                                          var verified = await Get.to(() => OtpVerificationPage(data: data));
+                                          if (verified == true) {
+                                            var success = await _loginController.fetchUserLogin(
                                                 emailOrPhone: _loginController.email.text,
-                                                password:
-                                                    _loginController.password.text)
-                                            .then((value) {
-                                          if (value == true) {
-                                            Get.back();
+                                                password: _loginController.password.text);
+                                            if (success) {
+                                              Get.back();
+                                            }
                                           }
-                                        });
-                                        print(jsonString);
+                                        } else {
+                                          SnackBars().snackBarWarning(otpResult.toString());
+                                        }
+                                      } else {
+                                        var success = await _loginController.fetchUserLogin(
+                                            emailOrPhone: _loginController.email.text,
+                                            password: _loginController.password.text);
+                                        if (success) {
+                                          Get.back();
+                                        }
                                       }
                                     }
                                   },
