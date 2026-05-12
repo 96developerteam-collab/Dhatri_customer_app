@@ -136,7 +136,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
             ),
             Center(
               child: Image.asset(
-                'assets/images/otp.png',
+                'assets/config/splash_screen_logo.png',
                 width: 100.w,
                 height: 100.w,
               ),

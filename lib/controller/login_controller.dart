@@ -345,8 +345,8 @@ class LoginController extends GetxController {
   bool isValidPhoneNumber(String input) {
     // Remove all non-digit characters
     String digits = input.replaceAll(RegExp(r'\D'), '');
-    // Check if it's exactly 10 digits
-    return digits.length == 10;
+    // Check if it's between 10 and 15 digits
+    return digits.length >= 10 && digits.length <= 15;
   }
 
   bool isValidEmail(String input) {
@@ -368,7 +368,7 @@ class LoginController extends GetxController {
 
   Future<bool> fetchUserLogin({
     required String emailOrPhone,
-    required String password,
+    String? password,
   }) async {
     try {
       isLoading(true);
@@ -428,9 +428,12 @@ class LoginController extends GetxController {
     // Create map with proper null handling
     Map data = {
       "login": emailOrPhone.toString(),
-      "password": password.toString(),
       "device_token" : AuthDatabase.instance.getDeviceUniqueId()
     };
+
+    if (password != null) {
+      data["password"] = password.toString();
+    }
 
     // Remove null values from map
     data.removeWhere((key, value) => value == null);

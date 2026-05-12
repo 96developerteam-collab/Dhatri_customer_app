@@ -114,11 +114,11 @@ class RegistrationPage extends GetView<LoginController> {
                       if (value?.isEmpty ?? true) return 'Please enter email or phone number'.tr;
 
                       String digits = value!.replaceAll(RegExp(r'\D'), '');
-                      bool isPhone = digits.length == 10;
+                      bool isPhone = digits.length >= 10 && digits.length <= 15;
                       bool isEmail = value.contains('@') && value.contains('.');
 
                       if (!isPhone && !isEmail) {
-                        return 'Please enter a valid email or 10 digit phone number'.tr;
+                        return 'Please enter a valid email or a valid phone number with country code'.tr;
                       }
                       return null;
                     },

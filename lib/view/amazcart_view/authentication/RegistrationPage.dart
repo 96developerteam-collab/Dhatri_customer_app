@@ -245,14 +245,14 @@ class RegistrationPage extends GetView<LoginController> {
 
                         // Check if it's a phone number
                         String digits = (value ?? '').replaceAll(RegExp(r'\D'), '');
-                        bool isPhone = digits.length == 10;
+                        bool isPhone = digits.length >= 10 && digits.length <= 15;
 
                         // Check if it's an email
                         bool isEmail = (value ?? '').contains('@');
 
                         // If it's neither phone nor email, show error
                         if (!isPhone && !isEmail) {
-                          return 'Please enter a valid email or 10 digit phone number'.tr;
+                          return 'Please enter a valid email or a valid phone number with country code'.tr;
                         }
 
                         // If it looks like an email but doesn't have dot
@@ -613,11 +613,11 @@ class RegistrationPage extends GetView<LoginController> {
 
                                   log("_settingsController.otpOnCustomerRegistration.value ::: ${_settingsController.otpOnCustomerRegistration.value}");
                                   if (_settingsController.otpOnCustomerRegistration.value) {
-                                    Map data = {
-                                      "type": "otp_on_customer_registration",
-                                      "login": controller.registerEmail.text,
-                                      "first_name": controller.firstName.text,
-                                    };
+                                      Map data = {
+                                        "type": "otp_on_customer_registration",
+                                        "login": controller.registerEmail.text.trim(),
+                                        "first_name": controller.firstName.text,
+                                      };
 
                                     final OtpController otpController = Get.put(OtpController());
 
@@ -656,7 +656,7 @@ class RegistrationPage extends GetView<LoginController> {
                               ),
                             ),
                           ),
-                  )),,
+                  )),
                   // GestureDetector(
                   //   onTap: () => Get.to(() => ForgotPasswordPage()),
                   //   child: Container(
@@ -677,7 +677,6 @@ class RegistrationPage extends GetView<LoginController> {
             ),
           ),
         ),
-      ),
     );
   }
 }

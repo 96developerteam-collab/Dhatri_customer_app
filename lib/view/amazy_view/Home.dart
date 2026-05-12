@@ -226,7 +226,7 @@ LinearGradient? selectColor(int position) {
                               HomePageSlider slider = _homeController.homePageModel.value.sliders![sliderIndex];
                               return FancyShimmerImage(
                                 imageUrl: AppConfig.assetPath + '/' + slider.sliderImage!,
-                                boxFit: BoxFit.fill,
+                                boxFit: BoxFit.contain,
                                 width: Get.width,
                                 height: 200.h,
                                 errorWidget: FancyShimmerImage(
