@@ -7,731 +7,228 @@ import 'package:amazcart/controller/otp_controller.dart';
 import 'package:amazcart/controller/settings_controller.dart';
 import 'package:amazcart/controller/login_controller.dart';
 import 'package:amazcart/utils/styles.dart';
-import 'package:amazcart/view/amazy_view/authentication/ForgotPassword.dart';
 import 'package:amazcart/view/amazy_view/authentication/OtpVerificationPage.dart';
 import 'package:amazcart/widgets/amazy_widget/snackbars.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import 'RegistrationPage.dart';
-import 'package:amazcart/view/amazcart_view/MainNavigation.dart' as amazcart;
-import 'package:amazcart/view/amazy_view/MainNavigation.dart' as amazy;
 
-// ignore: must_be_immutable
 class LoginPage extends GetView<LoginController> {
-  final _googleSignIn = GoogleSignIn();
   final _formKey = GlobalKey<FormState>();
-
   final LoginController _loginController = Get.put(LoginController());
-
-  final GeneralSettingsController _settingsController =
-  Get.put(GeneralSettingsController());
-
-  // ignore: unused_field
-  Map<String, dynamic>? _userData;
-  AccessToken? _accessToken;
+  final GeneralSettingsController _settingsController = Get.put(GeneralSettingsController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(() {
-        return Container(
-          height: Get.height - 79.w,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 30,
-                ),
-
-                Navigator.canPop(context)?
-                  Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.only(left: 10.w,top: 20.h),
-                      child: IconButton(
-                        onPressed: () {
-                          Get.back();
-                        },
-                        icon: Icon(
-                          Icons.close,
-                          color: Colors.black,
-                          size: 25.w,
-                        ),
-                      ),
-                    ),
-                  ],
-                ): SizedBox(height: 20.h),
-
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      AppConfig.appLogo,
-                      width: 33.w,
-                      height: 33.w,
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      AppConfig.appName,
-                      style: AppStyles.appFontBold.copyWith(
-                        fontSize: 20.fontSize,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Login Your Account'.tr,
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Obx(() {
+          if (_settingsController.isLoading.value) {
+            return const Center(child: CupertinoActivityIndicator());
+          }
+          return SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25.w),
+              child: Column(
+                children: [
+                  SizedBox(height: 40.h),
+                  
+                  // Big Logo
+                  Image.asset(
+                    AppConfig.appLogo,
+                    width: 140.w,
+                    height: 140.w,
+                  ),
+                  
+                  SizedBox(height: 20.h),
+                  
+                  Text(
+                    _settingsController.loginWithOtpOnly.value ? 'Login with OTP'.tr : 'Login Your Account'.tr,
                     style: AppStyles.appFontBold.copyWith(
-                      fontSize: 22.fontSize,
+                      fontSize: 28.sp,
+                      color: const Color(0xFF1A330F),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    'Enter your email and password to access your account or create an account'.tr
-                        .tr,
-                    textAlign: TextAlign.center,
-                    style: AppStyles.appFontBook.copyWith(
-                      fontSize: 16.fontSize,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      Container(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                        child: TextFormField(
+                  
+                  SizedBox(height: 40.h),
+                  
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        // Phone Number Field
+                        _buildTextField(
                           controller: _loginController.email,
-                          textAlign: TextAlign.start,
-                          textAlignVertical: TextAlignVertical.center,
-                          decoration: InputDecoration(
-                            hintText: 'Email or Phone Number'.tr,
-                            hintStyle: AppStyles.appFontMedium,
-                            prefixIcon: Container(
-                              height: 10.w,
-                              width: 10.w,
-                              padding: EdgeInsets.all(12),
-                              child: Image.asset(
-                                'assets/images/email.png',
-                              ),
-                            ),
-                            errorStyle: AppStyles.appFontMedium
-                                .copyWith(color: AppStyles.pinkColor, fontSize: 12.fontSize),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          style: AppStyles.appFontMedium.copyWith(
-                              fontSize: 12.fontSize
-                          ),
-                          maxLines: 1,
+                          hint: 'Phone Number'.tr,
+                          icon: Icons.phone_android_outlined,
+                          keyboardType: TextInputType.phone,
                           validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Please enter email or phone number'.tr;
-                            }
-
-                            // Check if it's a phone number
+                            if (value!.isEmpty) return 'Please enter phone number'.tr;
                             String digits = value.replaceAll(RegExp(r'\D'), '');
-                            bool isPhone = digits.length == 10;
-
-                            // Check if it's an email
-                            bool isEmail = value.contains('@');
-
-                            // If it's neither phone nor email, show error
-                            if (!isPhone && !isEmail) {
-                              return 'Please enter a valid email or 10 digit phone number'.tr;
-                            }
-
-                            // If it looks like an email but doesn't have dot
-                            if (isEmail && !value.contains('.')) {
-                              return 'Please enter a valid email'.tr;
-                            }
-
+                            if (digits.length < 10) return 'Please enter a valid phone number'.tr;
                             return null;
                           },
                         ),
-                      ),
-                      Container(
-                        padding:
-                         EdgeInsets.symmetric(horizontal: 30, vertical: 10.h),
-                        child: TextFormField(
-                          controller: _loginController.password,
-                          obscureText: _loginController.isPasswordHidden.value,
-                          textAlign: TextAlign.start,
-                          textAlignVertical: TextAlignVertical.center,
-                          decoration: InputDecoration(
-                            hintText: 'Password'.tr,
-                            hintStyle: AppStyles.appFontMedium,
-                            prefixIcon: Container(
-                              height: 10.w,
-                              width: 10.w,
-                              padding: EdgeInsets.all(12),
-                              child: Image.asset(
-                                'assets/images/lock.png',
-                              ),
-                            ),
-                            errorStyle: AppStyles.appFontMedium
-                                .copyWith(color: AppStyles.pinkColor, fontSize: 12.fontSize),
+                        
+                        SizedBox(height: 20.h),
+                        
+                        // Password Field
+                        if (!_settingsController.loginWithOtpOnly.value)
+                          _buildTextField(
+                            controller: _loginController.password,
+                            hint: 'Password'.tr,
+                            icon: Icons.lock_outline,
+                            obscureText: _loginController.isPasswordHidden.value,
                             suffixIcon: GestureDetector(
-                              onTap: () {
-                                _loginController.isPasswordHidden.value =
-                                !_loginController.isPasswordHidden.value;
-                              },
+                              onTap: () => _loginController.isPasswordHidden.value = !_loginController.isPasswordHidden.value,
                               child: Icon(
-                                _loginController.isPasswordHidden.value
-                                    ? FontAwesomeIcons.solidEyeSlash
-                                    : FontAwesomeIcons.solidEye,
-                                color: Color(0xffBBBBBB),
-                                size: 18.w,
+                                _loginController.isPasswordHidden.value ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                                color: Colors.grey,
+                                size: 22.w,
                               ),
                             ),
+                            validator: (value) => value!.isEmpty ? 'Please Type your password'.tr : null,
                           ),
-                          keyboardType: TextInputType.text,
-                          style: AppStyles.appFontMedium.copyWith(
-                              fontSize: 12.fontSize
-                          ),
-                          maxLines: 1,
-                          validator: (value) {
-                            if (value!.length == 0) {
-                              return 'Please Type your password'.tr + '..';
-                            } else {
-                              return null;
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                AnimatedSwitcher(
-                  duration: Duration(milliseconds: 500),
-                  child: _loginController.isLoading.value
-                      ? Center(
-                      child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 20),
-                          child: CupertinoActivityIndicator()))
-                      : Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 5),
-                    child: InkWell(
-                      onTap: () async {
-                        // Validate form before proceeding
-                        if (!_formKey.currentState!.validate()) {
-                          return;
-                        }
-
-                        if (_settingsController.otpOnLogin.value) {
-                          Map data = {
-                            "type": "otp_on_login",
-                            "email": _loginController.email.value.text,
-                            "password":
-                            _loginController.password.value.text,
-                          };
-
-                          final OtpController otpController =
-                          Get.put(OtpController());
-
-                          _loginController.isLoading.value = true;
-
-                          await otpController
-                              .generateOtp(data)
-                              .then((value) {
-                            if (value == true) {
-                              _loginController.isLoading.value = false;
-                              Get.to(() => OtpVerificationPage(
-                                data: data,
-                                onSuccess: (result) async {
-                                  if (result == true) {
-                                    var jsonString =
-                                    await _loginController
-                                        .fetchUserLogin(
-                                        emailOrPhone:
-                                        _loginController
-                                            .email.text,
-                                        password:
-                                        _loginController
-                                            .password
-                                            .text)
-                                        .then((value) {
-                                      if (value == true) {
-                                        Get.back();
-                                      }
-                                    });
-                                    print(jsonString);
-                                  }
-                                },
-                              ));
-                            } else {
-                              _loginController.isLoading.value = false;
-                              SnackBars()
-                                  .snackBarWarning(value.toString());
-                            }
-                          });
-                        } else {
-                          var jsonString = await _loginController
-                              .fetchUserLogin(
-                              emailOrPhone: _loginController.email.text,
-                              password:
-                              _loginController.password.text)
-                              .then((value) {
-                            if (value == true) {
-                              Get.back();
-                            }
-                          });
-                          print(jsonString);
-                        }
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: Get.width,
-                        height: 40.h,
-                        decoration: BoxDecoration(
-                            gradient: AppStyles.gradient,
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(5))),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Login'.tr,
-                            textAlign: TextAlign.center,
-                            style: AppStyles.appFontBook.copyWith(
-                              color: Colors.white,
-                              fontSize: 14.fontSize,
-                            ),
-                          ),
-                        ),
-                      ),
+                      ],
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                // GestureDetector(
-                //   onTap: () {
-                //     Get.to(() => ForgotPasswordPage());
-                //   },
-                //   child: Container(
-                //     alignment: Alignment.center,
-                //     padding: const EdgeInsets.symmetric(
-                //         horizontal: 20, vertical: 10),
-                //     child: Text(
-                //       'Forgot password?'.tr,
-                //       style: AppStyles.appFontMedium.copyWith(
-                //         fontSize: 16.fontSize,
-                //         decoration: TextDecoration.underline,
-                //         color: AppStyles.pinkColor,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                AppConfig.appleLogin ||
-                    AppConfig.googleLogin ||
-                    AppConfig.facebookLogin
-                    ? Column(
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    // Container(
-                    //   alignment: Alignment.center,
-                    //   padding: const EdgeInsets.symmetric(
-                    //       horizontal: 30, vertical: 5),
-                    //   child: Text(
-                    //     '..${"Or continue with".tr}'.tr,
-                    //     style: AppStyles.appFontMedium.copyWith(
-                    //       fontSize: 14.fontSize,
-                    //       color: AppStyles.greyColorLight,
-                    //     ),
-                    //   ),
-                    // ),
-                    SizedBox(
-                      height: 20,
-                    ),
-
-                    // Container(
-                    //   alignment: Alignment.center,
-                    //   padding: const EdgeInsets.symmetric(
-                    //       horizontal: 20, vertical: 5),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.center,
-                    //     crossAxisAlignment: CrossAxisAlignment.center,
-                    //     children: [
-                    //       AppConfig.facebookLogin
-                    //           ? InkWell(
-                    //         onTap: () async {
-                    //           final LoginResult result =
-                    //           await FacebookAuth.instance
-                    //               .login(); // by default we request the email and the public profile
-                    //           if (result.status ==
-                    //               LoginStatus.success) {
-                    //             _accessToken = result.accessToken;
-                    //             _printCredentials();
-
-                    //             final userData = await FacebookAuth
-                    //                 .instance
-                    //                 .getUserData();
-                    //             _userData = userData;
-
-                    //             final _getToken =
-                    //             FacebookResponse.fromJson(
-                    //                 _accessToken!.toJson());
-
-                    //             final _getUser =
-                    //             FacebookUser.fromJson(userData);
-
-                    //             Map data = {
-                    //               "provider_id": _getUser.id,
-                    //               "provider_name": "facebook",
-                    //               "name": _getUser.name,
-                    //               "email": _getUser.email,
-                    //               "token":
-                    //               _getToken.token.toString(),
-                    //             };
-
-                    //             print(data);
-
-                    //             await _loginController
-                    //                 .socialLogin(data)
-                    //                 .then((value) async {
-                    //               if (value == true) {
-                    //                 Get.back();
-                    //               } else {
-                    //                 await FacebookAuth.instance
-                    //                     .logOut();
-                    //               }
-                    //             });
-                    //           } else {
-                    //             print(result.status);
-                    //             print(result.message);
-                    //           }
-                    //         },
-                    //         child: Container(
-                    //           width: Get.width/2 - 60,
-                    //           decoration: BoxDecoration(
-                    //             border: Border.all(
-                    //               width: 1,
-                    //               color: Color(0xff969599),
-                    //             ),
-                    //             borderRadius:
-                    //             BorderRadius.circular(5.r),
-                    //           ),
-                    //           padding: EdgeInsets.symmetric(
-                    //               horizontal: 8, vertical: 8),
-                    //           child: Row(
-                    //             mainAxisAlignment:
-                    //             MainAxisAlignment.center,
-                    //             children: [
-                    //               Container(
-                    //                 width: 30.w,
-                    //                 height: 30.w,
-                    //                 child: Image.asset(
-                    //                   'assets/images/facebook_logo.png',
-                    //                 ),
-                    //               ),
-                    //               SizedBox(
-                    //                 width: 10,
-                    //               ),
-                    //               Expanded(
-                    //                 child: Text(
-                    //                   'Facebook'.tr,
-                    //                   style: AppStyles.appFontBold
-                    //                       .copyWith(
-                    //                     fontSize: 13.fontSize,
-                    //                     color: AppStyles
-                    //                         .greyColorLight,
-                    //                   ),
-                    //                 ),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       )
-                    //           : SizedBox.shrink(),
-                    //       SizedBox(
-                    //         width: 10,
-                    //       ),
-                    //       AppConfig.googleLogin
-                    //           ? InkWell(
-                    //         onTap: () async {
-                    //           GoogleSignInAccount?
-                    //           googleSignInAccount =
-                    //           await _googleSignIn.signIn();
-
-                    //           await googleSignInAccount!
-                    //               .authentication
-                    //               .then((value) async {
-                    //             log(value.idToken.toString());
-
-                    //             Map data = {
-                    //               "provider_id":
-                    //               googleSignInAccount.id,
-                    //               "provider_name": "google",
-                    //               "name": googleSignInAccount
-                    //                   .displayName,
-                    //               "email":
-                    //               googleSignInAccount.email,
-                    //               "token": value.idToken.toString(),
-                    //             };
-
-                    //             await _loginController
-                    //                 .socialLogin(data)
-                    //                 .then((value) {
-                    //               if (value == true) {
-                    //                 Get.back();
-                    //               } else {
-                    //                 _googleSignIn.signOut();
-                    //               }
-                    //             });
-                    //           });
-                    //         },
-                    //         child: Container(
-                    //           width: Get.width/2 - 60,
-                    //           decoration: BoxDecoration(
-                    //             border: Border.all(
-                    //               width: 1,
-                    //               color: Color(0xff969599),
-                    //             ),
-                    //             borderRadius:
-                    //             BorderRadius.circular(5.r),
-                    //           ),
-                    //           padding: EdgeInsets.symmetric(
-                    //               vertical: 8, horizontal: 8),
-                    //           child: Row(
-                    //             mainAxisAlignment:
-                    //             MainAxisAlignment.center,
-                    //             children: [
-                    //               Container(
-                    //                 width: 30.w,
-                    //                 height: 30.w,
-                    //                 child: Image.asset(
-                    //                   'assets/images/google_logo.png',
-                    //                 ),
-                    //               ),
-                    //               SizedBox(
-                    //                 width: 10,
-                    //               ),
-                    //               Expanded(
-                    //                 child: Text(
-                    //                   'Google'.tr,
-                    //                   style: AppStyles.appFontBold
-                    //                       .copyWith(
-                    //                     fontSize: 13.fontSize,
-                    //                     color:
-                    //                     AppStyles.greyColorLight,
-                    //                   ),
-                    //                 ),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       )
-                    //           : SizedBox.shrink(),
-                    //     ],
-                    //   ),
-                    // ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    (Platform.isIOS && AppConfig.appleLogin)
-                        ? InkWell(
-                      onTap: () async {
-                        // final credential = await SignInWithApple
-                        //     .getAppleIDCredential(
-                        //   scopes: [
-                        //     AppleIDAuthorizationScopes.email,
-                        //     AppleIDAuthorizationScopes.fullName,
-                        //   ],
-                        // );
-
-                        // print(credential);
-                      },
-                      child: Container(
-                        width: Get.width * 0.4,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            width: 1,
-                            color: Color(0xff969599),
-                          ),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 8),
-                        child: Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: 30.w,
-                              height: 30.w,
-                              child: Icon(
-                                FontAwesomeIcons.apple,
-                                size: 30.w,
-                              ),
+                  
+                  SizedBox(height: 40.h),
+                  
+                  // Login Button
+                  _loginController.isLoading.value
+                      ? const Center(child: CupertinoActivityIndicator())
+                      : InkWell(
+                          onTap: () => _handleLogin(),
+                          child: Container(
+                            width: double.infinity,
+                            height: 55.h,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF698F34), // Darker green from logo leaf
+                              borderRadius: BorderRadius.circular(12.r),
                             ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              'Apple'.tr,
+                            child: Text(
+                              'Login'.tr,
                               style: AppStyles.appFontBold.copyWith(
-                                fontSize: 13.fontSize,
-                                color: AppStyles.greyColorLight,
+                                color: Colors.white,
+                                fontSize: 18.sp,
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    )
-                        : SizedBox.shrink(),
-                  ],
-                )
-                    : SizedBox.shrink(),
-                SizedBox(
-                  height: 10,
-                ),
-                GestureDetector(
-                  onTap: () async{
-                    var result = await Get.dialog(RegistrationPage(), useSafeArea: false);
-                  },
-                  behavior: HitTestBehavior.translucent,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                    ),
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: "Don't have an account Yet?".tr,
-                            style: AppStyles.appFontMedium.copyWith(
-                              color: AppStyles.greyColorLight,
-                              fontSize: 16.fontSize,
-                            ),
+                  
+                  SizedBox(height: 30.h),
+                  
+                  // Sign Up Link
+                  GestureDetector(
+                    onTap: () => Get.dialog(RegistrationPage(), useSafeArea: false),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Don't have an account yet? ".tr,
+                          style: AppStyles.appFontMedium.copyWith(
+                            color: Colors.grey[600],
+                            fontSize: 16.sp,
                           ),
-                          TextSpan(
-                            text: '  ' + 'Sign Up'.tr,
-                            style: AppStyles.appFontMedium.copyWith(
-                              color: AppStyles.pinkColor,
-                              fontSize: 16.fontSize,
-                            ),
+                        ),
+                        Text(
+                          'Sign Up'.tr,
+                          style: AppStyles.appFontBold.copyWith(
+                            color: const Color(0xFF1A330F),
+                            fontSize: 16.sp,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-              ],
+                  
+                  SizedBox(height: 30.h),
+                ],
+              ),
             ),
-          ),
-        );
-      }),
+          );
+        }),
+      ),
     );
   }
 
-  void _printCredentials() {
-    print(
-      prettyPrint(_accessToken!.toJson()),
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hint,
+    required IconData icon,
+    TextInputType? keyboardType,
+    bool obscureText = false,
+    Widget? suffixIcon,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: AppStyles.appFontMedium.copyWith(color: Colors.grey[400]),
+        prefixIcon: Icon(icon, color: Colors.grey[400], size: 22.w),
+        suffixIcon: suffixIcon,
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          borderSide: const BorderSide(color: Color(0xFF1A330F), width: 1.5),
+        ),
+      ),
+      style: AppStyles.appFontMedium.copyWith(fontSize: 16.sp),
+      validator: validator,
     );
   }
-}
 
-String prettyPrint(Map json) {
-  JsonEncoder encoder = new JsonEncoder.withIndent('  ');
-  String pretty = encoder.convert(json);
-  return pretty;
-}
+  void _handleLogin() async {
+    if (!_formKey.currentState!.validate()) return;
 
-FacebookResponse facebookResponseFromJson(String str) =>
-    FacebookResponse.fromJson(json.decode(str));
+    // FOR TESTING: Always use OTP flow
+    Map data = {
+      "type": "otp_on_login",
+      "phone": _loginController.getLoginIdentifier(),
+      "password": _loginController.password.text,
+    };
 
-String facebookResponseToJson(FacebookResponse data) =>
-    json.encode(data.toJson());
+    final OtpController otpController = Get.put(OtpController());
+    _loginController.isLoading.value = true;
 
-class FacebookResponse {
-  FacebookResponse({
-    this.userId,
-    this.token,
-  });
+    var result = await otpController.generateOtp(data);
+    _loginController.isLoading.value = false;
 
-  String? userId;
-  String? token;
-
-  factory FacebookResponse.fromJson(Map<String, dynamic> json) =>
-      FacebookResponse(
-        userId: json["userId"],
-        token: json["token"],
-      );
-
-  Map<String, dynamic> toJson() => {
-    "userId": userId,
-    "token": token,
-  };
-}
-
-FacebookUser facebookUserFromJson(String str) =>
-    FacebookUser.fromJson(json.decode(str));
-
-String facebookUserToJson(FacebookUser data) => json.encode(data.toJson());
-
-class FacebookUser {
-  FacebookUser({
-    this.email,
-    this.id,
-    this.name,
-  });
-
-  String? email;
-  String? id;
-  String? name;
-
-  factory FacebookUser.fromJson(Map<String, dynamic> json) => FacebookUser(
-    email: json["email"],
-    id: json["id"],
-    name: json["name"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "email": email,
-    "id": id,
-    "name": name,
-  };
+    if (result == true) {
+      Get.to(() => OtpVerificationPage(
+            data: data,
+            onSuccess: (result) async {
+              if (result == true) {
+                bool loginSuccess = await _loginController.fetchUserLogin(
+                  emailOrPhone: _loginController.getLoginIdentifier(),
+                  password: _loginController.password.text,
+                );
+                if (loginSuccess) Get.back();
+              }
+            },
+          ));
+    } else {
+      SnackBars().snackBarError(result is String ? result : "OTP generation failed".tr);
+    }
+  }
 }

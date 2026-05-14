@@ -109,27 +109,20 @@ class ForgotPasswordPage extends GetView<LoginController> {
                   child: TextFormField(
                     controller: _loginController.email,
                     decoration: InputDecoration(
-                      hintText: 'Enter Your Email'.tr,
+                      hintText: 'Enter Your Phone Number'.tr,
                       hintStyle: AppStyles.appFontMedium,
-                      prefixIcon: Container(
-                        height: 10.w,
-                        width: 10.w,
-                        padding: EdgeInsets.all(12),
-                        child: Image.asset(
-                          'assets/images/email.png',
-                        ),
-                      ),
+                      prefixIcon: Icon(Icons.phone_android_outlined, color: Colors.grey[400], size: 22.w),
                       errorStyle: AppStyles.appFontMedium
                           .copyWith(color: AppStyles.pinkColor, fontSize: 12.fontSize),
                     ),
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.phone,
                     style: AppStyles.appFontMedium
                         .copyWith(color: AppStyles.pinkColor, fontSize: 12.fontSize),
 
                     maxLines: 1,
                     validator: (value) {
                       if (value!.length == 0) {
-                        return 'Please Type Email address'.tr + '...';
+                        return 'Please Type phone number'.tr + '...';
                       } else {
                         return null;
                       }
@@ -154,9 +147,19 @@ class ForgotPasswordPage extends GetView<LoginController> {
                             onTap: () async {
                               if (_settingsController
                                   .otpOnPasswordReset.value) {
+                                String phone = _loginController.email.text.trim();
+                                if (!phone.startsWith('+')) {
+                                  if (phone.length == 10) {
+                                    phone = '+91$phone';
+                                  } else if (phone.length == 12 && phone.startsWith('91')) {
+                                    phone = '+$phone';
+                                  } else if (!phone.startsWith('+91')) {
+                                    phone = '+91$phone';
+                                  }
+                                }
                                 Map data = {
                                   "type": "otp_on_password_reset",
-                                  "email": _loginController.email.value.text,
+                                  "phone": phone,
                                 };
 
                                 final OtpController otpController =

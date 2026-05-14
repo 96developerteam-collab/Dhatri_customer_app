@@ -44,28 +44,29 @@ class OtpController extends GetxController {
       SnackBars().snackBarSuccess("OTP Sent!".tr);
 
       return true;
-    } else if (response.statusCode == 422) {
-      final errorData = jsonDecode(response.body);
-
-      String combinedMessage = "";
-
-      errorData["errors"].forEach((key, messages) {
-        for (var message in messages)
-          combinedMessage = combinedMessage + "$message\n";
-      });
-      return combinedMessage;
     } else {
       final errorData = jsonDecode(response.body);
-
       print("Error -> ${response.body}");
-
       String combinedMessage = "";
 
-      errorData["errors"].forEach((key, messages) {
-        for (var message in messages)
-          combinedMessage = combinedMessage + "$message\n";
-      });
-      return combinedMessage;
+      if (errorData["errors"] != null) {
+        errorData["errors"].forEach((key, messages) {
+          if (messages is List) {
+            for (var message in messages) combinedMessage = combinedMessage + "$message\n";
+          } else {
+            combinedMessage = combinedMessage + "$messages\n";
+          }
+        });
+      } else if (errorData["msg"] != null) {
+        combinedMessage = errorData["msg"];
+      } else if (errorData["message"] != null) {
+        combinedMessage = errorData["message"];
+      }
+
+      if (combinedMessage.isEmpty) {
+        combinedMessage = "OTP generation failed".tr;
+      }
+      return combinedMessage.trim();
     }
   }
 

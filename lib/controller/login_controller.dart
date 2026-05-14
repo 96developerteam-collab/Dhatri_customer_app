@@ -181,13 +181,25 @@ class LoginController extends GetxController {
 
       // Handle email vs phone
       if (data.containsKey('login')) {
-        String input = data['login'];
+        String input = data['login'].toString().trim();
         String digits = input.replaceAll(RegExp(r'\D'), '');
-        bool isPhone = digits.length >= 10; // Simple check, adjust as needed
+        bool isPhone = digits.length >= 10; 
 
         data.remove('login');
         if (isPhone) {
-          data['phone'] = input;
+          // Prepend +91 if missing
+          String phone = input;
+          if (!phone.startsWith('+')) {
+            // Remove any leading 0s or existing 91 if it was typed without +
+            if (phone.length == 10) {
+              phone = '+91$phone';
+            } else if (phone.length == 12 && phone.startsWith('91')) {
+              phone = '+$phone';
+            } else if (!phone.startsWith('+91')) {
+              phone = '+91$phone';
+            }
+          }
+          data['phone'] = phone;
         } else {
           data['email'] = input;
         }
@@ -231,23 +243,22 @@ class LoginController extends GetxController {
       debugPrint('Register Response: ${response.data}');
 
       if (response.statusCode == 201) {
-        await fetchUserLogin(
-          emailOrPhone: data['email'] ?? data['phone'] ?? registerEmail.text,
-          password: registerPassword.text,
-        ).then((value) {
-          if (value) {
-            firstName.clear();
-            lastName.clear();
-            registerEmail.clear();
-            registerPassword.clear();
-            registerConfirmPassword.clear();
-            referralCode.clear();
-            storeName.clear();
-            gstNumber.clear();
-            pickedDocument.value = null;
-            pickedShopImage.value = null;
-          }
-        });
+        var responseData = response.data;
+        // Clear form fields after successful registration
+        firstName.clear();
+        lastName.clear();
+        registerEmail.clear();
+        registerPassword.clear();
+        registerConfirmPassword.clear();
+        referralCode.clear();
+        storeName.clear();
+        gstNumber.clear();
+        pickedDocument.value = null;
+        pickedShopImage.value = null;
+        selectedMerchant.value = null;
+
+        String successMsg = responseData['message'] ?? 'Registration successful! Please login to continue.'.tr;
+        SnackBars().snackBarSuccess(successMsg);
         return true;
       } else {
         return false;
@@ -356,7 +367,10 @@ class LoginController extends GetxController {
 
   String getLoginIdentifier() {
     String input = email.text.trim();
-    // If it's a phone number, return it as is, otherwise it's email
+    String digits = input.replaceAll(RegExp(r'\D'), '');
+    if (digits.length == 10 && !input.contains('@') && !input.startsWith('+')) {
+      return "+91" + digits;
+    }
     return input;
   }
 
@@ -416,18 +430,20 @@ class LoginController extends GetxController {
 
   static Future login(emailOrPhone, password) async {
 
-    // Uri loginUrl = Uri.parse(URLs.LOGIN);
-
     // Determine if it's phone or email
-    String digits = emailOrPhone.toString().replaceAll(RegExp(r'\D'), '');
-    bool isPhone = digits.length == 10;
+    String finalInput = emailOrPhone.toString().trim();
+    String digits = finalInput.replaceAll(RegExp(r'\D'), '');
+    if (digits.length == 10 && !finalInput.contains('@') && !finalInput.startsWith('+')) {
+      finalInput = "+91" + digits;
+    }
+    bool isPhone = !finalInput.contains('@');
 
     Uri loginUrl = Uri.parse(URLs.LOGIN);
     debugPrint('Login Url: --------->>>>>>> $loginUrl');
 
     // Create map with proper null handling
     Map data = {
-      "login": emailOrPhone.toString(),
+      "login": finalInput,
       "device_token" : AuthDatabase.instance.getDeviceUniqueId()
     };
 

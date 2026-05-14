@@ -1,13 +1,14 @@
 import 'dart:async';
+import 'package:amazcart/AppConfig/app_config.dart';
 import 'package:amazcart/controller/otp_controller.dart';
 import 'package:amazcart/controller/settings_controller.dart';
 import 'package:amazcart/utils/styles.dart';
 import 'package:amazcart/widgets/amazy_widget/snackbars.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 
 class OtpVerificationPage extends StatefulWidget {
   final Function(bool)? onSuccess;
@@ -20,282 +21,300 @@ class OtpVerificationPage extends StatefulWidget {
 }
 
 class _OtpVerificationPageState extends State<OtpVerificationPage> {
-
   final OtpController _otpController = Get.put(OtpController());
-
-  final GeneralSettingsController _settingsController =
-      Get.put(GeneralSettingsController());
-
-  final CountDownController _countDownController = CountDownController();
+  final GeneralSettingsController _settingsController = Get.put(GeneralSettingsController());
 
   String? enteredOtp;
-
   bool timedOut = false;
-
-  int? _validationTime;
-
-  // Timer _timer;
+  late int _validationTime;
+  late Timer _timer;
+  int _currentSeconds = 0;
 
   @override
   void initState() {
-    _validationTime = _settingsController.otpCodeValidationTime.value * 60;
-    Future.delayed(Duration(seconds: 1), () {
-      _countDownController.start();
-    });
     super.initState();
+    _validationTime = _settingsController.otpCodeValidationTime.value * 60;
+    _currentSeconds = _validationTime;
+    startTimer();
   }
 
-  // void startTimer() {
-  //   setState(() {
-  //     _timer = Timer.periodic(
-  //       const Duration(seconds: 1),
-  //       (Timer timer) {
-  //         if (_validationTime == 0) {
-  //           setState(() {
-  //             timedOut = true;
-  //             timer.cancel();
-  //           });
-  //         } else {
-  //           setState(() {
-  //             _validationTime--;
-  //           });
-  //         }
-  //       },
-  //     );
-  //   });
-  // }
+  void startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_currentSeconds == 0) {
+        setState(() {
+          timedOut = true;
+          timer.cancel();
+        });
+      } else {
+        setState(() {
+          _currentSeconds--;
+        });
+      }
+    });
+  }
+
+  String _formatTime(int seconds) {
+    int minutes = seconds ~/ 60;
+    int remainingSeconds = seconds % 60;
+    return "${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}";
+  }
 
   @override
   void dispose() {
-    // _timer.cancel();
+    _timer.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.black,
-          ),
-          onPressed: () {
-            Get.back();
-          },
-        ),
-      ),
-      body: Container(
-        child: ListView(
+      backgroundColor: const Color(0xFFF9F9F5),
+      body: SafeArea(
+        child: Stack(
           children: [
-            SizedBox(
-              height: 10,
+            // Bottom Leaf Graphic
+            Positioned(
+              bottom: 20.h,
+              left: 0,
+              right: 0,
+              child: Opacity(
+                opacity: 0.1,
+                child: Image.asset(
+                  AppConfig.appLogo,
+                  width: 100.w,
+                  height: 100.w,
+                  color: const Color(0xFF1A330F),
+                ),
+              ),
             ),
-            Row(
+            
+            Column(
               children: [
-                Expanded(child: Container()),
-                CircularCountDownTimer(
-                  duration: _validationTime!,
-                  initialDuration: 0,
-                  controller: _countDownController,
-                  width: 40.w,
-                  height: 40.w,
-                  ringColor: Colors.grey[300]!,
-                  ringGradient: null,
-                  fillColor: AppStyles.pinkColor,
-                  fillGradient: null,
-                  backgroundColor: Colors.white,
-                  backgroundGradient: null,
-                  strokeWidth: 4.0,
-                  strokeCap: StrokeCap.round,
-                  textStyle: TextStyle(
-                    fontSize: 10.0.fontSize,
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                  ),
-                  textFormat: CountdownTextFormat.MM_SS,
-                  isReverse: true,
-                  isReverseAnimation: true,
-                  isTimerTextShown: true,
-                  autoStart: false,
-                  onComplete: () {
-                    setState(() {
-                      timedOut = true;
-                      // _timer.cancel();
-                    });
-                  },
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-              ],
-            ),
-            Center(
-              child: Image.asset(
-                'assets/config/splash_screen_logo.png',
-                width: 100.w,
-                height: 100.w,
-              ),
-            ),
-            SizedBox(
-              height: 40,
-            ),
-            Center(
-              child: Text(
-                'Verification Code'.tr,
-                textAlign: TextAlign.left,
-                style: AppStyles.appFontBold.copyWith(
-                  fontSize: 22.fontSize,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'We sent 6 digit code to your email address please check & enter your code'.tr,
-                textAlign: TextAlign.center,
-                style: AppStyles.appFontBook.copyWith(
-                  fontSize: 16.fontSize,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50.0),
-              child: PinCodeTextField(
-                appContext: context,
-                length: 6,
-                obscureText: false,
-                animationType: AnimationType.fade,
-                keyboardType: TextInputType.number,
-                pinTheme: PinTheme(
-                  shape: PinCodeFieldShape.box,
-                  borderRadius: BorderRadius.circular(5),
-                  fieldHeight: 50,
-                  fieldWidth: 40,
-                  selectedFillColor: AppStyles.textFieldFillColor,
-                  activeColor: AppStyles.textFieldFillColor,
-                  activeFillColor: Colors.white,
-                  inactiveFillColor: Colors.white,
-                  borderWidth: 1,
-                ),
-                animationDuration: Duration(milliseconds: 300),
-                cursorColor: Colors.black,
-                cursorWidth: 1.0,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                enableActiveFill: true,
-                onChanged: (String value) {
-                  if (value != null) {
-                    enteredOtp = value.toString();
-                  }
-                },
-              ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 40.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    child: Container(
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width,
-                      height: 40.fontSize,
-                      decoration: BoxDecoration(
-                        gradient: AppStyles.gradient,
-                        borderRadius: BorderRadius.circular(5),
+                // Custom Header
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => Get.back(),
+                        icon: Icon(Icons.arrow_back, color: const Color(0xFF1A330F), size: 26.w),
                       ),
-                      child: Text(
-                        "Submit".tr,
-                        style: AppStyles.appFontMedium.copyWith(
+                      const Spacer(),
+                      Text(
+                        AppConfig.appName,
+                        style: AppStyles.appFontBold.copyWith(
+                          fontSize: 24.sp,
+                          color: const Color(0xFF1A330F),
+                        ),
+                      ),
+                      const Spacer(),
+                      SizedBox(width: 40.w), // To balance the back button
+                    ],
+                  ),
+                ),
+                
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: EdgeInsets.all(20.w),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 40.h),
+                        decoration: BoxDecoration(
                           color: Colors.white,
-                          fontSize: 14.fontSize,
-                          fontWeight: FontWeight.w500,
+                          borderRadius: BorderRadius.circular(20.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 15,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            // Circular Logo Placeholder
+                            Container(
+                              padding: EdgeInsets.all(15.w),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFF9F9F5),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Image.asset(
+                                AppConfig.appLogo,
+                                width: 80.w,
+                                height: 80.w,
+                              ),
+                            ),
+                            
+                            SizedBox(height: 30.h),
+                            
+                            Text(
+                              'Verification Code'.tr,
+                              style: AppStyles.appFontBold.copyWith(
+                                fontSize: 24.sp,
+                                color: const Color(0xFF1A330F),
+                              ),
+                            ),
+                            
+                            SizedBox(height: 15.h),
+                            
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10.w),
+                              child: Text(
+                                'We sent a 6-digit code to your phone number. Please check and enter your code.'.tr,
+                                textAlign: TextAlign.center,
+                                style: AppStyles.appFontBook.copyWith(
+                                  fontSize: 14.sp,
+                                  color: Colors.grey[600],
+                                  height: 1.5,
+                                ),
+                              ),
+                            ),
+                            
+                            SizedBox(height: 40.h),
+                            
+                            // Pin Code Fields
+                            PinCodeTextField(
+                              appContext: context,
+                              length: 6,
+                              animationType: AnimationType.fade,
+                              keyboardType: TextInputType.number,
+                              pinTheme: PinTheme(
+                                shape: PinCodeFieldShape.box,
+                                borderRadius: BorderRadius.circular(10.r),
+                                fieldHeight: 55.w,
+                                fieldWidth: 45.w,
+                                activeFillColor: Colors.white,
+                                inactiveFillColor: const Color(0xFFF9F9F5),
+                                selectedFillColor: Colors.white,
+                                activeColor: const Color(0xFF698F34),
+                                inactiveColor: Colors.grey[300],
+                                selectedColor: const Color(0xFF698F34),
+                                borderWidth: 1,
+                              ),
+                              animationDuration: const Duration(milliseconds: 300),
+                              enableActiveFill: true,
+                              onChanged: (value) => enteredOtp = value,
+                            ),
+                            
+                            SizedBox(height: 40.h),
+                            
+                            // Verify Button
+                            InkWell(
+                              onTap: () => _handleVerify(),
+                              child: Container(
+                                width: double.infinity,
+                                height: 55.h,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF2D5019),
+                                  borderRadius: BorderRadius.circular(30.r),
+                                ),
+                                child: Text(
+                                  "Verify & Proceed".tr,
+                                  style: AppStyles.appFontBold.copyWith(
+                                    color: Colors.white,
+                                    fontSize: 16.sp,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            
+                            SizedBox(height: 30.h),
+                            
+                            // Resend Section
+                            GestureDetector(
+                              onTap: timedOut ? () => _handleResend() : null,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Didn't receive code? ".tr,
+                                    style: AppStyles.appFontMedium.copyWith(
+                                      color: Colors.grey[600],
+                                      fontSize: 14.sp,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Resend OTP'.tr,
+                                    style: AppStyles.appFontBold.copyWith(
+                                      color: timedOut ? const Color(0xFF2D5019) : Colors.grey[400],
+                                      fontSize: 14.sp,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            
+                            SizedBox(height: 20.h),
+                            
+                            // Timer Badge
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE8F5E9),
+                                borderRadius: BorderRadius.circular(20.r),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.timer_outlined, size: 16.w, color: const Color(0xFF2D5019)),
+                                  SizedBox(width: 8.w),
+                                  Text(
+                                    timedOut ? "Code Expired".tr : "Resend in ".tr + _formatTime(_currentSeconds),
+                                    style: AppStyles.appFontBold.copyWith(
+                                      fontSize: 12.sp,
+                                      color: const Color(0xFF2D5019),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    onTap: () {
-                      if (timedOut == true) {
-                        SnackBars().snackBarWarning(
-                          "OTP Timed out. Please resend OTP".tr,
-                        );
-                      } else {
-                        bool isCorrectOTP =
-                            _otpController.resultChecker(int.parse(enteredOtp!));
-
-                        if (isCorrectOTP) {
-                          Get.back(result: widget.onSuccess!(true));
-                        } else {
-                          SnackBars().snackBarWarning(
-                            "OTP does not match".tr,
-                          );
-                        }
-                      }
-                    },
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      setState(() {
-                        timedOut = false;
-
-                        // _timer.cancel();
-
-                        _validationTime =
-                            _settingsController.otpCodeValidationTime.value *
-                                60;
-                      });
-
-                      await _otpController
-                          .generateOtp(widget.data!)
-                          .then((value) {
-                        if (value) {
-                          _countDownController.restart();
-                        }
-                      });
-                    },
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: "Didn't receive the code?".tr,
-                            style: AppStyles.appFontMedium.copyWith(
-                              color: AppStyles.greyColorLight,
-                              fontSize: 16,
-                            ),
-                          ),
-                          TextSpan(
-                            text: '  ' + 'Resend OTP'.tr,
-                            style: AppStyles.appFontMedium.copyWith(
-                              color: AppStyles.pinkColor,
-                              fontSize: 16.fontSize,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _handleVerify() {
+    if (enteredOtp == null || enteredOtp!.length < 6) {
+      SnackBars().snackBarWarning("Please enter 6-digit OTP".tr);
+      return;
+    }
     
+    if (timedOut) {
+      SnackBars().snackBarWarning("OTP Timed out. Please resend OTP".tr);
+      return;
+    }
+
+    bool isCorrectOTP = _otpController.resultChecker(int.parse(enteredOtp!));
+    if (isCorrectOTP) {
+      Get.back(result: widget.onSuccess!(true));
+    } else {
+      SnackBars().snackBarWarning("OTP does not match".tr);
+    }
+  }
+
+  void _handleResend() async {
+    setState(() {
+      timedOut = false;
+      _currentSeconds = _validationTime;
+    });
+    startTimer();
+    
+    var value = await _otpController.generateOtp(widget.data!);
+    if (value == true) {
+      SnackBars().snackBarSuccess("OTP Resent successfully".tr);
+    } else {
+      SnackBars().snackBarError(value is String ? value : "Failed to resend OTP".tr);
+    }
   }
 }

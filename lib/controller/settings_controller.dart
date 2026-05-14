@@ -51,6 +51,8 @@ class GeneralSettingsController extends GetxController {
 
   Rx<bool> otpOnLogin = false.obs;
 
+  Rx<bool> loginWithOtpOnly = false.obs;
+
   Rx<bool> otpOnPasswordReset = false.obs;
 
   Rx<bool> otpOnOrderWithCod = false.obs;
@@ -89,6 +91,10 @@ class GeneralSettingsController extends GetxController {
       if (response.statusCode == 200) {
 
         settingsModel.value = GeneralSettingsModel.fromJson(jsonDecode(response.body));
+        debugPrint('--- SETTINGS API DEBUG ---');
+        debugPrint('URL: $uri');
+        debugPrint('Response Body: ${response.body}');
+        debugPrint('--------------------------');
         debugPrint('Settings Response Body: ${settingsModel.value.msg}');
 
         if (settingsModel.value.msg?.toLowerCase() == 'success') {
@@ -142,6 +148,17 @@ class GeneralSettingsController extends GetxController {
             } else {
               otpOnLogin.value = false;
             }
+
+            try {
+              if (settingsModel.value.otpConfiguration?.firstWhere((element) => element.type == 'login_with_otp_only').value.toString() == "1") {
+                loginWithOtpOnly.value = true;
+              } else {
+                loginWithOtpOnly.value = false;
+              }
+            } catch (e) {
+              loginWithOtpOnly.value = false;
+            }
+
             if (settingsModel.value.otpConfiguration
                     ?.firstWhere(
                         (element) => element.type == 'otp_on_password_reset')
