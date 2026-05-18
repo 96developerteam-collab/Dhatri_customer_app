@@ -437,10 +437,8 @@ LinearGradient? selectColor(int position) {
                           left: 10.0.w, right: 10.0.w, top: 0.0),
                       child: Obx(() {
                         if (_homeController.isHomePageLoading.value) {
-                          return ListView(
-                            shrinkWrap: true,
-                            padding: EdgeInsets.zero,
-                            physics: NeverScrollableScrollPhysics(),
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
                                 height: 240.h,
@@ -494,10 +492,8 @@ LinearGradient? selectColor(int position) {
                           );
                         } else {
                           if (_homeController.hasDeal.value) {
-                            return ListView(
-                              shrinkWrap: true,
-                              padding: EdgeInsets.zero,
-                              physics: NeverScrollableScrollPhysics(),
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 HomeTitlesWidget(
                                   title: 'Flash Sale'.tr,
@@ -957,10 +953,8 @@ LinearGradient? selectColor(int position) {
                       ),
                       child: Obx(() {
                         if (_homeController.isHomePageLoading.value) {
-                          return ListView(
-                            shrinkWrap: true,
-                            padding: EdgeInsets.zero,
-                            physics: NeverScrollableScrollPhysics(),
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               HomeTitlesWidget(
                                 title: 'Brands'.tr,
@@ -1007,10 +1001,8 @@ LinearGradient? selectColor(int position) {
                             ],
                           );
                         } else {
-                          return ListView(
-                            shrinkWrap: true,
-                            padding: EdgeInsets.zero,
-                            physics: NeverScrollableScrollPhysics(),
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               HomeTitlesWidget(
                                 title: 'Brands'.tr,
