@@ -56,6 +56,8 @@ class LoginController extends GetxController {
 
   Rx<File?> pickedDocument = Rx<File?>(null);
   Rx<File?> pickedShopImage = Rx<File?>(null);
+  var latitude = Rxn<double>();
+  var longitude = Rxn<double>();
 
   var merchants = <Merchant>[].obs;
   var filteredMerchants = <Merchant>[].obs;
@@ -187,25 +189,25 @@ class LoginController extends GetxController {
 
         data.remove('login');
         if (isPhone) {
-          // Prepend +91 if missing
-          String phone = input;
-          if (!phone.startsWith('+')) {
-            // Remove any leading 0s or existing 91 if it was typed without +
-            if (phone.length == 10) {
-              phone = '+91$phone';
-            } else if (phone.length == 12 && phone.startsWith('91')) {
-              phone = '+$phone';
-            } else if (!phone.startsWith('+91')) {
-              phone = '+91$phone';
-            }
-          }
-          data['phone'] = phone;
+          data['phone'] = input;
         } else {
           data['email'] = input;
         }
       }
 
-      DIO.FormData formData = DIO.FormData.fromMap(data);
+      List<MapEntry<String, dynamic>> fields = data.entries.toList();
+      if (latitude.value != null) fields.add(MapEntry('latitude', latitude.value.toString()));
+      if (longitude.value != null) fields.add(MapEntry('longitude', longitude.value.toString()));
+
+      DIO.FormData formData = DIO.FormData.fromMap(Map.fromEntries(fields));
+
+      debugPrint("--- Registering User ---");
+      debugPrint("Register URL: ${URLs.REGISTER}");
+      fields.forEach((element) {
+        if (element.key != 'password' && element.key != 'password_confirmation') {
+          debugPrint("Field: ${element.key} -> ${element.value}");
+        }
+      });
 
       if (pickedDocument.value != null) {
         formData.files.add(MapEntry(
@@ -366,12 +368,7 @@ class LoginController extends GetxController {
   }
 
   String getLoginIdentifier() {
-    String input = email.text.trim();
-    String digits = input.replaceAll(RegExp(r'\D'), '');
-    if (digits.length == 10 && !input.contains('@') && !input.startsWith('+')) {
-      return "+91" + digits;
-    }
-    return input;
+    return email.text.trim();
   }
 
   void toggleLoginMode(bool isPhone) {
@@ -383,10 +380,11 @@ class LoginController extends GetxController {
   Future<bool> fetchUserLogin({
     required String emailOrPhone,
     String? password,
+    String? code,
   }) async {
     try {
       isLoading(true);
-      var loginData = await login(emailOrPhone, password);
+      var loginData = await login(emailOrPhone, password, code);
       if (loginData != null) {
         token = loginData['token'];
         if (token.length > 5) {
@@ -428,14 +426,10 @@ class LoginController extends GetxController {
     }
   }
 
-  static Future login(emailOrPhone, password) async {
+  static Future login(emailOrPhone, password, [String? code]) async {
 
     // Determine if it's phone or email
     String finalInput = emailOrPhone.toString().trim();
-    String digits = finalInput.replaceAll(RegExp(r'\D'), '');
-    if (digits.length == 10 && !finalInput.contains('@') && !finalInput.startsWith('+')) {
-      finalInput = "+91" + digits;
-    }
     bool isPhone = !finalInput.contains('@');
 
     Uri loginUrl = Uri.parse(URLs.LOGIN);
@@ -443,12 +437,16 @@ class LoginController extends GetxController {
 
     // Create map with proper null handling
     Map data = {
-      "login": finalInput,
+      if (isPhone) "phone": finalInput else "email": finalInput,
       "device_token" : AuthDatabase.instance.getDeviceUniqueId()
     };
 
     if (password != null) {
       data["password"] = password.toString();
+    }
+
+    if (code != null) {
+      data["code"] = code.toString();
     }
 
     // Remove null values from map

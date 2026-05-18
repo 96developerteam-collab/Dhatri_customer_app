@@ -10,6 +10,7 @@ import 'package:amazcart/utils/styles.dart';
 import 'package:amazcart/view/amazy_view/authentication/OtpVerificationPage.dart';
 import 'package:amazcart/view/amazy_view/authentication/LoginPage.dart';
 import 'package:amazcart/widgets/amazy_widget/snackbars.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -298,8 +299,128 @@ class RegistrationPage extends GetView<LoginController> {
         ),
         SizedBox(height: 15.h),
         _buildWarehouseSelectionField(),
+        SizedBox(height: 15.h),
+        _buildLocationCaptureField(context),
       ],
     );
+  }
+
+  Widget _buildLocationCaptureField(BuildContext context) {
+    return Obx(() => Container(
+      padding: EdgeInsets.all(12.r),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.location_on_outlined, color: const Color(0xFF1A330F), size: 20.w),
+              SizedBox(width: 8.w),
+              Text(
+                'Shop Location *'.tr,
+                style: AppStyles.appFontBold.copyWith(fontSize: 14.sp, color: const Color(0xFF1A330F)),
+              ),
+            ],
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            'We need your exact shop location for delivery and verification.'.tr,
+            style: AppStyles.appFontMedium.copyWith(fontSize: 11.sp, color: Colors.grey[600]),
+          ),
+          SizedBox(height: 12.h),
+          InkWell(
+            onTap: () => _captureLocation(context),
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 12.w),
+              decoration: BoxDecoration(
+                color: _accountController.latitude.value != null ? const Color(0xFFE8F5E9) : const Color(0xFFF5F5F5),
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(
+                  color: _accountController.latitude.value != null ? const Color(0xFF698F34) : Colors.grey.shade400,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    _accountController.latitude.value != null ? Icons.check_circle : Icons.my_location,
+                    color: _accountController.latitude.value != null ? const Color(0xFF698F34) : Colors.grey[700],
+                    size: 18.w,
+                  ),
+                  SizedBox(width: 8.w),
+                  Text(
+                    _accountController.latitude.value != null 
+                        ? 'Location Captured ✅'.tr 
+                        : 'Capture Current Location'.tr,
+                    style: AppStyles.appFontBold.copyWith(
+                      color: _accountController.latitude.value != null ? const Color(0xFF698F34) : Colors.grey[700],
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (_accountController.latitude.value != null)
+            Padding(
+              padding: EdgeInsets.only(top: 8.h),
+              child: Text(
+                'Lat: ${_accountController.latitude.value!.toStringAsFixed(6)}, Long: ${_accountController.longitude.value!.toStringAsFixed(6)}',
+                style: AppStyles.appFontMedium.copyWith(fontSize: 10.sp, color: Colors.grey[600]),
+              ),
+            ),
+        ],
+      ),
+    ));
+  }
+
+  Future<void> _captureLocation(BuildContext context) async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      SnackBars().snackBarWarning('Location services are disabled. Opening settings...'.tr);
+      await Geolocator.openLocationSettings();
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        SnackBars().snackBarError('Location permissions are denied'.tr);
+        return;
+      }
+    }
+    
+    if (permission == LocationPermission.deniedForever) {
+      SnackBars().snackBarError('Location permissions are permanently denied, we cannot request permissions.'.tr);
+      return;
+    } 
+
+    _accountController.isLoading.value = true;
+    try {
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      _accountController.latitude.value = position.latitude;
+      _accountController.longitude.value = position.longitude;
+      
+      debugPrint("--- Location Captured ---");
+      debugPrint("Latitude: ${position.latitude}");
+      debugPrint("Longitude: ${position.longitude}");
+      
+      SnackBars().snackBarSuccess('Location captured successfully!'.tr);
+    } catch (e) {
+      debugPrint("Error capturing location: $e");
+      SnackBars().snackBarError('Could not capture location. Please try again.'.tr);
+    } finally {
+      _accountController.isLoading.value = false;
+    }
   }
 
   Widget _buildStickyFooter(BuildContext context) {
@@ -413,6 +534,10 @@ class RegistrationPage extends GetView<LoginController> {
     }
     if (_accountController.selectedMerchant.value == null) {
       SnackBars().snackBarWarning("Please select Warehouse".tr);
+      return;
+    }
+    if (_accountController.latitude.value == null) {
+      SnackBars().snackBarWarning("Please capture your Shop Location".tr);
       return;
     }
 

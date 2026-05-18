@@ -75,6 +75,10 @@
 	<string>We need access to your camera to allow you to set your profile picture and support ticket image.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photo library to allow you to set your profile picture and support ticket image.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs access to location when open to capture your shop location during registration.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs access to location when in the background to capture your shop location during registration.</string>
 
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>

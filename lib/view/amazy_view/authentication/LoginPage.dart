@@ -201,34 +201,76 @@ class LoginPage extends GetView<LoginController> {
   void _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // FOR TESTING: Always use OTP flow
-    Map data = {
-      "type": "otp_on_login",
-      "phone": _loginController.getLoginIdentifier(),
-      "password": _loginController.password.text,
-    };
-
+    final String phoneInput = _loginController.getLoginIdentifier();
     final OtpController otpController = Get.put(OtpController());
-    _loginController.isLoading.value = true;
 
-    var result = await otpController.generateOtp(data);
-    _loginController.isLoading.value = false;
+    // ── Case 2a: login_with_otp_only == 1 ──────────────────────────────────
+    if (_settingsController.loginWithOtpOnly.value) {
+      final Map data = {
+        "type": "login_with_otp_only",
+        "phone": phoneInput,
+      };
 
-    if (result == true) {
-      Get.to(() => OtpVerificationPage(
-            data: data,
-            onSuccess: (result) async {
-              if (result == true) {
-                bool loginSuccess = await _loginController.fetchUserLogin(
-                  emailOrPhone: _loginController.getLoginIdentifier(),
-                  password: _loginController.password.text,
-                );
-                if (loginSuccess) Get.back();
-              }
-            },
-          ));
-    } else {
-      SnackBars().snackBarError(result is String ? result : "OTP generation failed".tr);
+      _loginController.isLoading.value = true;
+      var result = await otpController.generateOtp(data);
+      _loginController.isLoading.value = false;
+
+      if (result == true) {
+        Get.to(() => OtpVerificationPage(
+              data: data,
+              onSuccess: (verified, [code]) async {
+                if (verified == true) {
+                  // No password for OTP-only login
+                  bool loginSuccess = await _loginController.fetchUserLogin(
+                    emailOrPhone: phoneInput,
+                    code: code,
+                  );
+                  if (loginSuccess) Get.back();
+                }
+              },
+            ));
+      } else {
+        SnackBars().snackBarError(result is String ? result : "OTP generation failed".tr);
+      }
+      return;
     }
+
+    // ── Case 2b: otp_on_login == 1 ─────────────────────────────────────────
+    if (_settingsController.otpOnLogin.value) {
+      final Map data = {
+        "type": "otp_on_login",
+        "phone": phoneInput,
+      };
+
+      _loginController.isLoading.value = true;
+      var result = await otpController.generateOtp(data);
+      _loginController.isLoading.value = false;
+
+      if (result == true) {
+        Get.to(() => OtpVerificationPage(
+              data: data,
+              onSuccess: (verified, [code]) async {
+                if (verified == true) {
+                  bool loginSuccess = await _loginController.fetchUserLogin(
+                    emailOrPhone: phoneInput,
+                    password: _loginController.password.text,
+                    code: code,
+                  );
+                  if (loginSuccess) Get.back();
+                }
+              },
+            ));
+      } else {
+        SnackBars().snackBarError(result is String ? result : "OTP generation failed".tr);
+      }
+      return;
+    }
+
+    // ── Case 2c: both == 0 → direct password login (skip OTP entirely) ─────
+    bool loginSuccess = await _loginController.fetchUserLogin(
+      emailOrPhone: phoneInput,
+      password: _loginController.password.text,
+    );
+    if (loginSuccess) Get.back();
   }
 }

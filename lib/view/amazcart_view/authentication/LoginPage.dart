@@ -344,10 +344,11 @@ class LoginPage extends GetView<LoginController> {
 
                                         if (otpResult == true) {
                                           var verified = await Get.to(() => OtpVerificationPage(data: data));
-                                          if (verified == true) {
+                                          if (verified != null && verified is String) {
                                             var success = await _loginController.fetchUserLogin(
                                                 emailOrPhone: _loginController.email.text,
-                                                password: _loginController.password.text);
+                                                password: _loginController.password.text,
+                                                code: verified);
                                             if (success) {
                                               Get.back();
                                             }

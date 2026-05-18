@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class OtpVerificationPage extends StatefulWidget {
-  final Function(bool)? onSuccess;
+  final Function? onSuccess;
   final Map? data;
 
   OtpVerificationPage({this.data, this.onSuccess});
@@ -297,7 +297,17 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
     bool isCorrectOTP = _otpController.resultChecker(int.parse(enteredOtp!));
     if (isCorrectOTP) {
-      Get.back(result: widget.onSuccess!(true));
+      if (widget.onSuccess != null) {
+        dynamic callbackResult;
+        try {
+          callbackResult = widget.onSuccess!(true, enteredOtp!);
+        } catch (e) {
+          callbackResult = widget.onSuccess!(true);
+        }
+        Get.back(result: callbackResult);
+      } else {
+        Get.back(result: enteredOtp!);
+      }
     } else {
       SnackBars().snackBarWarning("OTP does not match".tr);
     }
