@@ -613,13 +613,20 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     ),
 
                                     /// Right side: Track Order
-                                    _buildActionButton('Track Order'.tr, () {
-                                      Get.to(() => OrderTrack(
-                                        order: widget.order!,
-                                        package: widget.order!.packages![packageIndex],
-                                        processes: DeliveryProcess.delivery,
-                                      ));
-                                    }, color: AppStyles.pinkColor, isFilled: true),
+                                    Obx(() {
+                                      if (nowOrderIsCanceled.value ||
+                                          widget.order?.isCompleted == 1 ||
+                                          widget.order?.isCancelled == 1) {
+                                        return const SizedBox.shrink();
+                                      }
+                                      return _buildActionButton('Track Order'.tr, () {
+                                        Get.to(() => OrderTrack(
+                                          order: widget.order!,
+                                          package: widget.order!.packages![packageIndex],
+                                          processes: DeliveryProcess.delivery,
+                                        ));
+                                      }, color: AppStyles.pinkColor, isFilled: true);
+                                    }),
                                   ],
                                 ),
                               ),

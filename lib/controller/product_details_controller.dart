@@ -82,7 +82,12 @@ class ProductDetailsController extends GetxController {
 
   Future fetchProductDetails(id) async {
     try {
+      print('=================== PRODUCT DETAILS REQUEST ===================');
+      print('Making request for Product ID: $id');
       Uri userData = Uri.parse(URLs.ALL_PRODUCTS + '/$id?lang=${AppLocalizations.getLanguageCode()}');
+      print('Request URL: $userData');
+      print('==============================================================');
+      logToFile('REQUEST_URL', userData.toString());
 
       var response = await http.get(
         userData,
@@ -113,6 +118,7 @@ class ProductDetailsController extends GetxController {
   Future<ProductDetailsModel> getProductDetails2(id) async {
 
     try {
+      print('>>> getProductDetails2 triggered for Product ID: $id');
       isCartLoading(true);
       var data = await fetchProductDetails(id);
 
@@ -123,6 +129,9 @@ class ProductDetailsController extends GetxController {
         // Specific Wholesale Data Log
         int wholeSaleCount = data.data.skus?.first.wholeSalePrices?.length ?? 0;
         logToFile('WHOLESALE_CHECK', 'Found $wholeSaleCount wholesale prices in first SKU');
+        if (wholeSaleCount > 0) {
+          logToFile('WHOLESALE_DETAILS_LOG', 'Wholesale prices details: ${data.data.skus?.first.wholeSalePrices?.map((e) => e.toJson()).toList()}');
+        }
 
         productReviews.value = data.data.reviews?.where((element) => element.type == ProductType.PRODUCT)
             .toList()??[];

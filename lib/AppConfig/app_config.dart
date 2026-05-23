@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class AppConfig {
 
- static const String hostUrl = "https://test.dhatri.store";
- static String appName = 'Dhatri';
+  static bool showDebugLogs = false;
 
- static bool isAmazCartTheme = false;
+  static const String hostUrl = "https://dhatri.store";
+  static String appName = 'Dhatri';
+
+  static bool isAmazCartTheme = false;
 
  // Updated Theme Colors
  static String appColorScheme = "#4f7942";

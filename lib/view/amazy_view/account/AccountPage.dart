@@ -293,6 +293,15 @@ class _AccountPageState extends State<AccountPage> {
                                                 fontSize: 14.fontSize,
                                                 color: Colors.white),
                                           ),
+                                          Text(
+                                            'GST Number'.tr + ': ${(loginController.profileData.value.gstNumber == null || loginController.profileData.value.gstNumber!.trim().isEmpty) ? "NA" : loginController.profileData.value.gstNumber!}',
+                                            textAlign: TextAlign.left,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: AppStyles.appFontBook.copyWith(
+                                                fontSize: 14.fontSize,
+                                                color: Colors.white),
+                                          ),
                                           InkWell(
                                             onTap: () async {
                                               await loginController

@@ -109,7 +109,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Text(
-                        'Bill to'.tr,
+                        '2 to'.tr,
                         style: AppStyles.kFontGrey12w5,
                       ),
                       Text(

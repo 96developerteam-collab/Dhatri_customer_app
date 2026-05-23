@@ -15,6 +15,7 @@ import '../../../../model/NewModel/Order/Package.dart';
 import '../../../../model/NewModel/Product/ProductType.dart';
 import '../../../../widgets/amazy_widget/AppBarWidget.dart';
 import '../../../../widgets/amazy_widget/custom_loading_widget.dart';
+import '../../../../widgets/amazy_widget/CustomDate.dart';
 
 class MyCancellations extends StatefulWidget {
   @override
@@ -23,10 +24,10 @@ class MyCancellations extends StatefulWidget {
 
 class _MyCancellationsState extends State<MyCancellations> {
   final CancelledOrderController cancelledController =
-  Get.put(CancelledOrderController());
+      Get.put(CancelledOrderController());
 
   final GeneralSettingsController _currencyController =
-  Get.put(GeneralSettingsController());
+      Get.put(GeneralSettingsController());
 
   String deliverStateName(Package package) {
     var deliveryStatus = '';
@@ -66,18 +67,21 @@ class _MyCancellationsState extends State<MyCancellations> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppStyles.appBackgroundColor,
-      appBar: AppBarWidget(title: 'Cancelled Orders'.tr,showCart: false,),
+      appBar: AppBarWidget(
+        title: 'Cancelled Orders'.tr,
+        showCart: false,
+      ),
       body: Obx(
-            () {
+        () {
           if (cancelledController.isAllOrderLoading.value) {
             return Center(
               child: CustomLoadingWidget(),
             );
           } else {
             if (cancelledController.cancelledOrderListModel.value.orders ==
-                null ||
+                    null ||
                 cancelledController
-                    .cancelledOrderListModel.value.orders?.length ==
+                        .cancelledOrderListModel.value.orders?.length ==
                     0) {
               return Center(
                 child: Column(
@@ -104,476 +108,261 @@ class _MyCancellationsState extends State<MyCancellations> {
                 ),
               );
             }
-            return Container(
-              child: ListView.separated(
-                separatorBuilder: (context, index) {
-                  return Divider(
-                    color: AppStyles.appBackgroundColor,
-                    height: 5.h,
-                    thickness: 5,
-                  );
-                },
-                itemCount: cancelledController
-                    .cancelledOrderListModel.value.orders!.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    color: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            return ListView.builder(
+              padding: EdgeInsets.symmetric(vertical: 10.h),
+              physics: BouncingScrollPhysics(),
+              itemCount: cancelledController
+                  .cancelledOrderListModel.value.orders!.length,
+              itemBuilder: (context, index) {
+                var order = cancelledController
+                    .cancelledOrderListModel.value.orders![index];
+
+                Color statusColor = Color(0xFFFF9800); // Orange by default (Pending)
+                final statusText = orderStatusGet(order);
+                if (statusText.toLowerCase() == "cancelled".tr.toLowerCase() ||
+                    statusText.toLowerCase() == "cancelled".toLowerCase()) {
+                  statusColor = Color(0xFFE53935); // Red
+                } else if (statusText.toLowerCase() == "completed".tr.toLowerCase() ||
+                    statusText.toLowerCase() == "completed".toLowerCase()) {
+                  statusColor = Color(0xFF4CAF50); // Green
+                }
+
+                return Card(
+                  margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  elevation: 1,
+                  shadowColor: Colors.black.withOpacity(0.04),
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.r),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(16.w),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         InkWell(
                           onTap: () {
                             Get.to(() => OrderDetails(
-                              order: cancelledController
-                                  .cancelledOrderListModel
-                                  .value
-                                  .orders![index],
-                            ));
+                                  order: order,
+                                ));
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        cancelledController
-                                            .cancelledOrderListModel
-                                            .value
-                                            .orders![index]
-                                            .orderNumber!
-                                            .capitalizeFirst!,
-                                        style: AppStyles.kFontBlack15w4,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          order.orderNumber!.capitalizeFirst!,
+                                          style: AppStyles.appFontMedium.copyWith(
+                                            fontSize: 16.fontSize,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        SizedBox(width: 4.w),
+                                        Icon(
+                                          Icons.arrow_forward_ios,
+                                          size: 12.w,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 4.h),
+                                    Text(
+                                      'Placed on'.tr +
+                                          ': ' +
+                                          (order.createdAt != null
+                                              ? CustomDate().formattedDateTime(
+                                                  order.createdAt!.toLocal())
+                                              : ''),
+                                      style: AppStyles.appFontBook.copyWith(
+                                        fontSize: 12.fontSize,
+                                        color: Colors.grey[600],
                                       ),
-                                      Icon(
-                                        Icons.arrow_forward_ios,
-                                        size: 15.w,
-                                        color: AppStyles.blackColor,
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 5.2.h,
-                                  ),
-                                  Text(
-                                    'Placed on'.tr +
-                                        ': ' +
-                                        cancelledController
-                                            .cancelledOrderListModel
-                                            .value
-                                            .orders![index]
-                                            .createdAt!
-                                            .toLocal()
-                                            .toString(),
-                                    style: AppStyles.kFontBlack12w4,
-                                  ),
-                                  SizedBox(
-                                    height: 5.2.h,
-                                  ),
-                                ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                              Expanded(child: Container()),
-                              Text(
-                                '${orderStatusGet(cancelledController.cancelledOrderListModel.value.orders![index])}',
-                                style: AppStyles.kFontBlack12w4,
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 14.w, vertical: 5.h),
+                                decoration: BoxDecoration(
+                                  color: statusColor.withOpacity(0.08),
+                                  borderRadius: BorderRadius.circular(20.r),
+                                  border: Border.all(
+                                      color: statusColor.withOpacity(0.4),
+                                      width: 1.w),
+                                ),
+                                child: Text(
+                                  statusText,
+                                  style: AppStyles.appFontMedium.copyWith(
+                                    fontSize: 12.fontSize,
+                                    color: statusColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        SizedBox(
-                          height: 10.h,
+                        Divider(
+                          color: Colors.grey.withOpacity(0.15),
+                          height: 24.h,
+                          thickness: 1,
                         ),
                         ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: cancelledController
-                                .cancelledOrderListModel
-                                .value
-                                .orders![index]
-                                .packages!
-                                .length,
-                            itemBuilder: (context, packageIndex) {
-                              return Container(
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Image.asset(
-                                                    'assets/images/icon_delivery-parcel.png',
-                                                    width: 17.w,
-                                                    height: 17.w,
-                                                  ),
-                                                  SizedBox(
-                                                    width: 8.w,
-                                                  ),
-                                                  Text(
-                                                    cancelledController
-                                                        .cancelledOrderListModel
-                                                        .value
-                                                        .orders![index]
-                                                        .packages![packageIndex]
-                                                        .packageCode!,
-                                                    style: AppStyles
-                                                        .kFontBlack14w5,
-                                                  ),
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 26.0, top: 5),
-                                                child: Text(
-                                                  'Sold by'.tr +
-                                                      ': ' +
-                                                      cancelledController
-                                                          .cancelledOrderListModel
-                                                          .value
-                                                          .orders![index]
-                                                          .packages![
-                                                      packageIndex]
-                                                          .seller!
-                                                          .firstName!,
-                                                  style:
-                                                  AppStyles.kFontBlack14w5,
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 26.0, top: 5),
-                                                child: Text(
-                                                  cancelledController
-                                                      .cancelledOrderListModel
-                                                      .value
-                                                      .orders![index]
-                                                      .packages![packageIndex]
-                                                      .shippingDate ?? '',
-                                                  style:
-                                                  AppStyles.kFontBlack12w4,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Text(
-                                          deliverStateName(cancelledController
-                                              .cancelledOrderListModel
-                                              .value
-                                              .orders![index]
-                                              .packages![packageIndex]),
-                                          textAlign: TextAlign.center,
-                                          style: AppStyles.kFontDarkBlue12w5
-                                              .copyWith(
-                                              fontStyle: FontStyle.italic),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 15.h,
-                                    ),
-                                    ListView.separated(
-                                        separatorBuilder: (context, index) {
-                                          return Divider(
-                                            color: AppStyles.appBackgroundColor,
-                                            height: 2.h,
-                                            thickness: 2,
-                                          );
-                                        },
-                                        shrinkWrap: true,
-                                        padding: EdgeInsets.only(left: 26.0),
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount: cancelledController.cancelledOrderListModel.value.orders?[index].packages?[packageIndex].products?.length ?? 0,
-                                        itemBuilder: (context, productIndex) {
-                                          if (cancelledController
-                                              .cancelledOrderListModel
-                                              .value
-                                              .orders![index]
-                                              .packages![packageIndex]
-                                              .products![productIndex]
-                                              .type ==
-                                              ProductType.GIFT_CARD) {
-                                            return Container(
-                                              margin: EdgeInsets.symmetric(
-                                                  vertical: 10.h),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  ClipRRect(
-                                                    borderRadius:
-                                                    BorderRadius.all(
-                                                        Radius.circular(5.r)),
-                                                    child: Container(
-                                                        height: 80.w,
-                                                        width: 80.w,
-                                                        child: Image.network(
-                                                          AppConfig.assetPath +
-                                                              '/' +
-                                                              cancelledController
-                                                                  .cancelledOrderListModel
-                                                                  .value
-                                                                  .orders![index]
-                                                                  .packages![
-                                                              packageIndex]
-                                                                  .products![
-                                                              productIndex]
-                                                                  .giftCard!
-                                                                  .thumbnailImage!,
-                                                          fit: BoxFit.cover,
-                                                        )),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 15.w,
-                                                  ),
-                                                  Expanded(
-                                                    child: Container(
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .start,
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                        children: [
-                                                          Text(
-                                                            cancelledController
-                                                                .cancelledOrderListModel
-                                                                .value
-                                                                .orders![index]
-                                                                .packages![
-                                                            packageIndex]
-                                                                .products![
-                                                            productIndex]
-                                                                .giftCard!
-                                                                .name!,
-                                                            style: AppStyles
-                                                                .kFontBlack14w5,
-                                                          ),
-                                                          SizedBox(
-                                                            height: 5.h,
-                                                          ),
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceAround,
-                                                            children: [
-                                                              Text(
-                                                                '${(cancelledController.cancelledOrderListModel.value.orders![index].packages![packageIndex].products![productIndex].giftCard!.sellingPrice! * _currencyController.conversionRate.value).toString()}${_currencyController.appCurrency.value}',
-                                                                style: AppStyles
-                                                                    .kFontPink15w5,
-                                                              ),
-                                                              Expanded(
-                                                                child:
-                                                                Container(),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: 5.h,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          } else {
-                                            return Container(
-                                              margin: EdgeInsets.symmetric(
-                                                  vertical: 10.h),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  ClipRRect(
-                                                    borderRadius:
-                                                    BorderRadius.all(
-                                                        Radius.circular(5.r)),
-                                                    child: Container(
-                                                        height: 80.w,
-                                                        width: 80.w,
-                                                        child: Image.network(
-                                                          AppConfig.assetPath +
-                                                              '/' +
-                                                              cancelledController
-                                                                  .cancelledOrderListModel
-                                                                  .value
-                                                                  .orders![index]
-                                                                  .packages![
-                                                              packageIndex]
-                                                                  .products![
-                                                              productIndex]
-                                                                  .sellerProductSku!
-                                                                  .product!
-                                                                  .product!
-                                                                  .thumbnailImageSource!,
-                                                          fit: BoxFit.cover,
-                                                        )),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 15.w,
-                                                  ),
-                                                  Expanded(
-                                                    child: Container(
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .start,
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                        children: [
-                                                          Text(
-                                                            cancelledController
-                                                                .cancelledOrderListModel
-                                                                .value
-                                                                .orders![index]
-                                                                .packages![
-                                                            packageIndex]
-                                                                .products![
-                                                            productIndex]
-                                                                .sellerProductSku!
-                                                                .product!
-                                                                .productName!,
-                                                            style: AppStyles
-                                                                .kFontBlack14w5,
-                                                          ),
-                                                          ListView.builder(
-                                                            shrinkWrap: true,
-                                                            physics:
-                                                            NeverScrollableScrollPhysics(),
-                                                            itemCount: cancelledController.cancelledOrderListModel.value.orders?[index].packages![packageIndex].products?[productIndex].sellerProductSku?.productVariations?.length??0,
-
-                                                            itemBuilder: (context,
-                                                                variantIndex) {
-
-                                                              var attributeValue = cancelledController.cancelledOrderListModel.value.orders?[index].packages?[packageIndex].products?[productIndex].sellerProductSku?.productVariations?[variantIndex].attributeValue;
-                                                              var attribute = cancelledController.cancelledOrderListModel.value.orders?[index].packages?[packageIndex].products?[productIndex].sellerProductSku?.productVariations?[variantIndex].attribute;
-
-                                                              log("attributeValue :::${attributeValue?.toJson()}");
-
-                                                              return Text(
-                                                                '${attribute?.name??''}: ${attributeValue?.name??attributeValue?.value??''}',
-                                                                style: AppStyles
-                                                                    .kFontBlack12w4,
-                                                              );
-
-                                                            },
-                                                          ),
-                                                          SizedBox(
-                                                            height: 5.h,
-                                                          ),
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceAround,
-                                                            children: [
-                                                              Column(
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                                children: [
-                                                                  Row(
-                                                                    mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                    crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                    children: [
-                                                                      Text(
-                                                                        '${_currencyController.appCurrency.value}${((cancelledController.cancelledOrderListModel.value.orders![index].packages![packageIndex].products![productIndex].price??0) * _currencyController.conversionRate.value).toStringAsFixed(2)}',
-                                                                        style: AppStyles
-                                                                            .kFontPink15w5,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                        5.w,
-                                                                      ),
-                                                                      Text(
-                                                                        '(${cancelledController.cancelledOrderListModel.value.orders![index].packages![packageIndex].products![productIndex].qty}x)',
-                                                                        style: AppStyles
-                                                                            .kFontBlack14w5,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Expanded(
-                                                                child:
-                                                                Container(),
-                                                              ),
-                                                              // Text(
-                                                              //   '=\$${orderController.orderListModel.value.orders[index].packages[packageIndex].products[productIndex].totalPrice}',
-                                                              //   style: AppStyles
-                                                              //       .kFontBlack14w5,
-                                                              // ),
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: 5.h,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          }
-                                        }),
-                                  ],
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: order.packages?.length ?? 0,
+                          itemBuilder: (context, packageIndex) {
+                            var package = order.packages![packageIndex];
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Sold by'.tr +
+                                      ': ${package.seller?.firstName ?? "Seller"}',
+                                  style: AppStyles.appFontBook.copyWith(
+                                    fontSize: 13.fontSize,
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              );
-                            }),
-                        SizedBox(
-                          height: 10.h,
+                                SizedBox(height: 8.h),
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: package.products?.length ?? 0,
+                                  itemBuilder: (context, productIndex) {
+                                    var product =
+                                        package.products![productIndex];
+                                    String name = "";
+                                    String imageUrl = "";
+                                    double price = 0.0;
+
+                                    if (product.type == ProductType.GIFT_CARD) {
+                                      name = product.giftCard?.name ?? "";
+                                      imageUrl =
+                                          '${AppConfig.assetPath}/${product.giftCard?.thumbnailImage ?? ""}';
+                                      price = product.giftCard?.sellingPrice ??
+                                          0.0;
+                                    } else {
+                                      name = product.sellerProductSku?.product
+                                              ?.productName ??
+                                          "";
+                                      imageUrl =
+                                          '${AppConfig.assetPath}/${product.sellerProductSku?.product?.product?.thumbnailImageSource ?? ""}';
+                                      price = product.price ?? 0.0;
+                                    }
+
+                                    return Container(
+                                      margin:
+                                          EdgeInsets.symmetric(vertical: 8.h),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(10.r),
+                                            child: Container(
+                                              height: 70.w,
+                                              width: 70.w,
+                                              child: Image.network(
+                                                imageUrl,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (context, error,
+                                                        stackTrace) =>
+                                                    Container(
+                                                  color: Colors.grey[100],
+                                                  child: Icon(Icons.image,
+                                                      color: Colors.grey[400]),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(width: 12.w),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  name,
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: AppStyles
+                                                      .appFontMedium
+                                                      .copyWith(
+                                                    fontSize: 14.fontSize,
+                                                    color: Colors.black87,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 4.h),
+                                                Text(
+                                                  '${_currencyController.appCurrency.value}${((price) * _currencyController.conversionRate.value).toStringAsFixed(2)} x ${product.qty}',
+                                                  style: AppStyles.appFontMedium
+                                                      .copyWith(
+                                                    fontSize: 14.fontSize,
+                                                    color: Color(0xFF2E7D32),
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        Divider(
+                          color: Colors.grey.withOpacity(0.15),
+                          height: 24.h,
+                          thickness: 1,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text(
-                              '${cancelledController.cancelledOrderListModel.value.orders![index].packages!.length} ' +
-                                  'Package'.tr +
-                                  ',' +
-                                  'Total'.tr +
-                                  ':' +
-                                  '${_currencyController.appCurrency.value}' +
-                                  (cancelledController.cancelledOrderListModel
-                                      .value.orders![index].grandTotal! *
-                                      _currencyController
-                                          .conversionRate.value)
-                                      .toStringAsFixed(2),
-                              style: AppStyles.kFontBlack14w5,
+                            RichText(
+                              text: TextSpan(
+                                style: AppStyles.appFontBook.copyWith(
+                                  fontSize: 14.fontSize,
+                                  color: Colors.black87,
+                                ),
+                                children: [
+                                  TextSpan(
+                                      text:
+                                          '${order.packages?.length ?? 0} ${"Package".tr}, '),
+                                  TextSpan(
+                                    text:
+                                        '${"Total".tr}: ${_currencyController.appCurrency.value}${(order.grandTotal! * _currencyController.conversionRate.value).toStringAsFixed(2)}',
+                                    style: AppStyles.appFontMedium.copyWith(
+                                      fontSize: 14.fontSize,
+                                      color: Color(0xFF2E7D32),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
                       ],
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             );
           }
         },

@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:amazcart/AppConfig/api_keys.dart';
 import 'package:amazcart/bindings/home_bindings.dart';
 import 'package:amazcart/AppConfig/app_config.dart';
@@ -27,6 +29,14 @@ import 'controller/cart_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Override debugPrint behavior globally
+  debugPrint = (String? message, {int? wrapWidth}) {
+    if (AppConfig.showDebugLogs) {
+      debugPrintThrottled(message, wrapWidth: wrapWidth);
+    }
+  };
+
   Stripe.publishableKey = stripePublishableKey;
   Stripe.merchantIdentifier = 'merchant.flutter.stripe.test';
   Stripe.urlScheme = 'flutterstripe';
@@ -62,7 +72,15 @@ Future<void> main() async {
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
-    runApp(MyApp());
+    runZoned(() {
+      runApp(MyApp());
+    }, zoneSpecification: ZoneSpecification(
+      print: (Zone self, ZoneDelegate parent, Zone zone, String line) {
+        if (AppConfig.showDebugLogs) {
+          parent.print(zone, line);
+        }
+      },
+    ));
   });
   configLoading();
 }

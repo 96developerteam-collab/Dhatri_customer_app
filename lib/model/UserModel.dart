@@ -57,6 +57,7 @@ class UserClass {
     this.storeImage,
     this.warehouseId,
     this.document,
+    this.gstNumber,
   });
 
   int? id;
@@ -83,6 +84,7 @@ class UserClass {
   String? storeImage;
   int? warehouseId;
   String? document;
+  String? gstNumber;
   List<CustomerAddress>? customerAddresses;
 
   factory UserClass.fromJson(Map<String, dynamic> json) => UserClass(
@@ -110,6 +112,7 @@ class UserClass {
     storeImage: json['store_image'],
     warehouseId: json['warehouse_id'],
     document: json['document'],
+    gstNumber: json['gst_number'],
         customerAddresses: List<CustomerAddress>.from(
             json["customer_addresses"].map((x) => CustomerAddress.fromJson(x))),
       );
@@ -139,6 +142,7 @@ class UserClass {
         "warehouse_id": warehouseId,
         "store_image": storeImage,
         "document": document,
+        "gst_number": gstNumber,
         "customer_addresses":
             List<dynamic>.from(customerAddresses!.map((x) => x.toJson())),
       };

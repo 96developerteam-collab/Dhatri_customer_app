@@ -118,6 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController phoneNumberCtrl = TextEditingController();
   final TextEditingController emailCtrl = TextEditingController();
   final TextEditingController storeNameCtrl = TextEditingController(); // Added for store name
+  final TextEditingController gstNumberCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -129,6 +130,7 @@ class _ProfilePageState extends State<ProfilePage> {
     phoneNumberCtrl.text = loginController.profileData.value.phone ?? "";
     emailCtrl.text = loginController.profileData.value.email ?? "";
     storeNameCtrl.text = loginController.profileData.value.storeName ?? ""; // Added for store name
+    gstNumberCtrl.text = loginController.profileData.value.gstNumber ?? "";
     super.initState();
   }
 
@@ -136,33 +138,51 @@ class _ProfilePageState extends State<ProfilePage> {
     return date < 10 ? '0$date' : '$date';
   }
 
-  Future updateProfile(Map data) async {
+  Future<bool> updateProfile(Map<String, dynamic> data) async {
     EasyLoading.show(
         maskType: EasyLoadingMaskType.none, indicator: CustomLoadingWidget());
     String token = await userToken.read(tokenKey);
-    Uri addressUrl = Uri.parse(URLs.UPDATE_USER_PROFILE);
-    var body = json.encode(data);
-    var response = await http.post(addressUrl,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: body);
-    var jsonString = jsonDecode(response.body);
-    print(jsonString);
-    if (response.statusCode == 202) {
-      EasyLoading.dismiss();
-      return true;
-    } else {
-      EasyLoading.dismiss();
-      if (response.statusCode == 401) {
-        SnackBars().snackBarWarning('Invalid Access token. Please re-login.'.tr);
-        return false;
+
+    try {
+      DIO.Dio dio = DIO.Dio();
+      
+      DIO.FormData formData = DIO.FormData.fromMap(data);
+
+      var response = await dio.post(
+        URLs.UPDATE_USER_PROFILE,
+        data: formData,
+        options: DIO.Options(
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      print(response.data);
+      if (response.statusCode == 202 || response.statusCode == 200) {
+        EasyLoading.dismiss();
+        return true;
       } else {
-        SnackBars().snackBarError(jsonString['message']);
+        EasyLoading.dismiss();
+        SnackBars().snackBarError(response.data['message'] ?? 'Failed to update profile');
         return false;
       }
+    } on DIO.DioException catch (e) {
+      EasyLoading.dismiss();
+      print(e);
+      if (e.response?.statusCode == 401) {
+        SnackBars().snackBarWarning('Invalid Access token. Please re-login.'.tr);
+      } else {
+        final errorMessage = DioExceptions.fromDioError(e).toString();
+        SnackBars().snackBarError(errorMessage);
+      }
+      return false;
+    } catch (e) {
+      EasyLoading.dismiss();
+      print(e);
+      SnackBars().snackBarError(e.toString());
+      return false;
     }
   }
 
@@ -325,7 +345,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     return SizedBox.shrink();
                   }),
                   SizedBox(
-                    height: 20,
+                    height: 15,
                   ),
                   Flexible(
                     child: Padding(
@@ -419,117 +439,25 @@ class _ProfilePageState extends State<ProfilePage> {
                                   fontSize: 16.fontSize,
                                 ),
                                 validator: (value) {
-                                  if (value!.length == 0) {
-                                    return 'Please Type Email address'.tr;
+                                  if (value != null && value.isNotEmpty) {
+                                    if (!GetUtils.isEmail(value)) {
+                                      return 'Please Type a Valid Email address'.tr;
+                                    }
                                   }
                                   return null;
                                 },
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  print(loginController
-                                      .profileData.value.dateOfBirth);
-                                  var splitted;
-                                  if (loginController
-                                              .profileData.value.dateOfBirth !=
-                                          "" &&
-                                      loginController
-                                              .profileData.value.dateOfBirth !=
-                                          null) {
-                                    splitted = loginController
-                                        .profileData.value.dateOfBirth
-                                        .toString()
-                                        .split('-');
-                                  } else {
-                                    splitted =
-                                        '2000/12/31'.toString().split('/');
-                                  }
-
-                                  print(splitted);
-                                  final dob =
-                                      '${splitted[0]}-${splitted[1]}-${splitted[2]}';
-                                  DatePicker.showDatePicker(
-                                    context,
-                                    pickerTheme: DateTimePickerTheme(
-                                      confirm: Text(
-                                        'Update'.tr,
-                                        style: AppStyles.kFontPink15w5,
-                                      ),
-                                      cancel: Text(
-                                        'Cancel'.tr,
-                                        style: AppStyles.kFontBlack14w5,
-                                      ),
-                                    ),
-                                    minDateTime: DateTime.parse(initDateTime),
-                                    maxDateTime: DateTime.parse(maxDateTime),
-                                    initialDateTime: DateTime.parse(dob),
-                                    dateFormat: _format,
-                                    locale: _locale,
-                                    onClose: () => print("----- onClose -----"),
-                                    onCancel: () => print('onCancel'),
-                                    onChange: (dateTime, List<int> index) {
-                                      setState(() {
-                                        _dateTime = dateTime;
-                                      });
-                                    },
-                                    onConfirm:
-                                        (dateTime, List<int> index) async {
-                                      setState(() {
-                                        _dateTime = dateTime;
-                                        toDate =
-                                            '${_dateTime!.year}-${getAbsoluteDate(_dateTime!.month)}-${getAbsoluteDate(_dateTime!.day)}';
-                                        print(toDate);
-
-                                        dobCtrl.text = toDate!;
-                                      });
-                                    },
-                                  );
-                                },
-                                child: TextFormField(
-                                  controller: dobCtrl,
-                                  enabled: false,
-                                  keyboardType: TextInputType.text,
-                                  decoration: CustomInputDecoration()
-                                      .underlineDecoration(
-                                          label: "Date of Birth".tr)
-                                      .copyWith(
-                                          disabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: AppStyles.pinkColor,
-                                        ),
-                                      )),
-                                  style: AppStyles.appFontBook.copyWith(
-                                    fontSize: 16.fontSize,
-                                  ),
-                                  validator: (value) {
-                                    if (value!.length == 0) {
-                                      return 'Please type date of birth'.tr;
-                                    }
-                                    return null;
-                                  },
-                                ),
                               ),
                               SizedBox(
                                 height: 5,
                               ),
                               TextFormField(
-                                controller: descriptionCtrl,
+                                controller: gstNumberCtrl,
                                 keyboardType: TextInputType.text,
-                                maxLines: 3,
                                 decoration: CustomInputDecoration()
-                                    .underlineDecoration(label: "Description".tr),
+                                    .underlineDecoration(label: "GST Number".tr),
                                 style: AppStyles.appFontBook.copyWith(
                                   fontSize: 16.fontSize,
                                 ),
-                                validator: (value) {
-                                  if (value!.length == 0) {
-                                    return 'Please Enter description'.tr;
-                                  }
-                                  return null;
-                                },
                               ),
                               SizedBox(
                                 height: 20,
@@ -543,26 +471,27 @@ class _ProfilePageState extends State<ProfilePage> {
                                     SnackBars()
                                         .snackBarWarning("Disabled in demo".tr);
                                   } else {
-                                    if (_formKey.currentState!.validate()) {
-                                      Map data = {
-                                        "first_name": firstNameCtrl.text,
-                                        "last_name": lastNameCtrl.text,
-                                        "email": emailCtrl.text,
-                                        "phone": phoneNumberCtrl.text,
-                                        "date_of_birth": dobCtrl.text,
-                                        "description": descriptionCtrl.text,
-                                        "store_name": storeNameCtrl.text, // Added store name to update data
-                                      };
-                                      await updateProfile(data)
-                                          .then((value) async {
-                                        if (value) {
-                                          SnackBars().snackBarSuccess(
-                                              'Profile updated successfully');
-                                          await loginController.getProfileData();
-                                        }
-                                      });
-                                    }
-                                  }
+                                      if (_formKey.currentState!.validate()) {
+                                        Map<String, dynamic> data = {
+                                          "first_name": firstNameCtrl.text,
+                                          "last_name": lastNameCtrl.text,
+                                          "email": emailCtrl.text,
+                                          "phone": phoneNumberCtrl.text,
+                                          "date_of_birth": dobCtrl.text,
+                                          "store_name": storeNameCtrl.text,
+                                          "gst_number": gstNumberCtrl.text,
+                                        };
+                                        debugPrint("Profile Edit Submitting Request Data: $data");
+                                        await updateProfile(data)
+                                            .then((value) async {
+                                          debugPrint("Profile Edit API Result success status: $value");
+                                          if (value) {
+                                            SnackBars().snackBarSuccess(
+                                                'Profile updated successfully');
+                                            await loginController.getProfileData();
+                                          }
+                                        });
+                                      }}
                                 },
                               )
                             ],

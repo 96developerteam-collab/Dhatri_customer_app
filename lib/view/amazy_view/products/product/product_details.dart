@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
 import 'dart:convert';
-
 import 'package:amazcart/AppConfig/app_config.dart';
 import 'package:amazcart/controller/cart_controller.dart';
 import 'package:amazcart/controller/login_controller.dart';
@@ -364,7 +363,7 @@ Widget wholesalePriceWidget() {
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 4.w),
                         child: Text(
-                          "Unit Price".tr,
+                          "${(controller.products.value.data?.product?.unitTypeId?.toString() ?? "Unit").tr} Price",
                           textAlign: TextAlign.center,
                           style: AppStyles.appFontMedium.copyWith(
                             color: AppStyles.blackColor,
@@ -466,6 +465,219 @@ Widget wholesalePriceWidget() {
 
   @override
   Widget build(BuildContext context) {
+    Widget buildSpecRow(String title, String value) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 6.h),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: AppStyles.appFontMedium.copyWith(
+                color: Colors.grey.shade500,
+                fontSize: 13.fontSize,
+              ),
+            ),
+            Text(
+              value,
+              style: AppStyles.appFontBold.copyWith(
+                color: const Color(0xFF042E1E),
+                fontSize: 13.fontSize,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget alwaysVisibleWholesalePricingCard() {
+      return Obx(() {
+        var currentSku = controller.productSKU.value.sku;
+        var tiers = currentSku?.wholeSalePrices ?? [];
+
+        if (tiers.isEmpty) {
+          tiers = controller.products.value.data?.skus?.first.wholeSalePrices ?? [];
+        }
+
+        if (tiers.isEmpty) return const SizedBox.shrink();
+
+        double regularPrice = (controller.productSKU.value.sellingPrice as num?)?.toDouble() ?? 0.0;
+        if (regularPrice == 0.0) {
+          var skus = controller.products.value.data?.skus ?? [];
+          if (skus.isNotEmpty) {
+            regularPrice = (skus.first.sellingPrice ?? 0.0).toDouble();
+          }
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.discount_outlined, color: const Color(0xFF042E1E), size: 20.w),
+                      SizedBox(width: 8.w),
+                      Text(
+                        "Wholesale Pricing Tiers".tr,
+                        style: AppStyles.appFontBold.copyWith(
+                          fontSize: 16.fontSize,
+                          color: const Color(0xFF042E1E),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 12.h),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: tiers.length,
+                    separatorBuilder: (context, index) => SizedBox(height: 6.h),
+                    itemBuilder: (context, index) {
+                      var tier = tiers[index];
+                      int minQty = tier.minQty ?? 1;
+                      int? maxQty = tier.maxQty;
+                      double tierPrice = (tier.sellingPrice ?? 0.0).toDouble();
+
+                      int currentQty = controller.itemQuantity.value;
+                      bool isActive = currentQty >= minQty && (maxQty == null || currentQty <= maxQty);
+
+                      double savingPercent = regularPrice > 0 ? ((regularPrice - tierPrice) / regularPrice) * 100 : 0.0;
+
+                      String unitType = (controller.products.value.data?.product?.unitTypeId?.toString() ?? "Unit").tr;
+                      String pluralUnitType = (unitType.toLowerCase().endsWith('s') || unitType.toLowerCase().endsWith('x') || unitType.toLowerCase() == 'kg') ? unitType : '${unitType}s';
+
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(
+                            color: isActive ? const Color(0xFF042E1E) : Colors.grey.shade200,
+                            width: isActive ? 1.5.w : 1.w,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.01),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            if (isActive)
+                              Container(
+                                width: 4.w,
+                                height: 48.h,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF042E1E),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(12.r),
+                                    bottomLeft: Radius.circular(12.r),
+                                  ),
+                                ),
+                              ),
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "TIER ${index + 1}".tr,
+                                              style: AppStyles.appFontBold.copyWith(
+                                                fontSize: 10.fontSize,
+                                                color: Colors.grey.shade500,
+                                                letterSpacing: 0.5,
+                                              ),
+                                            ),
+                                            if (isActive) ...[
+                                              SizedBox(width: 4.w),
+                                              Icon(
+                                                Icons.check_circle_rounded,
+                                                color: const Color(0xFF042E1E),
+                                                size: 12.w,
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                        SizedBox(height: 2.h),
+                                        Text(
+                                          maxQty == null ? "$minQty+ $pluralUnitType" : "$minQty - $maxQty $pluralUnitType",
+                                          style: AppStyles.appFontBold.copyWith(
+                                            fontSize: 14.fontSize,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          "${_settingsController.appCurrency.value}${tier.sellingPrice} / ${unitType.toLowerCase()}",
+                                          style: AppStyles.appFontBold.copyWith(
+                                            fontSize: 14.fontSize,
+                                            color: const Color(0xFF042E1E),
+                                          ),
+                                        ),
+                                        if (savingPercent > 0.5) ...[
+                                          SizedBox(height: 2.h),
+                                          Container(
+                                            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFFE6F4EA),
+                                              borderRadius: BorderRadius.circular(4.r),
+                                            ),
+                                            child: Text(
+                                              "Saves ${savingPercent.toStringAsFixed(0)}%",
+                                              style: AppStyles.appFontBold.copyWith(
+                                                fontSize: 9.fontSize,
+                                                color: const Color(0xFF137333),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      });
+    }
 
    return FutureBuilder<ProductDetailsModel>(
        future: getProductFuture,
@@ -480,119 +692,22 @@ Widget wholesalePriceWidget() {
              );
            } else if (snapshot.hasData) {
              return Scaffold(
-               backgroundColor: Colors.white,
+               backgroundColor: const Color(0xFFFBF9F1),
                body: NestedScrollView(
                 // physics: NeverScrollableScrollPhysics(),
                  headerSliverBuilder:
                      (BuildContext context, bool innerBoxIsScrolled) {
                    return <Widget>[
                      SliverAppBar(
-                       expandedHeight: 250.0.h,
+                       expandedHeight: 320.0.h,
                        pinned: true,
                        collapsedHeight: 70.h,
                        stretch: false,
                        forceElevated: false,
                        titleSpacing: 0,
                        scrolledUnderElevation: 0,
-                       backgroundColor: Colors.white,
+                       backgroundColor: const Color(0xFFFBF9F1),
                        automaticallyImplyLeading: false,
-                       title: SliverAppBarTitleWidget(
-                         child: Row(
-                           children: [
-                             Padding(
-                               padding: EdgeInsets.only(left: 10.w, top: 2),
-                               child: IconButton(
-                                 tooltip: "Back".tr,
-                                 icon: Icon(
-                                   Platform.isIOS ? Icons.arrow_back_ios_new : Icons.arrow_back,
-                                   color: Colors.black,
-                                   size: 18.w,
-                                 ),
-                                 onPressed: () {
-                                   Get.back();
-                                 },
-                               ),
-                             ),
-                             Expanded(
-                               child: Padding(
-                                 padding: const EdgeInsets.only(left: 8.0),
-                                 child: Text(
-                                   _productDetailsModel.data?.productName??'',
-                                   maxLines: 1,
-                                   style: AppStyles.kFontBlack17w5
-                                       .copyWith(fontWeight: FontWeight.bold),
-                                 ),
-                               ),
-                             ),
-                             SizedBox(
-                               width: 10,
-                             ),
-                             Container(
-                               margin: EdgeInsets.only(right: 10),
-                               child: FloatingActionButton(
-                                 heroTag: null,
-                                 tooltip: "Wishlist".tr,
-                                 elevation: 0,
-                                 enableFeedback: false,
-                                 backgroundColor: Colors.transparent,
-                                 child: Container(
-                                   width: 30.w,
-                                   height: 30.w,
-                                   child: InkWell(
-                                     onTap: () async {
-                                       final LoginController loginController =
-                                       Get.put(LoginController());
-
-                                       if (loginController.loggedIn.value) {
-                                         final MyWishListController
-                                         wishListController =
-                                         Get.put(MyWishListController());
-                                         if (_inWishList) {
-                                           await wishListController
-                                               .deleteWishListProduct(
-                                               _wishListId)
-                                               .then((value) {
-                                             setState(() {
-                                               _inWishList = false;
-                                             });
-                                           });
-                                         } else {
-                                           Map data = {
-                                             'seller_product_id':
-                                             _productDetailsModel.data!.id,
-                                             'seller_id': _productDetailsModel
-                                                 .data!.seller!.id,
-                                             'type': 'product',
-                                           };
-
-                                           await wishListController
-                                               .addProductToWishList(data)
-                                               .then((value) {
-                                             setState(() {
-                                               _inWishList = true;
-                                             });
-                                           });
-                                         }
-                                       } else {
-                                         Get.dialog(LoginPage(),
-                                             useSafeArea: false);
-                                       }
-                                     },
-                                     child: Icon(
-                                       _inWishList
-                                           ? FontAwesomeIcons.solidHeart
-                                           : FontAwesomeIcons.heart,
-                                       size: 20.w,
-                                       color: AppStyles.pinkColor,
-                                     ),
-                                   ),
-                                 ),
-                                 onPressed: null,
-                               ),
-                             ),
-                           ],
-                         ),
-                       ),
                        actions: [Container()],
                        flexibleSpace: FlexibleSpaceBar(
                          centerTitle: true,
@@ -601,91 +716,104 @@ Widget wholesalePriceWidget() {
                              clipBehavior: Clip.none,
                              children: [
                                Positioned.fill(
-                                 child: (_productDetailsModel.data?.product?.gallaryImages?.length??0) >
-                                     1
-                                     ? Container(
-                                   child: Swiper(
-                                     itemBuilder: (BuildContext context,
-                                         int index) {
-                                       return Container(
-                                         padding: EdgeInsets.all(
-                                             kToolbarHeight),
-                                         child: InkWell(
-                                           onTap: () {
-                                             Get.to(() =>
-                                                 PhotoViewerWidget(
-                                                   productDetailsModel:
-                                                   _productDetailsModel,
-                                                   initialIndex: index,
-                                                 ));
-                                           },
-                                           child: FancyShimmerImage(
-                                             imageUrl:
-                                             "${AppConfig
-                                                 .assetPath}/${_productDetailsModel
-                                                 .data!.product!
-                                                 .gallaryImages![index]
-                                                 .imagesSource}",
-                                             boxFit: BoxFit.contain,
-                                             errorWidget:
-                                             FancyShimmerImage(
+                                 child: Container(
+                                   margin: EdgeInsets.only(top: 80.h, left: 20.w, right: 20.w, bottom: 20.h),
+                                   decoration: BoxDecoration(
+                                     color: Colors.white,
+                                     borderRadius: BorderRadius.circular(16.r),
+                                     boxShadow: [
+                                       BoxShadow(
+                                         color: Colors.black.withOpacity(0.04),
+                                         blurRadius: 10,
+                                         offset: const Offset(0, 4),
+                                       ),
+                                     ],
+                                   ),
+                                   child: (_productDetailsModel.data?.product?.gallaryImages?.length??0) >
+                                       1
+                                       ? Container(
+                                     child: Swiper(
+                                       itemBuilder: (BuildContext context,
+                                           int index) {
+                                         return Container(
+                                           padding: EdgeInsets.all(16.w),
+                                           child: InkWell(
+                                             onTap: () {
+                                               Get.to(() =>
+                                                   PhotoViewerWidget(
+                                                     productDetailsModel:
+                                                     _productDetailsModel,
+                                                     initialIndex: index,
+                                                   ));
+                                             },
+                                             child: FancyShimmerImage(
                                                imageUrl:
                                                "${AppConfig
-                                                   .assetPath}/backend/img/default.png",
+                                                   .assetPath}/${_productDetailsModel
+                                                   .data!.product!
+                                                   .gallaryImages![index]
+                                                   .imagesSource}",
                                                boxFit: BoxFit.contain,
+                                               errorWidget:
+                                               FancyShimmerImage(
+                                                 imageUrl:
+                                                 "${AppConfig
+                                                     .assetPath}/backend/img/default.png",
+                                                 boxFit: BoxFit.contain,
+                                               ),
                                              ),
                                            ),
-                                         ),
-                                       );
-                                     },
-                                     itemCount: _productDetailsModel.data!
-                                         .product!.gallaryImages!.length,
-                                     control: new SwiperControl(
-                                         color: AppStyles.pinkColor),
-                                     pagination: SwiperPagination(
-                                         builder: SwiperCustomPagination(
-                                             builder:
-                                                 (BuildContext context,
-                                                 SwiperPluginConfig
-                                                 config) {
-                                               return Align(
-                                                 alignment:
-                                                 Alignment.bottomCenter,
-                                                 child:
-                                                 RectSwiperPaginationBuilder(
-                                                   color: AppStyles
-                                                       .lightBlueColorAlt,
-                                                   activeColor:
-                                                   AppStyles.pinkColor,
-                                                   size: Size(10.0, 10.0),
-                                                   activeSize: Size(10.0, 10.0),
-                                                 ).build(context, config),
-                                               );
-                                             })),
-                                   ),
-                                 )
-                                     : Container(
-                                   padding:
-                                   EdgeInsets.all(kToolbarHeight),
-                                   child: InkWell(
-                                     onTap: () {
-                                       Get.to(() =>
-                                           PhotoViewerWidget(
-                                             productDetailsModel:
-                                             _productDetailsModel,
-                                             initialIndex: 0,
-                                           ));
-                                     },
-                                     child: FancyShimmerImage(
-                                       imageUrl:
-                                       "${AppConfig
-                                           .assetPath}/${_productDetailsModel.data?.product?.thumbnailImageSource}",
-                                       boxFit: BoxFit.contain,
-                                       errorWidget: FancyShimmerImage(
+                                         );
+                                       },
+                                       itemCount: _productDetailsModel.data!
+                                           .product!.gallaryImages!.length,
+                                       control: new SwiperControl(
+                                           color: AppStyles.pinkColor),
+                                       pagination: SwiperPagination(
+                                           builder: SwiperCustomPagination(
+                                               builder:
+                                                   (BuildContext context,
+                                                   SwiperPluginConfig
+                                                   config) {
+                                                 return Align(
+                                                   alignment:
+                                                   Alignment.bottomCenter,
+                                                   child:
+                                                   RectSwiperPaginationBuilder(
+                                                     color: AppStyles
+                                                         .lightBlueColorAlt,
+                                                     activeColor:
+                                                     AppStyles.pinkColor,
+                                                     size: Size(10.0, 10.0),
+                                                     activeSize: Size(10.0, 10.0),
+                                                   ).build(context, config),
+                                                 );
+                                               })),
+                                     ),
+                                   )
+                                       : Container(
+                                     padding:
+                                     EdgeInsets.all(16.w),
+                                     child: InkWell(
+                                       onTap: () {
+                                         Get.to(() =>
+                                             PhotoViewerWidget(
+                                               productDetailsModel:
+                                               _productDetailsModel,
+                                               initialIndex: 0,
+                                             ));
+                                       },
+                                       child: FancyShimmerImage(
                                          imageUrl:
                                          "${AppConfig
-                                             .assetPath}/backend/img/default.png",
+                                             .assetPath}/${_productDetailsModel.data?.product?.thumbnailImageSource}",
                                          boxFit: BoxFit.contain,
+                                         errorWidget: FancyShimmerImage(
+                                           imageUrl:
+                                           "${AppConfig
+                                               .assetPath}/backend/img/default.png",
+                                           boxFit: BoxFit.contain,
+                                         ),
                                        ),
                                      ),
                                    ),
@@ -868,1152 +996,412 @@ Widget wholesalePriceWidget() {
                                ],
                              ),
 
-                             _settingsController.vendorType.value == "single"
-                                 ? _productDetailsModel.data?.stockManage == 1
-                                 ? (_productDetailsModel.data?.skus?.first
-                                 .productStock??0) >
-                                 0
-                                 ? Container(
-                               margin: EdgeInsets.only(right: 5.w),
-                               padding: EdgeInsets.symmetric(
-                                 horizontal: 8,
-                                 vertical: 4,
-                               ),
-                               color: Colors.green,
-                               child: Text(
-                                 "In Stock".tr,
-                                 style: AppStyles.appFontBold
-                                     .copyWith(
-                                   fontSize: 12.fontSize,
-                                   color: Colors.white,
-                                 ),
-                               ),
-                             )
-                                 : Container(
-                               margin: EdgeInsets.only(right: 5.w),
-                               padding: EdgeInsets.symmetric(
-                                 horizontal: 8,
-                                 vertical: 4,
-                               ),
-                               color: Colors.red,
-                               child: Text(
-                                 "Not in Stock".tr,
-                                 style: AppStyles.appFontBold
-                                     .copyWith(
-                                   fontSize: 12.fontSize,
-                                   color: Colors.white,
-                                 ),
-                               ),
-                             )
-                                 : SizedBox.shrink()
-                                 : Row(
-                               children: [
-                                 _productDetailsModel.data?.stockManage ==
-                                     1
-                                     ? (_productDetailsModel.data?.skus?.first.productStock??0) >
-                                     0
-                                     ? Container(
-                                   margin: EdgeInsets.only(
-                                       right: 5.w),
-                                   padding:
-                                   EdgeInsets.symmetric(
-                                     horizontal: 8,
-                                     vertical: 4,
-                                   ),
-                                   color: Colors.green,
-                                   child: Text(
-                                     "In Stock".tr,
-                                     style: AppStyles
-                                         .appFontBold
-                                         .copyWith(
-                                       fontSize: 12.fontSize,
-                                       color: Colors.white,
-                                     ),
-                                   ),
-                                 )
-                                     : Container(
-                                   margin: EdgeInsets.only(
-                                       right: 5.w),
-                                   padding:
-                                   EdgeInsets.symmetric(
-                                     horizontal: 8,
-                                     vertical: 4,
-                                   ),
-                                   color: Colors.red,
-                                   child: Text(
-                                     "Not in Stock".tr,
-                                     style: AppStyles
-                                         .appFontBold
-                                         .copyWith(
-                                       fontSize: 12.fontSize,
-                                       color: Colors.white,
-                                     ),
-                                   ),
-                                 )
-                                     : SizedBox.shrink(),
-                                 Row(
-                                   children: [
-                                     Text(
-                                       "Store".tr + ": ",
-                                       style: AppStyles.appFontBold
-                                           .copyWith(
-                                         fontSize: 16.fontSize,
-                                       ),
-                                     ),
-                                     Text(
-                                       "${_productDetailsModel.data?.seller?.name ?? ""}",
-                                       style: AppStyles.appFontBold
-                                           .copyWith(
-                                         fontSize: 16.fontSize,
-                                         color: AppStyles.pinkColor,
-                                       ),
-                                     ),
-                                   ],
-                                 ),
-                                 Expanded(
-                                   child: Container(),
-                                 ),
-                               ],
-                             ),
-
-                             SizedBox(
-                               height: 10,
-                             ),
-
-                             Row(
-                               mainAxisAlignment: MainAxisAlignment.start,
-                               crossAxisAlignment: CrossAxisAlignment.start,
-                               children: [
-                                 Padding(
-                                   padding: const EdgeInsets.only(top: 2.0),
-                                   child:
-                                   (_productDetailsModel.data?.avgRating ?? 0) >
-                                       0
-                                       ? StarCounterWidget(
-                                     value: _productDetailsModel.data
-                                         ?.avgRating ?? 0,
-                                     color: AppStyles.pinkColor,
-                                     size: 14.fontSize,
-                                   )
-                                       : StarCounterWidget(
-                                     value: averageRating,
-                                     color: AppStyles.pinkColor,
-                                     size: 14.w,
-                                   ),
-                                 ),
-                                 SizedBox(
-                                   width: 5,
-                                 ),
-                                 (_productDetailsModel.data?.reviews?.length??0) <= 0
-                                     ? Text(
-                                   '${(_productDetailsModel.data?.avgRating ??
-                                       0).toString()} (${_productDetailsModel.data?.reviews?.length??0
-                                       .toString()} ${"Review".tr})',
-                                   overflow: TextOverflow.ellipsis,
-                                   style: AppStyles.appFontBook.copyWith(
-                                     fontSize: 14.fontSize,
-                                     color: AppStyles.greyColorBook,
-                                   ),
-                                 )
-                                     : Container(),
-                                 Expanded(child: Container()),
-
-                                 if(!(Platform.isIOS && controller.products.value.data?.product?.isPhysical == 0))
-                                   Text(
-                                   "Select Quantity".tr,
-                                   style: AppStyles.appFontBook.copyWith(
-                                     fontSize: 14.fontSize,
-                                     color: AppStyles.greyColorBook,
-                                   ),
-                                 ),
-                               ],
-                             ),
-
-                             SizedBox(
-                               height: 10,
-                             ),
-
+                              SizedBox(height: 8.h),
+                              // Stock Badge, Stars, Reviews
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  if (_productDetailsModel.data?.stockManage == 1)
+                                    Container(
+                                      margin: EdgeInsets.only(right: 8.w),
+                                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                                      decoration: BoxDecoration(
+                                        color: (_productDetailsModel.data?.skus?.first.productStock ?? 0) > 0
+                                            ? const Color(0xFFE6F4EA)
+                                            : Colors.red.shade50,
+                                        borderRadius: BorderRadius.circular(6.r),
+                                      ),
+                                      child: Text(
+                                        (_productDetailsModel.data?.skus?.first.productStock ?? 0) > 0
+                                            ? "In Stock".tr
+                                            : "Not in Stock".tr,
+                                        style: AppStyles.appFontBold.copyWith(
+                                          fontSize: 11.fontSize,
+                                          color: (_productDetailsModel.data?.skus?.first.productStock ?? 0) > 0
+                                              ? const Color(0xFF137333)
+                                              : Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                  StarCounterWidget(
+                                    value: (_productDetailsModel.data?.avgRating ?? 0) > 0
+                                        ? _productDetailsModel.data!.avgRating!
+                                        : averageRating,
+                                    color: const Color(0xFF048E38),
+                                    size: 16.fontSize,
+                                  ),
+                                  SizedBox(width: 6.w),
+                                  Text(
+                                    '(${_productDetailsModel.data?.reviews?.length ?? 0} ${"reviews".tr})',
+                                    style: AppStyles.appFontBook.copyWith(
+                                      fontSize: 13.fontSize,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 6.h),
+                              // Sold by
+                              if (_productDetailsModel.data?.seller?.name != null)
+                                Text(
+                                  "Sold by ".tr + "${_productDetailsModel.data?.seller?.name ?? ""}",
+                                  style: AppStyles.appFontBook.copyWith(
+                                    fontSize: 13.fontSize,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ),
+                              SizedBox(height: 14.h),                             // Price + Quantity & Variants card (reference image style)
                              Container(
-                               child: Row(
-                                 mainAxisAlignment: MainAxisAlignment.center,
-                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                 mainAxisSize: MainAxisSize.min,
+                               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                               decoration: BoxDecoration(
+                                 color: Colors.white,
+                                 borderRadius: BorderRadius.circular(16.r),
+                                 boxShadow: [
+                                   BoxShadow(
+                                     color: Colors.black.withOpacity(0.04),
+                                     blurRadius: 10,
+                                     offset: const Offset(0, 2),
+                                   ),
+                                 ],
+                               ),
+                               child: Column(
                                  children: [
-                                   Expanded(
-                                     child: Column(
-                                       crossAxisAlignment:
-                                       CrossAxisAlignment.start,
-                                       mainAxisAlignment:
-                                       MainAxisAlignment.center,
-                                       mainAxisSize: MainAxisSize.min,
+                                   Obx(() {
+                                     return Row(
+                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                       crossAxisAlignment: CrossAxisAlignment.center,
                                        children: [
-                                          if (_productDetailsModel.data?.mrp != null &&
-                                              _productDetailsModel.data!.mrp! > 0)
-                                            Padding(
-                                              padding: EdgeInsets.only(bottom: 5.h),
-                                              child: Text(
-                                                _settingsController.setCurrentSymbolPosition(
-                                                    amount: (_productDetailsModel.data!.mrp! *
-                                                        _settingsController
-                                                            .conversionRate.value)
-                                                        .toStringAsFixed(2)),
-                                                style: AppStyles.appFontBook.copyWith(
-                                                  fontSize: 14.fontSize,
-                                                  color: AppStyles.greyColorDark,
-                                                  decoration: TextDecoration.lineThrough,
-                                                ),
-                                              ),
-                                            ),
-                                         Obx(() {
-                                           return Column(
-                                             crossAxisAlignment: CrossAxisAlignment.start,
-                                             children: [
-                                               Row(
-                                                 children: [
-                                                   Text(
-                                                     "Unit Price: ".tr,
-                                                     style: AppStyles.appFontBook.copyWith(
-                                                       fontSize: 14.fontSize,
-                                                       color: AppStyles.greyColorBook,
-                                                     ),
-                                                   ),
-                                                   Flexible(
-                                                     child: Text(
-                                                       _settingsController.setCurrentSymbolPosition(amount: (controller.productPrice.value * _settingsController.conversionRate.value).toStringAsFixed(2)),
-                                                       style: AppStyles.appFontBold.copyWith(
-                                                         height: 1,
-                                                         fontSize: 16.fontSize,
-                                                         color: AppStyles.blackColor,
-                                                       ),
-                                                       overflow: TextOverflow.ellipsis,
-                                                     ),
-                                                   ),
-                                                 ],
-                                               ),
-                                               SizedBox(height: 5),
-                                               Row(
-                                                 children: [
-                                                   Text(
-                                                     "Total Price: ".tr,
-                                                     style: AppStyles.appFontBook.copyWith(
-                                                       fontSize: 14.fontSize,
-                                                       color: AppStyles.greyColorBook,
-                                                     ),
-                                                   ),
-                                                   Flexible(
-                                                     child: Text(
-                                                       _settingsController.setCurrentSymbolPosition(amount: (controller.finalPrice.value * _settingsController.conversionRate.value).toStringAsFixed(2)),
-                                                       style: AppStyles.appFontBold.copyWith(
-                                                         height: 1,
-                                                         fontSize: 22.fontSize,
-                                                         color: AppStyles.pinkColor,
-                                                       ),
-                                                       overflow: TextOverflow.ellipsis,
-                                                     ),
-                                                   ),
-                                                 ],
-                                               ),
-                                             ],
-                                           );
-                                         }),
-                                         _settingsController
-                                             .calculateMainPriceWithVariant(
-                                             _productDetailsModel.data??ProductModel()) !=
-                                             ""
-                                             ? Row(
+                                         // Left: price
+                                         Column(
+                                           crossAxisAlignment: CrossAxisAlignment.start,
                                            children: [
+                                             if (_productDetailsModel.data?.mrp != null &&
+                                                 _productDetailsModel.data!.mrp! > 0)
+                                               Text(
+                                                 _settingsController.setCurrentSymbolPosition(
+                                                     amount: (_productDetailsModel.data!.mrp! *
+                                                         _settingsController.conversionRate.value)
+                                                         .toStringAsFixed(2)),
+                                                 style: AppStyles.appFontBook.copyWith(
+                                                   fontSize: 13.fontSize,
+                                                   color: AppStyles.greyColorDark,
+                                                   decoration: TextDecoration.lineThrough,
+                                                 ),
+                                               ),
                                              Text(
-                                               _settingsController
-                                                   .calculateMainPriceWithVariant(
-                                                   _productDetailsModel
-                                                       .data!),
-                                               style: AppStyles
-                                                   .appFontBook
-                                                   .copyWith(
-                                                 height: 1,
-                                                 color: AppStyles
-                                                     .greyColorBook,
-                                                 decoration:
-                                                 TextDecoration
-                                                     .lineThrough,
+                                               _settingsController.setCurrentSymbolPosition(
+                                                   amount: (controller.productPrice.value *
+                                                       _settingsController.conversionRate.value)
+                                                       .toStringAsFixed(2)),
+                                               style: AppStyles.appFontBold.copyWith(
+                                                 fontSize: 26.fontSize,
+                                                 color: Colors.black,
+                                                 height: 1.1,
                                                ),
                                              ),
-                                             SizedBox(
-                                               width: 5,
-                                             ),
                                              Text(
-                                               getDiscountType(
-                                                   _productDetailsModel
-                                                       .data!),
-                                               textHeightBehavior:
-                                               ui.TextHeightBehavior(
-                                                 applyHeightToFirstAscent:
-                                                 false,
-                                                 applyHeightToLastDescent:
-                                                 false,
-                                               ),
-                                               style: AppStyles
-                                                   .appFontBook
-                                                   .copyWith(
-                                                 height: 1,
-                                                 color:
-                                                 Color(0xff5c7185),
+                                               "${(controller.products.value.data?.product?.unitTypeId?.toString() ?? "Unit").tr} Price",
+                                               style: AppStyles.appFontBook.copyWith(
+                                                 fontSize: 12.fontSize,
+                                                 color: AppStyles.greyColorBook,
                                                ),
                                              ),
                                            ],
-                                         )
-                                             : SizedBox.shrink(),
-                                       ],
-                                     ),
-                                   ),
-
-                                   if(!(Platform.isIOS && controller.products.value.data?.product?.isPhysical == 0))
-                                   Container(
-                                     padding: EdgeInsets.symmetric(
-                                         horizontal: 8, vertical: 7),
-                                     decoration: BoxDecoration(
-                                         color: AppStyles.pinkColor.withOpacity(0.15),
-                                         shape: BoxShape.rectangle,
-                                         borderRadius:
-                                         BorderRadius.circular(7.r)),
-                                     child: Row(
-                                         children: [
-                                           InkWell(
-                                             onTap: () {
-                                               if (controller
-                                                   .itemQuantity.value <=
-                                                   controller.minOrder.value) {
-                                                 SnackBars().snackBarWarning(
-                                                     "Can't add less than".tr +
-                                                         ' ${controller.minOrder
-                                                             .value} ' +
-                                                         'Products'.tr);
-                                               } else {
-                                                 controller.cartDecrease();
-                                               }
-                                             },
-                                             child: Icon(
-                                               FontAwesomeIcons
-                                                   .solidSquareMinus,
-                                               color: Color(0xff5c7185),
-                                               size: 20.w,
-                                             ),
-                                           ),
-                                           SizedBox(
-                                             width: 10,
-                                           ),
-                                           SizedBox(
-                                             width: 50.w,
-                                             child: TextField(
-                                               controller: _quantityTextController,
-                                               textAlign: TextAlign.center,
-                                               keyboardType: TextInputType.number,
-                                               inputFormatters: [
-                                                 FilteringTextInputFormatter.digitsOnly
-                                               ],
-                                               onChanged: (val) {
-                                                 controller.updateQuantity(val);
-                                               },
-                                               decoration: InputDecoration(
-                                                 border: InputBorder.none,
-                                                 isDense: true,
-                                                 contentPadding: EdgeInsets.zero,
-                                               ),
-                                               style: AppStyles.appFontBold.copyWith(
-                                                 fontSize: 18.fontSize,
-                                                 color: AppStyles.pinkColor,
-                                               ),
-                                             ),
-                                           ),
-                                           SizedBox(
-                                             width: 10,
-                                           ),
-                                           InkWell(
-                                             onTap: () {
-                                               if (controller
-                                                   .stockManage.value ==
-                                                   1) {
-                                                 if (controller
-                                                     .itemQuantity.value >=
-                                                     controller
-                                                         .stockCount.value) {
-                                                   SnackBars().snackBarWarning(
-                                                       'Stock not available.'.tr);
-                                                 } else {
-                                                   controller.cartIncrease();
-                                                 }
-                                               } else {
-                                                 if (controller.itemQuantity.value >= controller.maxOrder.value) {
-                                                   SnackBars()
-                                                       .snackBarWarning(
-                                                       "Can't add more than"
-                                                           .tr +
-                                                           ' ${controller
-                                                               .maxOrder
-                                                               .value} ' +
-                                                           'Products'.tr);
-                                                 } else {
-                                                   controller.cartIncrease();
-                                                 }
-                                                                                              }
-                                             },
-                                             child: Icon(
-                                               FontAwesomeIcons
-                                                   .solidSquarePlus,
-                                               color: Color(0xff5c7185),
-                                               size: 20.w,
-                                             ),
-                                           ),
-                                         ],
-                                       ),
-                                   ),
-                                 ],
-                               ),
-                             ),
-
-
-
-                             wholesalePriceWidget(),
-                             ((controller.products.value.data?.variantDetails??[]).length) >
-                                 0
-                                 ? SizedBox(
-                               height: 10,
-                             )
-                                 : SizedBox.shrink(),
-
-                             ListView.separated(
-                                 shrinkWrap: true,
-                                 padding: EdgeInsets.zero,
-                                 physics: NeverScrollableScrollPhysics(),
-                                 itemCount: (controller.products.value.data?.variantDetails??[]).length,
-                                 separatorBuilder: (context, seperatedIndx) {
-                                   return SizedBox(
-                                     height: 10,
-                                   );
-                                 },
-                                 itemBuilder: (context, variantIndex) {
-                                   ProductVariantDetail variant = controller
-                                       .products
-                                       .value
-                                       .data!
-                                       .variantDetails![variantIndex];
-                                   if (variant.name == 'Color') {
-                                     return Row(
-                                       crossAxisAlignment:
-                                       CrossAxisAlignment.center,
-                                       mainAxisAlignment:
-                                       MainAxisAlignment.center,
-                                       children: [
-                                         Container(
-                                           margin: EdgeInsets.all(5),
-                                           child: Text(
-                                             '${variant.name}: ',
-                                             style: AppStyles.appFontBook
-                                                 .copyWith(
-                                               color: Color(0xff5c7185),
-                                               fontSize: 18.fontSize,
-                                             ),
-                                           ),
                                          ),
-                                         Expanded(
-                                           child: Container(
-                                             margin: EdgeInsets.all(5),
-                                             child: Wrap(
-                                               alignment: WrapAlignment.start,
-                                               crossAxisAlignment:
-                                               WrapCrossAlignment.center,
-                                               spacing: 5,
-                                               runSpacing: 5,
-                                               children: List.generate(
-                                                   variant.code!.length,
-                                                       (colorIndex) {
-                                                     var bgColor = 0;
-                                                     if (!variant
-                                                         .code![colorIndex]
-                                                         .contains('#')) {
-                                                       bgColor =
-                                                           CustomColorConvert()
-                                                               .colourNameToHex(
-                                                               variant.code![
-                                                               colorIndex]);
+                                         // Right: dark-green quantity stepper
+                                         if (!(Platform.isIOS && controller.products.value.data?.product?.isPhysical == 0))
+                                           Container(
+                                             decoration: BoxDecoration(
+                                               color: const Color(0xFF042E1E),
+                                               borderRadius: BorderRadius.circular(10.r),
+                                             ),
+                                             child: Row(
+                                               mainAxisSize: MainAxisSize.min,
+                                               children: [
+                                                 InkWell(
+                                                   onTap: () {
+                                                     if (controller.itemQuantity.value <= controller.minOrder.value) {
+                                                       SnackBars().snackBarWarning(
+                                                           "Can't add less than".tr +
+                                                               ' ${controller.minOrder.value} ' +
+                                                               'Products'.tr);
                                                      } else {
-                                                       bgColor =
-                                                           CustomColorConvert()
-                                                               .getBGColor(
-                                                               variant
-                                                                   .code![
-                                                               colorIndex]);
+                                                       controller.cartDecrease();
                                                      }
-                                                     return GestureDetector(
-                                                       onTap: () async {
-                                                         setState(() {
-                                                           selected.clear();
-                                                           controller
-                                                               .products
-                                                               .value
-                                                               .data!
-                                                               .variantDetails!
-                                                               .forEach((
-                                                               element) {
-                                                             if (element.name ==
-                                                                 'Color') {
-                                                               element.code!
-                                                                   .forEach(
-                                                                       (
-                                                                       element2) {
-                                                                     selected
-                                                                         .add(
-                                                                         false);
-                                                                   });
+                                                   },
+                                                   child: Container(
+                                                     width: 38.w,
+                                                     height: 38.w,
+                                                     alignment: Alignment.center,
+                                                     child: Icon(Icons.remove, color: Colors.white, size: 18.w),
+                                                   ),
+                                                 ),
+                                                 Container(
+                                                   width: 44.w,
+                                                   height: 38.w,
+                                                   color: Colors.white,
+                                                   alignment: Alignment.center,
+                                                   child: TextField(
+                                                     controller: _quantityTextController,
+                                                     textAlign: TextAlign.center,
+                                                     keyboardType: TextInputType.number,
+                                                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                                     onChanged: (val) { controller.updateQuantity(val); },
+                                                     decoration: const InputDecoration(
+                                                       border: InputBorder.none,
+                                                       isDense: true,
+                                                       contentPadding: EdgeInsets.zero,
+                                                     ),
+                                                     style: AppStyles.appFontBold.copyWith(
+                                                       fontSize: 16.fontSize,
+                                                       color: Colors.black,
+                                                     ),
+                                                   ),
+                                                 ),
+                                                 InkWell(
+                                                   onTap: () {
+                                                     if (controller.stockManage.value == 1) {
+                                                       if (controller.itemQuantity.value >= controller.stockCount.value) {
+                                                         SnackBars().snackBarWarning('Stock not available.'.tr);
+                                                       } else {
+                                                         controller.cartIncrease();
+                                                       }
+                                                     } else {
+                                                       if (controller.itemQuantity.value >= controller.maxOrder.value) {
+                                                         SnackBars().snackBarWarning(
+                                                             "Can't add more than".tr +
+                                                                 ' ${controller.maxOrder.value} ' +
+                                                                 'Products'.tr);
+                                                       } else {
+                                                         controller.cartIncrease();
+                                                       }
+                                                     }
+                                                   },
+                                                   child: Container(
+                                                     width: 38.w,
+                                                     height: 38.w,
+                                                     alignment: Alignment.center,
+                                                     child: Icon(Icons.add, color: Colors.white, size: 18.w),
+                                                   ),
+                                                 ),
+                                               ],
+                                             ),
+                                           ),
+                                       ],
+                                     );
+                                   }),
+                                   
+                                   if (((controller.products.value.data?.variantDetails ?? []).length) > 0) ...[
+                                     Padding(
+                                       padding: EdgeInsets.symmetric(vertical: 12.h),
+                                       child: Divider(color: Colors.grey.shade200, thickness: 1),
+                                     ),
+                                     ListView.separated(
+                                       shrinkWrap: true,
+                                       padding: EdgeInsets.zero,
+                                       physics: NeverScrollableScrollPhysics(),
+                                       itemCount: (controller.products.value.data?.variantDetails ?? []).length,
+                                       separatorBuilder: (context, seperatedIndx) {
+                                         return SizedBox(
+                                           height: 10,
+                                         );
+                                       },
+                                       itemBuilder: (context, variantIndex) {
+                                         ProductVariantDetail variant = controller
+                                             .products
+                                             .value
+                                             .data!
+                                             .variantDetails![variantIndex];
+                                         if (variant.name == 'Color') {
+                                           return Row(
+                                             crossAxisAlignment: CrossAxisAlignment.center,
+                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                             children: [
+                                               Text(
+                                                 'Select ${variant.name}'.tr,
+                                                 style: AppStyles.appFontBook.copyWith(
+                                                   color: Colors.black,
+                                                   fontSize: 16.fontSize,
+                                                 ),
+                                               ),
+                                               Flexible(
+                                                 child: Wrap(
+                                                   alignment: WrapAlignment.end,
+                                                   crossAxisAlignment: WrapCrossAlignment.center,
+                                                   spacing: 5,
+                                                   runSpacing: 5,
+                                                   children: List.generate(
+                                                     variant.code!.length,
+                                                     (colorIndex) {
+                                                       var bgColor = 0;
+                                                       if (!variant.code![colorIndex].contains('#')) {
+                                                         bgColor = CustomColorConvert()
+                                                             .colourNameToHex(variant.code![colorIndex]);
+                                                       } else {
+                                                         bgColor = CustomColorConvert()
+                                                             .getBGColor(variant.code![colorIndex]);
+                                                       }
+                                                       return GestureDetector(
+                                                         onTap: () async {
+                                                           setState(() {
+                                                             selected.clear();
+                                                             controller.products.value.data!.variantDetails!
+                                                                 .forEach((element) {
+                                                               if (element.name == 'Color') {
+                                                                 element.code!.forEach((element2) {
+                                                                   selected.add(false);
+                                                                 });
+                                                               }
+                                                             });
+                                                             selected[colorIndex] = !selected[colorIndex];
+                                                           });
+                                                           addValueToMap(
+                                                               getSKU,
+                                                               'id[$variantIndex]',
+                                                               '${variant.attrValId![colorIndex]}-${variant.attrId}');
+                                                           Map data = {
+                                                             'product_id': controller.products.value.data!.id,
+                                                             'user_id': controller.products.value.data!.userId,
+                                                           };
+                                                           data.addAll(getSKU);
+                                                           await controller.getSkuWisePrice(data).then((value) {
+                                                             if (value == false) {
+                                                               setState(() {});
                                                              }
                                                            });
-                                                           selected[colorIndex] =
-                                                           !selected[
-                                                           colorIndex];
-                                                         });
-                                                         addValueToMap(
-                                                             getSKU,
-                                                             'id[$variantIndex]',
-                                                             '${variant
-                                                                 .attrValId![colorIndex]}-${variant
-                                                                 .attrId}');
-                                                         Map data = {
-                                                           'product_id': controller
-                                                               .products
-                                                               .value
-                                                               .data!
-                                                               .id,
-                                                           'user_id': controller
-                                                               .products
-                                                               .value
-                                                               .data!
-                                                               .userId,
-                                                         };
-                                                         data.addAll(getSKU);
-                                                         await controller
-                                                             .getSkuWisePrice(
-                                                           data,
-                                                         )
-                                                             .then((value) {
-                                                           if (value == false) {
-                                                             setState(() {});
-                                                           }
-                                                         });
-                                                       },
-                                                       child: Container(
-                                                         width: 30.w,
-                                                         height: 30.w,
-                                                         alignment:
-                                                         Alignment.center,
-                                                         padding:
-                                                         const EdgeInsets.all(
-                                                             2.0),
-                                                         decoration: BoxDecoration(
-                                                           border: Border.all(
-                                                             color: selected[
-                                                             colorIndex]
-                                                                 ? AppStyles
-                                                                 .pinkColor
-                                                                 : Colors
-                                                                 .transparent,
-                                                           ),
-                                                           shape: BoxShape
-                                                               .circle,
-                                                         ),
-                                                         child: Stack(
-                                                           children: [
-                                                             Positioned.fill(
-                                                               child: Container(
-                                                                 width: 30.w,
-                                                                 height: 30.w,
-                                                                 decoration:
-                                                                 BoxDecoration(
-                                                                   shape: BoxShape
-                                                                       .circle,
-                                                                   color: Color(
-                                                                       bgColor),
-                                                                 ),
-                                                               ),
+                                                         },
+                                                         child: Container(
+                                                           width: 30.w,
+                                                           height: 30.w,
+                                                           alignment: Alignment.center,
+                                                           padding: const EdgeInsets.all(2.0),
+                                                           decoration: BoxDecoration(
+                                                             border: Border.all(
+                                                               color: selected[colorIndex]
+                                                                   ? const Color(0xFF042E1E)
+                                                                   : Colors.transparent,
                                                              ),
-                                                           ],
+                                                             shape: BoxShape.circle,
+                                                           ),
+                                                           child: Container(
+                                                             width: 30.w,
+                                                             height: 30.w,
+                                                             decoration: BoxDecoration(
+                                                               shape: BoxShape.circle,
+                                                               color: Color(bgColor),
+                                                             ),
+                                                           ),
                                                          ),
-                                                       ),
-                                                     );
-                                                   }),
-                                             ),
-                                           ),
-                                         ),
-                                       ],
-                                     );
-                                   } else {
-                                     return Row(
-                                       crossAxisAlignment:
-                                       CrossAxisAlignment.center,
-                                       mainAxisAlignment:
-                                       MainAxisAlignment.center,
-                                       children: [
-                                         Container(
-                                           margin: EdgeInsets.all(5),
-                                           child: Text(
-                                             '${variant.name?.tr}:    ',
-                                             style: AppStyles.appFontBook
-                                                 .copyWith(
-                                               color: Color(0xff5c7185),
-                                               fontSize: 18.fontSize,
-                                             ),
-                                           ),
-                                         ),
-                                         Expanded(
-                                           child: Container(
-                                             child: CustomRadioButton(
-                                               buttonLables: variant.value!,
-                                               buttonValues: variant.attrValId!,
-                                               radioButtonValue:
-                                                   (value, index) async {
-                                                 addValueToMap(
-                                                     getSKU,
-                                                     'id[$variantIndex]',
-                                                     '$value-${variant
-                                                         .attrId}');
-                                                 Map data = {
-                                                   'product_id': controller
-                                                       .products.value.data!.id,
-                                                   'user_id': controller
-                                                       .products
-                                                       .value
-                                                       .data!
-                                                       .userId,
-                                                 };
-                                                 data.addAll(getSKU);
-                                                 await controller
-                                                     .getSkuWisePrice(
-                                                   data,
-                                                 )
-                                                     .then((value) {
-                                                   if (value == false) {
-                                                     setState(() {});
-                                                   }
-                                                 });
-                                               },
-                                               horizontal: true,
-                                               enableShape: true,
-                                               textColor: AppStyles.pinkColor,
-                                               selectedTextColor: Colors.white,
-                                               buttonColor:
-                                               AppStyles.pinkColor.withOpacity(0.15),
-                                               selectedColor:
-                                               AppStyles.pinkColor,
-                                               elevation: 0,
-                                             ),
-                                           ),
-                                         ),
-                                       ],
-                                     );
-                                   }
-                                 }),
-
-                             ((_productDetailsModel.data?.variantDetails??[]).length) >
-                                 0
-                                 ? SizedBox(
-                               height: 10,
-                             )
-                                 : SizedBox.shrink(),
-
-                             // ** Product Specifications
-
-                             Container(
-                               child: Column(
-                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                 children: [
-                                   Container(
-                                     padding:
-                                     EdgeInsets.symmetric(vertical: 15.w),
-                                     child: Text(
-                                       'Product Specifications'.tr,
-                                       style: AppStyles.appFontBook.copyWith(
-                                         color: AppStyles.greyColorBook,
-                                         fontSize: 12.fontSize
-                                       ),
+                                                       );
+                                                     },
+                                                   ),
+                                                 ),
+                                               ),
+                                             ],
+                                           );
+                                         } else {
+                                           return Row(
+                                             crossAxisAlignment: CrossAxisAlignment.center,
+                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                             children: [
+                                               Text(
+                                                 'Select ${variant.name?.tr}',
+                                                 style: AppStyles.appFontBook.copyWith(
+                                                   color: Colors.black,
+                                                   fontSize: 16.fontSize,
+                                                 ),
+                                               ),
+                                               Flexible(
+                                                 child: Align(
+                                                   alignment: Alignment.centerRight,
+                                                   child: CustomRadioButton(
+                                                     buttonLables: variant.value!,
+                                                     buttonValues: variant.attrValId!,
+                                                     radioButtonValue: (value, index) async {
+                                                       addValueToMap(
+                                                           getSKU,
+                                                           'id[$variantIndex]',
+                                                           '$value-${variant.attrId}');
+                                                       Map data = {
+                                                         'product_id': controller.products.value.data!.id,
+                                                         'user_id': controller.products.value.data!.userId,
+                                                       };
+                                                       data.addAll(getSKU);
+                                                       await controller.getSkuWisePrice(data).then((value) {
+                                                         if (value == false) {
+                                                           setState(() {});
+                                                         }
+                                                       });
+                                                     },
+                                                     horizontal: true,
+                                                     enableShape: true,
+                                                     textColor: Colors.black,
+                                                     selectedTextColor: Colors.white,
+                                                     buttonColor: Colors.grey.shade200,
+                                                     selectedColor: const Color(0xFF042E1E),
+                                                     elevation: 0,
+                                                   ),
+                                                 ),
+                                               ),
+                                             ],
+                                           );
+                                         }
+                                       },
                                      ),
-                                   ),
-                                   Divider(
-                                     color: AppStyles.textFieldFillColor,
-                                     thickness: 1,
-                                     height: 1,
-                                   ),
+                                   ],
                                  ],
                                ),
                              ),
-                             Container(
-                               padding: EdgeInsets.symmetric(vertical: 15.h),
-                               child: Column(
-                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                 children: [
-                                   _productDetailsModel.data?.product?.brand !=
-                                       null
-                                       ? Column(
-                                     children: [
-                                       Row(
-                                         crossAxisAlignment:
-                                         CrossAxisAlignment.center,
-                                         children: [
-                                           Container(
-                                             width: 5.w,
-                                             height: 5.w,
-                                             color:
-                                             AppStyles.darkBlueColor,
-                                           ),
-                                           SizedBox(
-                                             width: 5,
-                                           ),
-                                           Text(
-                                             "Brand".tr + ": ",
-                                             style: AppStyles.appFontBook
-                                                 .copyWith(
-                                               color: AppStyles
-                                                   .greyColorBook,
-                                                 fontSize: 12.fontSize
-                                             ),
-                                           ),
-                                           Text(
-                                             "${_productDetailsModel.data?.product?.brand?.name??0}",
-                                             style: AppStyles.appFontBook
-                                                 .copyWith(
-                                               color: AppStyles.greyColorBook,
-                                               fontSize: 12.fontSize
-                                             ),
-                                           ),
-                                         ],
-                                       ),
-                                       SizedBox(
-                                         height: 15,
-                                       ),
-                                     ],
-                                   )
-                                       : SizedBox.shrink(),
 
-                                   //** MODEL NUMBER */
+                             // ** Always-Visible Wholesale Pricing Tiers and Modernized Product Specifications Cards
+                              SizedBox(height: 16.h),
+                              alwaysVisibleWholesalePricingCard(),
+                              SizedBox(height: 16.h),
 
-                                   _productDetailsModel
-                                       .data?.product?.modelNumber !=
-                                       null
-                                       ? Column(
-                                     children: [
-                                       Row(
-                                         crossAxisAlignment:
-                                         CrossAxisAlignment.center,
-                                         children: [
-                                           Container(
-                                             width: 5.w,
-                                             height: 5.w,
-                                             color:
-                                             AppStyles.darkBlueColor,
-                                           ),
-                                           SizedBox(
-                                             width: 5,
-                                           ),
-                                           Text(
-                                             "Model Number".tr + ": ",
-                                             style: AppStyles.appFontBook
-                                                 .copyWith(
-                                               color: AppStyles
-                                                   .greyColorBook,
-                                                 fontSize: 12.fontSize
-                                             ),
-                                           ),
-                                           Text(
-                                             "${_productDetailsModel.data?.product?.modelNumber??''}",
-                                             style: AppStyles.appFontBook
-                                                 .copyWith(
-                                               color: AppStyles
-                                                   .greyColorBook,
-                                                 fontSize: 12.fontSize
-                                             ),
-                                           ),
-                                         ],
-                                       ),
-                                       SizedBox(
-                                         height: 15,
-                                       ),
-                                     ],
-                                   )
-                                       : SizedBox.shrink(),
-
-                                   //** AVAILABLITY */
-
-                                   _productDetailsModel.data?.stockManage == 1
-                                       ? Column(
-                                     children: [
-                                       Row(
-                                         crossAxisAlignment:
-                                         CrossAxisAlignment.center,
-                                         children: [
-                                           Container(
-                                             width: 5.w,
-                                             height: 5.w,
-                                             color:
-                                             AppStyles.darkBlueColor,
-                                           ),
-                                           SizedBox(
-                                             width: 5,
-                                           ),
-                                           Text(
-                                             "Availability".tr + ": ",
-                                             style: AppStyles.appFontBook
-                                                 .copyWith(
-                                               color: AppStyles
-                                                   .greyColorBook,
-                                                 fontSize: 12.fontSize
-                                             ),
-                                           ),
-                                           Text(
-                                             "${_productDetailsModel.data!.skus!
-                                                 .first.productStock! > 0
-                                                 ? "In Stock".tr
-                                                 : "Not in stock".tr}",
-                                             style: AppStyles.appFontBook
-                                                 .copyWith(
-                                               color: AppStyles
-                                                   .greyColorBook,
-                                                 fontSize: 12.fontSize
-                                             ),
-                                           ),
-                                         ],
-                                       ),
-                                       SizedBox(
-                                         height: 15,
-                                       ),
-                                     ],
-                                   )
-                                       : SizedBox.shrink(),
-
-                                   //** SKU */
-                                   _productDetailsModel
-                                       .data?.product?.skus?.first.sku !=
-                                       null
-                                       ? Column(
-                                     children: [
-                                       Row(
-                                         crossAxisAlignment:
-                                         CrossAxisAlignment.center,
-                                         children: [
-                                           Container(
-                                             width: 5,
-                                             height: 5,
-                                             color:
-                                             AppStyles.darkBlueColor,
-                                           ),
-                                           SizedBox(
-                                             width: 5,
-                                           ),
-                                           Text(
-                                             "Product SKU".tr + ": ",
-                                             style: AppStyles.appFontBook
-                                                 .copyWith(
-                                               color: AppStyles
-                                                   .greyColorBook,
-                                                 fontSize: 12.fontSize
-                                             ),
-                                           ),
-                                           Obx(() {
-                                             return Text(
-                                               "${controller.productSKU.value
-                                                   .sku?.sku??''}",
-                                               style: AppStyles
-                                                   .appFontBook
-                                                   .copyWith(
-                                                 color: AppStyles
-                                                     .greyColorBook,
-                                                   fontSize: 12.fontSize
-                                               ),
-                                             );
-                                           }),
-                                         ],
-                                       ),
-                                       SizedBox(
-                                         height: 15,
-                                       ),
-                                     ],
-                                   )
-                                       : SizedBox.shrink(),
-
-                                   //** Min Order Quantity */
-                                   _productDetailsModel
-                                       .data?.product?.minimumOrderQty !=
-                                       null
-                                       ? Column(
-                                     children: [
-                                       Row(
-                                         crossAxisAlignment:
-                                         CrossAxisAlignment.center,
-                                         children: [
-                                           Container(
-                                             width: 5.w,
-                                             height: 5.w,
-                                             color:
-                                             AppStyles.darkBlueColor,
-                                           ),
-                                           SizedBox(
-                                             width: 5,
-                                           ),
-                                           Text(
-                                             "Minimum Order Quantity".tr +
-                                                 ": ",
-                                             style: AppStyles.appFontBook
-                                                 .copyWith(
-                                               color: AppStyles
-                                                   .greyColorBook,
-                                                 fontSize: 12.fontSize
-                                             ),
-                                           ),
-                                           Text(
-                                             "${_productDetailsModel.data?.product?.minimumOrderQty??''}",
-                                             style: AppStyles.appFontBook
-                                                 .copyWith(
-                                               color: AppStyles
-                                                   .greyColorBook,
-                                                 fontSize: 12.fontSize
-                                             ),
-                                           ),
-                                         ],
-                                       ),
-                                       SizedBox(
-                                         height: 15,
-                                       ),
-                                     ],
-                                   )
-                                       : SizedBox.shrink(),
-
-                                   //** Max Order Quantity */
-                                   _productDetailsModel.data?.product?.maxOrderQty !=
-                                       null
-                                       ? Column(
-                                     children: [
-                                       Row(
-                                         crossAxisAlignment:
-                                         CrossAxisAlignment.center,
-                                         children: [
-                                           Container(
-                                             width: 5.w,
-                                             height: 5.w,
-                                             color:
-                                             AppStyles.darkBlueColor,
-                                           ),
-                                           SizedBox(
-                                             width: 5,
-                                           ),
-                                           Text(
-                                             "Maximum Order Quantity".tr +
-                                                 ": ",
-                                             style: AppStyles.appFontBook
-                                                 .copyWith(
-                                               color: AppStyles
-                                                   .greyColorBook,
-                                                 fontSize: 12.fontSize
-                                             ),
-                                           ),
-                                           Text(
-                                             "${_productDetailsModel.data?.product?.maxOrderQty??1}",
-                                             style: AppStyles.appFontBook
-                                                 .copyWith(
-                                               color: AppStyles
-                                                   .greyColorBook,
-                                                 fontSize: 12.fontSize
-                                             ),
-                                           ),
-                                         ],
-                                       ),
-                                       SizedBox(
-                                         height: 15,
-                                       ),
-                                     ],
-                                   )
-                                       : SizedBox.shrink(),
-
-                                   //** Category */
-                                   (_productDetailsModel.data?.product?.categories?.length??0) >
-                                       0
-                                       ? Column(
-                                     children: [
-                                       Wrap(
-                                         spacing: 5,
-                                         children: List.generate(
-                                             _productDetailsModel
-                                                 .data!
-                                                 .product!
-                                                 .categories!
-                                                 .length +
-                                                 1, (categoryIndex) {
-                                           if (categoryIndex == 0) {
-                                             return Row(
-                                               crossAxisAlignment:
-                                               CrossAxisAlignment
-                                                   .center,
-                                               mainAxisAlignment:
-                                               MainAxisAlignment
-                                                   .start,
-                                               children: [
-                                                 Text(
-                                                   'Category'.tr + ':',
-                                                   style: AppStyles
-                                                       .appFontBook
-                                                       .copyWith(
-                                                     color: AppStyles
-                                                         .greyColorBook,
-                                                       fontSize: 12.fontSize
-                                                   ),
-                                                 ),
-                                                 SizedBox(
-                                                   width: 5,
-                                                 ),
-                                               ],
-                                             );
-                                           }
-                                           return InkWell(
-                                             onTap: () {
-                                               openCategory(
-                                                   _productDetailsModel
-                                                       .data!
-                                                       .product!
-                                                       .categories![
-                                                   categoryIndex -
-                                                       1]);
-                                             },
-                                             child: Chip(
-                                               backgroundColor: AppStyles
-                                                   .pinkColorAlt,
-                                               shape:
-                                               RoundedRectangleBorder(
-                                                   borderRadius:
-                                                   BorderRadius
-                                                       .circular(
-                                                       5.r)),
-                                               label: Text(
-                                                 '${_productDetailsModel.data!
-                                                     .product!
-                                                     .categories![categoryIndex -
-                                                     1].name}',
-                                                 style: AppStyles
-                                                     .appFontBook
-                                                     .copyWith(
-                                                   color: AppStyles
-                                                       .pinkColor,
-                                                 ),
-                                               ),
-                                             ),
-                                           );
-                                         }),
-                                       ),
-                                       SizedBox(
-                                         height: 15,
-                                       ),
-                                     ],
-                                   )
-                                       : SizedBox.shrink(),
-
-                                   //** TAGS */
-                                   (_productDetailsModel
-                                       .data?.product?.tags?.length??0) >
-                                       0
-                                       ? Column(
-                                     children: [
-                                       Wrap(
-                                         spacing: 5,
-                                         children: List.generate(
-                                             _productDetailsModel
-                                                 .data!
-                                                 .product!
-                                                 .tags!
-                                                 .length +
-                                                 1, (tagIndex) {
-                                           if (tagIndex == 0) {
-                                             return Row(
-                                               crossAxisAlignment:
-                                               CrossAxisAlignment
-                                                   .center,
-                                               mainAxisAlignment:
-                                               MainAxisAlignment
-                                                   .start,
-                                               children: [
-                                                 Text(
-                                                   'Tags'.tr + ':',
-                                                   style: AppStyles
-                                                       .appFontBook
-                                                       .copyWith(
-                                                     color: AppStyles
-                                                         .greyColorBook,
-                                                       fontSize: 12.fontSize
-                                                   ),
-                                                 ),
-                                                 SizedBox(
-                                                   width: 5,
-                                                 ),
-                                               ],
-                                             );
-                                           }
-                                           return InkWell(
-                                             onTap: () {
-                                               Get.to(
-                                                       () =>
-                                                       ProductsByTags(
-                                                         tagName: _productDetailsModel
-                                                             .data!
-                                                             .product!
-                                                             .tags![
-                                                         tagIndex -
-                                                             1]
-                                                             .name!,
-                                                         tagId: _productDetailsModel
-                                                             .data!
-                                                             .product!
-                                                             .tags![
-                                                         tagIndex -
-                                                             1]
-                                                             .id!,
-                                                       ));
-                                             },
-                                             child: Chip(
-                                               backgroundColor: AppStyles
-                                                   .pinkColorAlt,
-                                               shape:
-                                               RoundedRectangleBorder(
-                                                   borderRadius:
-                                                   BorderRadius
-                                                       .circular(
-                                                       5.r)),
-                                               label: Text(
-                                                 '${_productDetailsModel.data!
-                                                     .product!.tags![tagIndex -
-                                                     1].name}',
-                                                 style: AppStyles
-                                                     .appFontBook
-                                                     .copyWith(
-                                                   color: AppStyles
-                                                       .pinkColor,
-                                                     fontSize: 12.fontSize
-                                                 ),
-                                               ),
-                                             ),
-                                           );
-                                         }),
-                                       ),
-                                       SizedBox(
-                                         height: 15,
-                                       ),
-                                     ],
-                                   )
-                                       : SizedBox.shrink(),
-
-                                   _productDetailsModel
-                                       .data?.product?.specification !=
-                                       null
-                                       ? htmlExpandingWidget(
-                                       "${_productDetailsModel.data!.product!
-                                           .specification ?? ""}")
-                                       : SizedBox.shrink(),
-                                 ],
-                               ),
-                             ),
+                              Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.all(16.w),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.02),
+                                      blurRadius: 10,
+                                      spreadRadius: 2,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Product Specifications'.tr,
+                                      style: AppStyles.appFontBold.copyWith(
+                                        color: const Color(0xFF042E1E),
+                                        fontSize: 16.fontSize,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 12.h),
+                                    if (_productDetailsModel.data?.product?.brand != null)
+                                      buildSpecRow("Brand".tr, "${_productDetailsModel.data?.product?.brand?.name ?? ''}"),
+                                    if (_productDetailsModel.data?.product?.modelNumber != null)
+                                      buildSpecRow("Model Number".tr, "${_productDetailsModel.data?.product?.modelNumber ?? ''}"),
+                                    buildSpecRow("Availability".tr, (_productDetailsModel.data!.skus?.isNotEmpty ?? false) && _productDetailsModel.data!.skus!.first.productStock! > 0 ? "In Stock".tr : "Not in stock".tr),
+                                    if (_productDetailsModel.data?.product?.skus?.first.sku != null)
+                                      Obx(() => buildSpecRow("Product SKU".tr, "${controller.productSKU.value.sku?.sku ?? ''}")),
+                                    if (_productDetailsModel.data?.product?.specification != null) ...[
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                                        child: Divider(color: Colors.grey.shade100, thickness: 1),
+                                      ),
+                                      htmlExpandingWidget("${_productDetailsModel.data!.product!.specification ?? ''}"),
+                                    ]
+                                  ],
+                                ),
+                              ),
 
                              _productDetailsModel.data?.product?.description !=
                                  null
@@ -2630,38 +2018,7 @@ Widget wholesalePriceWidget() {
                          ),
                        );
                      }),
-                     SizedBox(width: 15),
-                     _settingsController.vendorType.value == "single"
-                         ? SizedBox.shrink()
-                         : Padding(
-                           padding: EdgeInsets.only(left: 15),
-                           child: InkWell(
-                                                  onTap: () {
-                           Get.to(() =>
-                               StoreHome(
-                                   sellerId:
-                                   _productDetailsModel.data!.seller!.id!));
-                                                  },
-                                                  child: Container(
-                           width: 60.w,
-                           height: 46.w,
-                           margin: EdgeInsets.only(right: 15),
-                           padding: EdgeInsets.all(10),
-                           decoration: BoxDecoration(
-                             gradient: AppStyles.gradient,
-                             shape: BoxShape.rectangle,
-                             borderRadius: BorderRadius.circular(5.r),
-                           ),
-                           child: Image.asset(
-                             'assets/images/store.png',
-                             width: 5.w,
-                             height: 5.w,
-                             color: Colors.white,
-                           ),
-                                                  ),
-                                                ),
-                         ),
-
+                     SizedBox(width: 15.w),
                      Expanded(
                        child: Obx(() {
                          return controller.stockManage.value == 1
@@ -2671,7 +2028,7 @@ Widget wholesalePriceWidget() {
                              width: Get.width,
                              height: 46.h,
                              decoration: BoxDecoration(
-                               color: Colors.green,
+                               color: const Color(0xFF042E1E),
                                borderRadius: BorderRadius.all(
                                  Radius.circular(5.r),
                                ),
@@ -2682,15 +2039,16 @@ Widget wholesalePriceWidget() {
                                  horizontal: 10,
                                ),
                                child: !cartController.isCartLoading.value
-                                   ? Text(
-                                 Platform.isIOS && _productDetailsModel.data?.product?.isPhysical == 0 ?  "Buy now".tr :"Add to Cart".tr,
-                                 textAlign: TextAlign.center,
-                                 style: AppStyles.appFontMedium
-                                     .copyWith(
-                                   color:  Colors.white,
-                                   fontSize: 14.fontSize,
-                                 ),
-                               )
+                                    ? Text(
+                                  Platform.isIOS && _productDetailsModel.data?.product?.isPhysical == 0
+                                      ? "Buy now".tr
+                                      : "${"Add to Cart".tr} • ${_settingsController.setCurrentSymbolPosition(amount: (controller.finalPrice.value * _settingsController.conversionRate.value).toStringAsFixed(2))}",
+                                  textAlign: TextAlign.center,
+                                  style: AppStyles.appFontMedium.copyWith(
+                                    color: Colors.white,
+                                    fontSize: 14.fontSize,
+                                  ),
+                                )
                                    : Container(
                                  width: 20.w,
                                  height: 20.w,
@@ -2751,7 +2109,7 @@ Widget wholesalePriceWidget() {
                              width: Get.width,
                              height: 46.h,
                              decoration: BoxDecoration(
-                               color: Colors.green,
+                               color: const Color(0xFF042E1E),
                                borderRadius: BorderRadius.all(
                                  Radius.circular(5.r),
                                ),
@@ -2762,15 +2120,16 @@ Widget wholesalePriceWidget() {
                                  horizontal: 10,
                                ),
                                child: !cartController.isCartLoading.value
-                                   ? Text(
-                                 Platform.isIOS && _productDetailsModel.data?.product?.isPhysical == 0 ?  "Buy now".tr :"Add to  Cart".tr,
-                                 textAlign: TextAlign.center,
-                                 style: AppStyles.appFontMedium
-                                     .copyWith(
-                                   color: Colors.white,
-                                   fontSize: 14.fontSize,
-                                 ),
-                               )
+                                    ? Text(
+                                  Platform.isIOS && _productDetailsModel.data?.product?.isPhysical == 0
+                                      ? "Buy now".tr
+                                      : "${"Add to Cart".tr} • ${_settingsController.setCurrentSymbolPosition(amount: (controller.finalPrice.value * _settingsController.conversionRate.value).toStringAsFixed(2))}",
+                                  textAlign: TextAlign.center,
+                                  style: AppStyles.appFontMedium.copyWith(
+                                    color: Colors.white,
+                                    fontSize: 14.fontSize,
+                                  ),
+                                )
                                    : Container(
                                  width: 20.w,
                                  height: 20.w,
@@ -3031,3 +2390,4 @@ class _PhotoViewerWidgetState extends State<PhotoViewerWidget> {
     );
   }
 }
+
