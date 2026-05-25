@@ -474,7 +474,7 @@ Widget wholesalePriceWidget() {
             Text(
               title,
               style: AppStyles.appFontMedium.copyWith(
-                color: Colors.grey.shade500,
+                color: Colors.grey.shade700,
                 fontSize: 13.fontSize,
               ),
             ),
@@ -609,7 +609,7 @@ Widget wholesalePriceWidget() {
                                               "TIER ${index + 1}".tr,
                                               style: AppStyles.appFontBold.copyWith(
                                                 fontSize: 10.fontSize,
-                                                color: Colors.grey.shade500,
+                                                color: Colors.grey.shade700,
                                                 letterSpacing: 0.5,
                                               ),
                                             ),
@@ -1047,7 +1047,7 @@ Widget wholesalePriceWidget() {
                                   "Sold by ".tr + "${_productDetailsModel.data?.seller?.name ?? ""}",
                                   style: AppStyles.appFontBook.copyWith(
                                     fontSize: 13.fontSize,
-                                    color: Colors.grey.shade600,
+                                    color: Colors.grey.shade800,
                                   ),
                                 ),
                               SizedBox(height: 14.h),                             // Price + Quantity & Variants card (reference image style)
@@ -1112,8 +1112,8 @@ Widget wholesalePriceWidget() {
                                          if (!(Platform.isIOS && controller.products.value.data?.product?.isPhysical == 0))
                                            Container(
                                              decoration: BoxDecoration(
-                                               color: const Color(0xFF042E1E),
-                                               borderRadius: BorderRadius.circular(10.r),
+                                                color: const Color(0xFF2B6B22),
+                                                borderRadius: BorderRadius.circular(10.r),
                                              ),
                                              child: Row(
                                                mainAxisSize: MainAxisSize.min,
@@ -1981,7 +1981,7 @@ Widget wholesalePriceWidget() {
                            width: 50.w,
                            height: 46.w,
                            decoration: BoxDecoration(
-                             gradient: AppStyles.gradient,
+                             color: const Color(0xFF2B6B22),
                              shape: BoxShape.rectangle,
                              borderRadius: BorderRadius.circular(5),
                            ),
@@ -2028,7 +2028,7 @@ Widget wholesalePriceWidget() {
                              width: Get.width,
                              height: 46.h,
                              decoration: BoxDecoration(
-                               color: const Color(0xFF042E1E),
+                               color: const Color(0xFF2B6B11),
                                borderRadius: BorderRadius.all(
                                  Radius.circular(5.r),
                                ),
@@ -2109,7 +2109,7 @@ Widget wholesalePriceWidget() {
                              width: Get.width,
                              height: 46.h,
                              decoration: BoxDecoration(
-                               color: const Color(0xFF042E1E),
+                                color: const Color(0xFF2B6B22),
                                borderRadius: BorderRadius.all(
                                  Radius.circular(5.r),
                                ),

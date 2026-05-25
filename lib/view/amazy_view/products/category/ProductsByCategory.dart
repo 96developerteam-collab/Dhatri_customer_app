@@ -62,7 +62,8 @@ class _ProductsByCategoryState extends State<ProductsByCategory> {
   void initState() {
     controller = Get.put(CategoryController(widget.categoryId!));
     source = CategoryProductsLoadMore(widget.categoryId!);
-    source!.isSorted = false;
+    source!.isSorted = true;
+    source!.sortKey = 'new';
     source!.isFilter = false;
 
     super.initState();
@@ -429,7 +430,7 @@ class CategoryProductsLoadMore extends LoadingMoreBase<ProductModel> {
   int productsLength = 0;
 
   @override
-  bool get hasMore => (_hasMore && length < productsLength) || forceRefresh;
+  bool get hasMore => _hasMore || forceRefresh;
 
   @override
   Future<bool> refresh([bool clearBeforeRequest = false]) async {

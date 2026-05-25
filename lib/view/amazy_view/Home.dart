@@ -216,51 +216,53 @@ LinearGradient? selectColor(int position) {
                           return SizedBox.shrink();
                         }
 
-                        return Container(
-                          height: 200.h,
-                          child: Swiper(
-                            itemCount: _homeController.homePageModel.value.sliders!.length,
-                            autoplay: true,
-                            autoplayDelay: 5000,
-                            itemBuilder: (BuildContext context, int sliderIndex) {
-                              HomePageSlider slider = _homeController.homePageModel.value.sliders![sliderIndex];
-                              return FancyShimmerImage(
-                                imageUrl: AppConfig.assetPath + '/' + slider.sliderImage!,
-                                boxFit: BoxFit.contain,
-                                width: Get.width,
-                                height: 200.h,
-                                errorWidget: FancyShimmerImage(
-                                  imageUrl: "${AppConfig.assetPath}/backend/img/default.png",
-                                  boxFit: BoxFit.contain,
+                        return ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(5.r)),
+                          child: AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: Swiper(
+                              itemCount: _homeController.homePageModel.value.sliders!.length,
+                              autoplay: true,
+                              autoplayDelay: 5000,
+                              itemBuilder: (BuildContext context, int sliderIndex) {
+                                HomePageSlider slider = _homeController.homePageModel.value.sliders![sliderIndex];
+                                return FancyShimmerImage(
+                                  imageUrl: AppConfig.assetPath + '/' + slider.sliderImage!,
+                                  boxFit: BoxFit.fill,
+                                  width: Get.width,
+                                  errorWidget: FancyShimmerImage(
+                                    imageUrl: "${AppConfig.assetPath}/backend/img/default.png",
+                                    boxFit: BoxFit.contain,
+                                  ),
+                                );
+                              },
+                              onTap: (sliderIndex) {
+                                HomePageSlider slider = _homeController.homePageModel.value.sliders![sliderIndex];
+                                if (slider.dataType == SliderDataType.PRODUCT) {
+                                  Get.to(() => ProductDetails(productID: slider.dataId));
+                                } else if (slider.dataType == SliderDataType.CATEGORY) {
+                                  Get.to(() => ProductsByCategory(categoryId: slider.dataId));
+                                } else if (slider.dataType == SliderDataType.BRAND) {
+                                  Get.to(() => ProductsByBrands(brandId: slider.dataId));
+                                } else if (slider.dataType == SliderDataType.TAG) {
+                                  Get.to(() => ProductsByTags(tagName: slider.tag!.name, tagId: slider.tag!.id));
+                                }
+                              },
+                              pagination: SwiperPagination(
+                                margin: EdgeInsets.all(5.0.w),
+                                builder: SwiperCustomPagination(
+                                  builder: (BuildContext context, SwiperPluginConfig config) {
+                                    return Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: RectSwiperPaginationBuilder(
+                                        color: Colors.white.withOpacity(0.5),
+                                        activeColor: Colors.white,
+                                        size: Size(5.0, 5.0),
+                                        activeSize: Size(20.0.w, 5.0.h),
+                                      ).build(context, config),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
-                            onTap: (sliderIndex) {
-                              HomePageSlider slider = _homeController.homePageModel.value.sliders![sliderIndex];
-                              if (slider.dataType == SliderDataType.PRODUCT) {
-                                Get.to(() => ProductDetails(productID: slider.dataId));
-                              } else if (slider.dataType == SliderDataType.CATEGORY) {
-                                Get.to(() => ProductsByCategory(categoryId: slider.dataId));
-                              } else if (slider.dataType == SliderDataType.BRAND) {
-                                Get.to(() => ProductsByBrands(brandId: slider.dataId));
-                              } else if (slider.dataType == SliderDataType.TAG) {
-                                Get.to(() => ProductsByTags(tagName: slider.tag!.name, tagId: slider.tag!.id));
-                              }
-                            },
-                            pagination: SwiperPagination(
-                              margin: EdgeInsets.all(5.0.w),
-                              builder: SwiperCustomPagination(
-                                builder: (BuildContext context, SwiperPluginConfig config) {
-                                  return Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: RectSwiperPaginationBuilder(
-                                      color: Colors.white.withOpacity(0.5),
-                                      activeColor: Colors.white,
-                                      size: Size(5.0, 5.0),
-                                      activeSize: Size(20.0.w, 5.0.h),
-                                    ).build(context, config),
-                                  );
-                                },
                               ),
                             ),
                           ),

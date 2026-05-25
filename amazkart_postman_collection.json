@@ -1,49 +1,31 @@
 {
   "info": {
-    "name": "Amazkart API Collection",
-    "description": "Module-based Postman collection for Amazkart App.",
+    "name": "Dhatri E-Commerce App API Collection (AmazCart/Amazy)",
+    "description": "Comprehensive and fully functional Postman collection mapping all customer and marketplace APIs used by the Dhatri (AmazCart/Amazy) Flutter Application. This collection features correct HTTP methods, bearer token authorization, path/query parameters, and detailed sample request payloads.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Auth & Profile",
+      "name": "1. Auth & Profile",
       "item": [
         {
-          "name": "LOGIN",
+          "name": "User Registration",
           "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "login"
-              ]
-            }
-          }
-        },
-        {
-          "name": "SOCIAL_LOGIN",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/social-login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "social-login"
-              ]
-            }
-          }
-        },
-        {
-          "name": "REGISTER",
-          "request": {
-            "method": "GET",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"johndoe@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\",\n  \"phone\": \"+1234567890\",\n  \"referral_code\": \"REF2026\",\n  \"store_name\": \"John's Retail Store\",\n  \"gst_number\": \"GST2026SAMPLE\",\n  \"latitude\": \"12.971598\",\n  \"longitude\": \"77.594562\"\n}"
+            },
             "url": {
               "raw": "{{baseUrl}}/api/register",
               "host": [
@@ -53,29 +35,86 @@
                 "api",
                 "register"
               ]
-            }
+            },
+            "description": "Register a new user or merchant account in the Dhatri platform. Supports optional GPS coordinates (latitude/longitude), merchant details (store_name, gst_number), and documents/images via multipart form-data upload if matching merchant registration."
           }
         },
         {
-          "name": "LOGOUT",
+          "name": "Email/Phone Login",
           "request": {
-            "method": "GET",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"johndoe@example.com\",\n  \"password\": \"password123\",\n  \"device_token\": \"dev_unique_token_98765\"\n}"
+            },
             "url": {
-              "raw": "{{baseUrl}}/api/logout",
+              "raw": "{{baseUrl}}/api/login",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "logout"
+                "login"
               ]
-            }
+            },
+            "description": "Authenticate user using their registered Email or Phone number. If a phone number is used, the key should be changed from 'email' to 'phone'. Returns a Bearer token used for authenticated requests."
           }
         },
         {
-          "name": "GET_USER",
+          "name": "Social Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"provider\": \"google\",\n  \"uid\": \"google-oauth-uid-12345\",\n  \"email\": \"johndoe@example.com\",\n  \"name\": \"John Doe\",\n  \"token\": \"google_auth_token_xyz\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/social-login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "social-login"
+              ]
+            },
+            "description": "Log in or sign up securely using third-party auth providers (e.g., Google, Facebook, Apple)."
+          }
+        },
+        {
+          "name": "Get Profile Data",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/get-user",
               "host": [
@@ -85,98 +124,32 @@
                 "api",
                 "get-user"
               ]
-            }
+            },
+            "description": "Fetch the currently authenticated user's profile details including basic info, wallet balance, and shipping/billing preferences."
           }
         },
         {
-          "name": "ADDRESS_LIST",
+          "name": "Update User Profile",
           "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/profile/address-list",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "profile",
-                "address-list"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ADD_ADDRESS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/profile/address-store",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "profile",
-                "address-store"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ADDRESS_SET_DEFAULT_BILLING",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/profile/default-billing-address",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "profile",
-                "default-billing-address"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ADDRESS_SET_DEFAULT_SHIPPING",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/profile/default-shipping-address",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "profile",
-                "default-shipping-address"
-              ]
-            }
-          }
-        },
-        {
-          "name": "DELETE_ADDRESS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/profile/address-delete",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "profile",
-                "address-delete"
-              ]
-            }
-          }
-        },
-        {
-          "name": "UPDATE_USER_PROFILE",
-          "request": {
-            "method": "GET",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"phone\": \"+1234567890\",\n  \"email\": \"johndoe@example.com\"\n}"
+            },
             "url": {
               "raw": "{{baseUrl}}/api/profile/update-information",
               "host": [
@@ -187,13 +160,35 @@
                 "profile",
                 "update-information"
               ]
-            }
+            },
+            "description": "Update account profile information for the authenticated user."
           }
         },
         {
-          "name": "UPDATE_PROFILE_PHOTO",
+          "name": "Update Profile Photo",
           "request": {
-            "method": "GET",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "Image file to upload as the profile image."
+                }
+              ]
+            },
             "url": {
               "raw": "{{baseUrl}}/api/profile/update-photo",
               "host": [
@@ -204,62 +199,28 @@
                 "profile",
                 "update-photo"
               ]
-            }
+            },
+            "description": "Upload a new avatar/photo for the user's profile."
           }
         },
         {
-          "name": "CHANGE_PASSWORD",
+          "name": "Send OTP (Order Confirm / COD)",
           "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/change-password",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "change-password"
-              ]
-            }
-          }
-        },
-        {
-          "name": "USER_DELETE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/customer-delete",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "customer-delete"
-              ]
-            }
-          }
-        },
-        {
-          "name": "CUSTOMER_GET_DATA",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/profile/get-customer-data",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "profile",
-                "get-customer-data"
-              ]
-            }
-          }
-        },
-        {
-          "name": "OTP_SEND",
-          "request": {
-            "method": "GET",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"otp_on_order_with_cod\",\n  \"email\": \"johndoe@example.com\",\n  \"name\": \"John Doe\",\n  \"phone\": \"+1234567890\"\n}"
+            },
             "url": {
               "raw": "{{baseUrl}}/api/general-setting/send-otp",
               "host": [
@@ -270,13 +231,28 @@
                 "general-setting",
                 "send-otp"
               ]
-            }
+            },
+            "description": "Triggers an OTP (One-Time Password) request to the user's email or phone number for COD orders validation."
           }
         },
         {
-          "name": "FORGOT_PASSWORD",
+          "name": "Forgot Password",
           "request": {
-            "method": "GET",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"johndoe@example.com\"\n}"
+            },
             "url": {
               "raw": "{{baseUrl}}/api/forgot-password",
               "host": [
@@ -286,30 +262,155 @@
                 "api",
                 "forgot-password"
               ]
-            }
+            },
+            "description": "Sends a password reset link or dynamic recovery code to the registered email."
           }
         },
         {
-          "name": "MERCHANT_LIST",
+          "name": "Logout",
           "request": {
-            "method": "GET",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/customer/merchants",
+              "raw": "{{baseUrl}}/api/logout",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "customer",
-                "merchants"
+                "logout"
               ]
-            }
+            },
+            "description": "Invalidates the active Bearer auth token and logs out the user securely."
           }
         },
         {
-          "name": "editAddress",
+          "name": "Delete User Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/customer-delete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customer-delete"
+              ]
+            },
+            "description": "Permenantly delete the logged-in customer account and clear associated data."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Address Book",
+      "item": [
+        {
+          "name": "Get Address List",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/address-list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "address-list"
+              ]
+            },
+            "description": "List all saved billing and shipping addresses for the logged-in user."
+          }
+        },
+        {
+          "name": "Add New Address",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe (Home)\",\n  \"email\": \"johndoe@example.com\",\n  \"address\": \"Flat 204, Green Valley Apartments, 12th Main Road\",\n  \"phone\": \"+1234567890\",\n  \"city\": 15,\n  \"state\": 2,\n  \"country\": 1,\n  \"postal_code\": \"560008\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/address-store",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "address-store"
+              ]
+            },
+            "description": "Save a new delivery address to the customer's address book database."
+          }
+        },
+        {
+          "name": "Update Existing Address",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe (Office)\",\n  \"email\": \"johndoe@example.com\",\n  \"address\": \"Tower B, Global Tech Park, Outer Ring Road\",\n  \"phone\": \"+1234567890\",\n  \"city\": 15,\n  \"state\": 2,\n  \"country\": 1,\n  \"postal_code\": \"560103\"\n}"
+            },
             "url": {
               "raw": "{{baseUrl}}/api/profile/address-update/:addressId",
               "host": [
@@ -320,1097 +421,135 @@
                 "profile",
                 "address-update",
                 ":addressId"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Products & Categories",
-      "item": [
-        {
-          "name": "ALL_PRODUCTS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/seller/products",
-              "host": [
-                "{{baseUrl}}"
               ],
-              "path": [
-                "api",
-                "seller",
-                "products"
+              "variable": [
+                {
+                  "key": "addressId",
+                  "value": "15"
+                }
               ]
-            }
+            },
+            "description": "Modify the details of a specific address."
           }
         },
         {
-          "name": "PRODUCT_PRICE_SKU_WISE",
+          "name": "Delete Address",
           "request": {
-            "method": "GET",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 15\n}"
+            },
             "url": {
-              "raw": "{{baseUrl}}/api/seller/product/get-sku-wise-price",
+              "raw": "{{baseUrl}}/api/profile/address-delete",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "seller",
-                "product",
-                "get-sku-wise-price"
+                "profile",
+                "address-delete"
               ]
-            }
+            },
+            "description": "Delete a specific address by its database ID."
           }
         },
         {
-          "name": "ALL_CATEGORY",
+          "name": "Set Default Billing Address",
           "request": {
-            "method": "GET",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"15\"\n}"
+            },
             "url": {
-              "raw": "{{baseUrl}}/api/product/category",
+              "raw": "{{baseUrl}}/api/profile/default-billing-address",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "product",
-                "category"
+                "profile",
+                "default-billing-address"
               ]
-            }
+            },
+            "description": "Set a specific address as the default billing address."
           }
         },
         {
-          "name": "TOP_CATEGORY",
+          "name": "Set Default Shipping Address",
           "request": {
-            "method": "GET",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"15\"\n}"
+            },
             "url": {
-              "raw": "{{baseUrl}}/api/product/category/filter/top",
+              "raw": "{{baseUrl}}/api/profile/default-shipping-address",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "product",
-                "category",
-                "filter",
-                "top"
+                "profile",
+                "default-shipping-address"
               ]
-            }
+            },
+            "description": "Set a specific address as the default shipping address."
           }
         },
         {
-          "name": "ALL_RECOMMENDED",
+          "name": "List Countries",
           "request": {
             "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/seller/product/recomanded-product",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "seller",
-                "product",
-                "recomanded-product"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ALL_TOP_PICKS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/seller/product/top-picks",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "seller",
-                "product",
-                "top-picks"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ALL_BRAND",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/product/brand",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "product",
-                "brand"
-              ]
-            }
-          }
-        },
-        {
-          "name": "SINGLE_TAG_PRODUCTS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/product/tag",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "product",
-                "tag"
-              ]
-            }
-          }
-        },
-        {
-          "name": "SORT_PRODUCTS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/seller/product/sort-before-filter",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "seller",
-                "product",
-                "sort-before-filter"
-              ]
-            }
-          }
-        },
-        {
-          "name": "SORT_ALL_PRODUCTS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/seller/product/filter/fetch-data",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "seller",
-                "product",
-                "filter",
-                "fetch-data"
-              ]
-            }
-          }
-        },
-        {
-          "name": "FILTER_ALL_PRODUCTS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/seller/product/filter/filter-product-page-by-type",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "seller",
-                "product",
-                "filter",
-                "filter-product-page-by-type"
-              ]
-            }
-          }
-        },
-        {
-          "name": "FILTER_SELLER_PRODUCTS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/seller/filter-by-type",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "seller",
-                "filter-by-type"
-              ]
-            }
-          }
-        },
-        {
-          "name": "LIVE_SEARCH",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/live-search",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "live-search"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Cart & Checkout",
-      "item": [
-        {
-          "name": "CART",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/cart",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cart"
-              ]
-            }
-          }
-        },
-        {
-          "name": "CART_QUANTITY_UPDATE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/cart/update-qty",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cart",
-                "update-qty"
-              ]
-            }
-          }
-        },
-        {
-          "name": "CART_SELECT_UNSELECT_ALL",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/cart/select-all",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cart",
-                "select-all"
-              ]
-            }
-          }
-        },
-        {
-          "name": "CART_SELECT_UNSELECT_SELLER_WISE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/cart/select-seller-item",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cart",
-                "select-seller-item"
-              ]
-            }
-          }
-        },
-        {
-          "name": "CART_SELECT_UNSELECT_SINGLE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/cart/select-item",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cart",
-                "select-item"
-              ]
-            }
-          }
-        },
-        {
-          "name": "CART_REMOVE_ALL",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/cart/remove-all",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cart",
-                "remove-all"
-              ]
-            }
-          }
-        },
-        {
-          "name": "CART_REMOVE_CART_ITEM",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/cart/remove",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cart",
-                "remove"
-              ]
-            }
-          }
-        },
-        {
-          "name": "CART_UPDATE_SHIPPING",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/cart/update-shipping-method",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cart",
-                "update-shipping-method"
-              ]
-            }
-          }
-        },
-        {
-          "name": "CHECKOUT",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/checkout",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "checkout"
-              ]
-            }
-          }
-        },
-        {
-          "name": "TABBYURL",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/tabby-checkout",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "tabby-checkout"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ORDER_STORE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-store",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-store"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ORDER_PAYMENT_STORE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-payment-info-store",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-payment-info-store"
-              ]
-            }
-          }
-        },
-        {
-          "name": "CHECK_PRICE_UPDATE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/checkout/check-price-update",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "checkout",
-                "check-price-update"
-              ]
-            }
-          }
-        },
-        {
-          "name": "APPLY_COUPON",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/checkout/coupon-apply",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "checkout",
-                "coupon-apply"
-              ]
-            }
-          }
-        },
-        {
-          "name": "inAppPurchaseAddToCart",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/in-app-cart-store",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "in-app-cart-store"
-              ]
-            }
-          }
-        },
-        {
-          "name": "createInAppPurchaseOrder",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-store/in-app-purchase",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-store",
-                "in-app-purchase"
-              ]
-            }
-          }
-        },
-        {
-          "name": "deleteInAppPurchaseCart",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/in-app-cart-delete",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "in-app-cart-delete"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Orders & Reviews",
-      "item": [
-        {
-          "name": "ALL_ORDER_LIST",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-list",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-list"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ALL_ORDER_DELIVERY_PROCESS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/delivery-processes",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "delivery-processes"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ALL_ORDER_PENDING_LIST",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-pending-list",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-pending-list"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ALL_ORDER_CANCEL_LIST",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-cancel-list",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-cancel-list"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ALL_ORDER_REFUND_LIST",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-refund-list",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-refund-list"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ORDER_TO_SHIP",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-to-ship",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-to-ship"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ORDER_TO_RECEIVE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-to-receive",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-to-receive"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ORDER_REVIEW",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-review",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-review"
-              ]
-            }
-          }
-        },
-        {
-          "name": "WAITING_FOR_REVIEW",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-review/waiting-for-review-list",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-review",
-                "waiting-for-review-list"
-              ]
-            }
-          }
-        },
-        {
-          "name": "MY_REVIEWS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-review/list",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-review",
-                "list"
-              ]
-            }
-          }
-        },
-        {
-          "name": "CANCEL_REASONS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-manage/cancel-reason-list",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-manage",
-                "cancel-reason-list"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ORDER_CANCEL_STORE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-manage/cancel-store",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-manage",
-                "cancel-store"
-              ]
-            }
-          }
-        },
-        {
-          "name": "REFUND_REASONS_LIST",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/refund/reason-list",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "refund",
-                "reason-list"
-              ]
-            }
-          }
-        },
-        {
-          "name": "REFUND_STORE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-refund/store",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-refund",
-                "store"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ALL_ORDER_LIST_BY_STATUS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/order-by-delivery-status?status=:id&lang=:AppLocalizations.getLanguageCode()}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "order-by-delivery-status?status=:id&lang=:AppLocalizations.getLanguageCode()}"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Gift Cards & Wishlist",
-      "item": [
-        {
-          "name": "ALL_GIFT_CARDS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/gift-card/list",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "gift-card",
-                "list"
-              ]
-            }
-          }
-        },
-        {
-          "name": "GIFT_CARD",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/gift-card",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "gift-card"
-              ]
-            }
-          }
-        },
-        {
-          "name": "MY_PURCHASED_GIFT_CARDS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/gift-card/my-purchased/list",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "gift-card",
-                "my-purchased",
-                "list"
-              ]
-            }
-          }
-        },
-        {
-          "name": "MY_WISHLIST",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/wishlist",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "wishlist"
-              ]
-            }
-          }
-        },
-        {
-          "name": "MY_WISHLIST_DELETE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/wishlist/delete",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "wishlist",
-                "delete"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Marketing & Coupons",
-      "item": [
-        {
-          "name": "NEW_USER_ZONE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/marketing/new-user-zone",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "marketing",
-                "new-user-zone"
-              ]
-            }
-          }
-        },
-        {
-          "name": "MY_COUPONS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/coupon",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "coupon"
-              ]
-            }
-          }
-        },
-        {
-          "name": "MY_COUPON_DELETE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/coupon/delete",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "coupon",
-                "delete"
-              ]
-            }
-          }
-        },
-        {
-          "name": "FLASH_DEALS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/marketing/flash-deal",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "marketing",
-                "flash-deal"
-              ]
-            }
-          }
-        },
-        {
-          "name": "fetchNewUserProductData",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/marketing/new-user-zone/:slug/fetch-product-data?lang=:AppLocalizations.getLanguageCode()}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "marketing",
-                "new-user-zone",
-                ":slug",
-                "fetch-product-data?lang=:AppLocalizations.getLanguageCode()}"
-              ]
-            }
-          }
-        },
-        {
-          "name": "fetchNewUserCategoryAllProducts",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/marketing/new-user-zone/:slug/fetch-all-category-data?lang=:AppLocalizations.getLanguageCode()}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "marketing",
-                "new-user-zone",
-                ":slug",
-                "fetch-all-category-data?lang=:AppLocalizations.getLanguageCode()}"
-              ]
-            }
-          }
-        },
-        {
-          "name": "fetchNewUserCouponAllProducts",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/marketing/new-user-zone/:slug/fetch-all-coupon-category-data?lang=:AppLocalizations.getLanguageCode()}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "marketing",
-                "new-user-zone",
-                ":slug",
-                "fetch-all-coupon-category-data?lang=:AppLocalizations.getLanguageCode()}"
-              ]
-            }
-          }
-        },
-        {
-          "name": "fetchNewUserCategoryProducts",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/marketing/new-user-zone/:slug/fetch-category-data?lang=:AppLocalizations.getLanguageCode()}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "marketing",
-                "new-user-zone",
-                ":slug",
-                "fetch-category-data?lang=:AppLocalizations.getLanguageCode()}"
-              ]
-            }
-          }
-        },
-        {
-          "name": "fetchNewUserCouponProducts",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/marketing/new-user-zone/:slug/fetch-coupon-category-data?lang=:AppLocalizations.getLanguageCode()}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "marketing",
-                "new-user-zone",
-                ":slug",
-                "fetch-coupon-category-data?lang=:AppLocalizations.getLanguageCode()}"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Settings & General",
-      "item": [
-        {
-          "name": "HOME_PAGE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/homepage-data",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "homepage-data"
-              ]
-            }
-          }
-        },
-        {
-          "name": "SELLER_PROFILE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/seller-profile",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "seller-profile"
-              ]
-            }
-          }
-        },
-        {
-          "name": "ALL_SLIDERS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/appearance/sliders",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "appearance",
-                "sliders"
-              ]
-            }
-          }
-        },
-        {
-          "name": "COUNTRY",
-          "request": {
-            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/location/country",
               "host": [
@@ -1421,194 +560,20 @@
                 "location",
                 "country"
               ]
-            }
+            },
+            "description": "Get all active countries available in the database for address selection."
           }
         },
         {
-          "name": "PAYMENT_GATEWAY",
+          "name": "List States of Country",
           "request": {
             "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/payment-gateway",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "payment-gateway"
-              ]
-            }
-          }
-        },
-        {
-          "name": "BANK_INFO",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/payment-gateway/bank/bank-info",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "payment-gateway",
-                "bank",
-                "bank-info"
-              ]
-            }
-          }
-        },
-        {
-          "name": "BANK_PAYMENT_DATA_STORE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/payment-gateway/bank/payment-data-store",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "payment-gateway",
-                "bank",
-                "payment-data-store"
-              ]
-            }
-          }
-        },
-        {
-          "name": "USER_NOTIFICATIONS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/user-notifications",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "user-notifications"
-              ]
-            }
-          }
-        },
-        {
-          "name": "GENERAL_SETTINGS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/general-settings",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "general-settings"
-              ]
-            }
-          }
-        },
-        {
-          "name": "CURRENCY_LIST",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/currency-list",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "currency-list"
-              ]
-            }
-          }
-        },
-        {
-          "name": "SHIPPING_LIST",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/shipping-lists",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "shipping-lists"
-              ]
-            }
-          }
-        },
-        {
-          "name": "NOTIFICATION_SETTINGS",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/user-notifications-setting",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "user-notifications-setting"
-              ]
-            }
-          }
-        },
-        {
-          "name": "NOTIFICATION_SETTINGS_UPDATE",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/user-notifications-setting/update",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "user-notifications-setting",
-                "update"
-              ]
-            }
-          }
-        },
-        {
-          "name": "getLang",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/get-lang",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "get-lang"
-              ]
-            }
-          }
-        },
-        {
-          "name": "setLang",
-          "request": {
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/set-lang",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "set-lang"
-              ]
-            }
-          }
-        },
-        {
-          "name": "stateByCountry",
-          "request": {
-            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/location/country/:countryId/states",
               "host": [
@@ -1620,14 +585,27 @@
                 "country",
                 ":countryId",
                 "states"
+              ],
+              "variable": [
+                {
+                  "key": "countryId",
+                  "value": "1"
+                }
               ]
-            }
+            },
+            "description": "List all states corresponding to a given Country ID."
           }
         },
         {
-          "name": "cityByState",
+          "name": "List Cities of State",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/location/state/:stateId/cities",
               "host": [
@@ -1639,137 +617,1203 @@
                 "state",
                 ":stateId",
                 "cities"
+              ],
+              "variable": [
+                {
+                  "key": "stateId",
+                  "value": "2"
+                }
               ]
-            }
+            },
+            "description": "List all cities corresponding to a given State ID."
           }
         }
       ]
     },
     {
-      "name": "Support Tickets",
+      "name": "3. Products & Browse",
       "item": [
         {
-          "name": "TICKET_LIST",
+          "name": "Get Homepage Data",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/ticket-list-get-data",
+              "raw": "{{baseUrl}}/api/homepage-data",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "ticket-list-get-data"
+                "homepage-data"
               ]
-            }
+            },
+            "description": "Fetch homepage components including sliders, top deals, featured brands, categories, and top-pick products."
           }
         },
         {
-          "name": "TICKET_LIST",
+          "name": "Get Product Details",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/ticket-list-get-data",
+              "raw": "{{baseUrl}}/api/seller/products/:productId?lang=en",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "ticket-list-get-data"
+                "seller",
+                "products",
+                ":productId"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "productId",
+                  "value": "45"
+                }
               ]
-            }
+            },
+            "description": "Retrieve full information of a single product (images, description, rating, shipping methods, and starting SKU variants) by ID."
           }
         },
         {
-          "name": "TICKET_CATEGORIES",
+          "name": "Get SKU-wise Price (Variants)",
           "request": {
-            "method": "GET",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "product_id",
+                  "value": "45",
+                  "type": "text"
+                },
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "id[0]",
+                  "value": "12-3",
+                  "type": "text",
+                  "description": "Formatted variant attribute (valueID-attrID)"
+                }
+              ]
+            },
             "url": {
-              "raw": "{{baseUrl}}/api/ticket/categories",
+              "raw": "{{baseUrl}}/api/seller/product/get-sku-wise-price?lang=en",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "ticket",
-                "categories"
+                "seller",
+                "product",
+                "get-sku-wise-price"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
               ]
-            }
+            },
+            "description": "Fetch precise pricing, stock availability, and wholesale tiers for a specific variant matching the attributes combination."
           }
         },
         {
-          "name": "TICKET_PRIORITIES",
+          "name": "Filter & Sort Products",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/ticket/priorities",
+              "raw": "{{baseUrl}}/api/seller/product/filter/fetch-data?page=1&sort_by=new&cat_id=3&brand_id=2",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "ticket",
-                "priorities"
+                "seller",
+                "product",
+                "filter",
+                "fetch-data"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "sort_by",
+                  "value": "new"
+                },
+                {
+                  "key": "cat_id",
+                  "value": "3"
+                },
+                {
+                  "key": "brand_id",
+                  "value": "2"
+                }
               ]
-            }
+            },
+            "description": "Browse and filter store products based on category, brand, and sorting parameters (new, low_to_high, high_to_low)."
           }
         },
         {
-          "name": "TICKET_STORE",
+          "name": "Get Category List",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/ticket-store",
+              "raw": "{{baseUrl}}/api/product/category",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "ticket-store"
+                "product",
+                "category"
               ]
-            }
+            },
+            "description": "Fetch all categories with multi-level subcategories hierarchy."
           }
         },
         {
-          "name": "TICKET_SHOW",
+          "name": "Get Brand List",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/ticket-show",
+              "raw": "{{baseUrl}}/api/product/brand",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "ticket-show"
+                "product",
+                "brand"
               ]
-            }
+            },
+            "description": "Fetch lists of all brands registered in the marketplace."
           }
         },
         {
-          "name": "TICKET_REPLY",
+          "name": "Live Search",
           "request": {
             "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/ticket-show/reply",
+              "raw": "{{baseUrl}}/api/live-search?search_key=shirt",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
-                "ticket-show",
-                "reply"
+                "live-search"
+              ],
+              "query": [
+                {
+                  "key": "search_key",
+                  "value": "shirt"
+                }
               ]
-            }
+            },
+            "description": "Instantly search items using key phrases to fetch matches dynamically."
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Cart Management",
+      "item": [
+        {
+          "name": "Get Shopping Cart",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cart?lang=en&device_token=unique_dev_token_98765&user_id=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                },
+                {
+                  "key": "device_token",
+                  "value": "unique_dev_token_98765"
+                },
+                {
+                  "key": "user_id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Fetch cart details including price totals, package groupings, and selected shipping values."
+          }
+        },
+        {
+          "name": "Add Product to Cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": 45,\n  \"qty\": 2,\n  \"price\": 149.98,\n  \"sku\": \"shirt-blue-m-variant\",\n  \"device_token\": \"unique_dev_token_98765\",\n  \"user_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cart?lang=en",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Add a specific product SKU variant or package item to the shopping cart."
+          }
+        },
+        {
+          "name": "Update Cart Item Qty",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 23,\n  \"qty\": 4\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/update-qty?lang=en",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "update-qty"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Increase or decrease the quantity of an item already in the cart using its Cart Item ID."
+          }
+        },
+        {
+          "name": "Select/Unselect Cart Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 23,\n  \"is_select\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/select-item",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "select-item"
+              ]
+            },
+            "description": "Mark a cart item as active (1) or inactive (0) for inclusion in the checkout totals calculation."
+          }
+        },
+        {
+          "name": "Select/Unselect Seller Wise Items",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seller_id\": 3,\n  \"is_select\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/select-seller-item?lang=en",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "select-seller-item"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Batch select or unselect all cart items sourced from a specific seller."
+          }
+        },
+        {
+          "name": "Select/Unselect All Cart Items",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_select\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/select-all?lang=en",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "select-all"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Select or deselect every item in the cart at once."
+          }
+        },
+        {
+          "name": "Remove Item from Cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 23\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/remove?lang=en",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "remove"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Remove a specific item from the cart."
+          }
+        },
+        {
+          "name": "Clear Shopping Cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/remove-all?device_token=unique_dev_token_98765&user_id=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "remove-all"
+              ],
+              "query": [
+                {
+                  "key": "device_token",
+                  "value": "unique_dev_token_98765"
+                },
+                {
+                  "key": "user_id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Empty the shopping cart entirely."
+          }
+        },
+        {
+          "name": "Update Cart Shipping Method",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cart_id\": 23,\n  \"shipping_method_id\": 3\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/update-shipping-method?lang=en",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "update-shipping-method"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Change the shipping logic or carrier preference for a package group."
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Checkout & Orders",
+      "item": [
+        {
+          "name": "Get Checkout List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/checkout?lang=en",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checkout"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Fetch checkout items, active shipping rules, tax values, and invoice sums."
+          }
+        },
+        {
+          "name": "Apply Promo/Coupon",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coupon_code\": \"DHATRI50\",\n  \"shopping_amount\": 149.98\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/checkout/coupon-apply",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checkout",
+                "coupon-apply"
+              ]
+            },
+            "description": "Apply a coupon to reduce grand_total based on shopping thresholds."
+          }
+        },
+        {
+          "name": "Get Shipping Lists",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipping-lists?lang=en",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "shipping-lists"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Retrieve available delivery methods/couriers."
+          }
+        },
+        {
+          "name": "Get Payment Gateways",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payment-gateway",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payment-gateway"
+              ]
+            },
+            "description": "List all active electronic payment gateways (Stripe, Razorpay, Paypal, COD)."
+          }
+        },
+        {
+          "name": "Get Bank Info",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payment-gateway/bank/bank-info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "payment-gateway",
+                "bank",
+                "bank-info"
+              ]
+            },
+            "description": "Retrieve static bank account fields for direct wire/offline bank transfers."
+          }
+        },
+        {
+          "name": "Submit Order Confirmation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "customer_shipping_address",
+                  "value": "15",
+                  "type": "text"
+                },
+                {
+                  "key": "customer_billing_address",
+                  "value": "15",
+                  "type": "text"
+                },
+                {
+                  "key": "customer_email",
+                  "value": "johndoe@example.com",
+                  "type": "text"
+                },
+                {
+                  "key": "customer_phone",
+                  "value": "+1234567890",
+                  "type": "text"
+                },
+                {
+                  "key": "customer_name",
+                  "value": "John Doe",
+                  "type": "text"
+                },
+                {
+                  "key": "number_of_item",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "number_of_package",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "shipping_total",
+                  "value": "10.00",
+                  "type": "text"
+                },
+                {
+                  "key": "discount_total",
+                  "value": "0.00",
+                  "type": "text"
+                },
+                {
+                  "key": "tax_total",
+                  "value": "12.50",
+                  "type": "text"
+                },
+                {
+                  "key": "delivery_type",
+                  "value": "home_delivery",
+                  "type": "text"
+                },
+                {
+                  "key": "pickup_location_id",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "sub_total",
+                  "value": "149.98",
+                  "type": "text"
+                },
+                {
+                  "key": "grand_total",
+                  "value": "172.48",
+                  "type": "text"
+                },
+                {
+                  "key": "payment_method",
+                  "value": "4",
+                  "type": "text",
+                  "description": "4 for Stripe, 1 for COD, 2 for Wallet, etc."
+                },
+                {
+                  "key": "payment_id",
+                  "value": "18",
+                  "type": "text",
+                  "description": "ID retrieved from order-payment-info-store"
+                },
+                {
+                  "key": "product_info",
+                  "value": "{\"45\": {\"price\": \"74.99\", \"total_price\": \"149.98\", \"qty\": \"2\"}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/order-store",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-store"
+              ]
+            },
+            "description": "Submit and record the finalized order on the server. Requires details of address, items breakdown, payment mode, and gateway success ID."
+          }
+        },
+        {
+          "name": "Store Payment Info",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 172.48,\n  \"payment_method\": 4,\n  \"transection_id\": \"stripe_tx_2026052309876\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/order-payment-info-store",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-payment-info-store"
+              ]
+            },
+            "description": "Post gateway transaction success details before checking out order. Returns payment database entry ID required for 'payment_id' in order-store."
+          }
+        },
+        {
+          "name": "Check Checkout Price Validation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/checkout/check-price-update",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checkout",
+                "check-price-update"
+              ]
+            },
+            "description": "Verifies if pricing configurations or item stock counts have changed since adding them to the cart."
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Post-Order Management",
+      "item": [
+        {
+          "name": "Get Customer Order List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/order-list?lang=en",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-list"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Fetch active, historical, or delivery-pending orders for the customer."
+          }
+        },
+        {
+          "name": "Get Orders by Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/order-by-delivery-status?status=1&lang=en",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-by-delivery-status"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "1",
+                  "description": "1 = Pending, 2 = Shipped, 3 = Completed"
+                },
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Filter user orders selectively matching processing states."
+          }
+        },
+        {
+          "name": "Get Order Cancellation Reasons",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/order-manage/cancel-reason-list?lang=en",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-manage",
+                "cancel-reason-list"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Get lists of pre-configured options for order cancellations."
+          }
+        },
+        {
+          "name": "Submit Order Cancellation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-20260523-9912\",\n  \"reason\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/order-manage/cancel-store?lang=en",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-manage",
+                "cancel-store"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            },
+            "description": "Cancel an order or a specific pack inside the order by passing reason ID."
+          }
+        },
+        {
+          "name": "Get Refund Reasons List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/refund/reason-list",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "refund",
+                "reason-list"
+              ]
+            },
+            "description": "Get lists of options for issuing refund return tickets."
+          }
+        },
+        {
+          "name": "Submit Refund Claim",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"ORD-20260523-9912\",\n  \"additional_info\": \"Damaged packages and wrong items delivered.\",\n  \"shipping_way\": \"courier\",\n  \"couriers\": 3,\n  \"drop_off_couriers\": 3,\n  \"pick_up_address_id\": 15,\n  \"drop_off_courier_address\": \"Drop off station 4\",\n  \"money_get_method\": \"wallet\",\n  \"product_ids\": [\n    \"45\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/order-refund/store",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "order-refund",
+                "store"
+              ]
+            },
+            "description": "Claim a return refund for order items. Supports courier collection or station drops, with options for bank transfer details or wallet credit."
           }
         }
       ]
     }
   ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
   "variable": [
     {
       "key": "baseUrl",
-      "value": "https://your-domain.com",
+      "value": "https://dhatri.store",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "your_bearer_token_here",
       "type": "string"
     }
   ]

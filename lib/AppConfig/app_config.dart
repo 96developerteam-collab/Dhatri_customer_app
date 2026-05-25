@@ -27,7 +27,7 @@ class AppConfig {
  static const String assetPath = hostUrl + '/public';
 
  static const String privacyPolicyUrl =
-     'https://dhatri.store/privacy-policy-terms-and-conditions';
+     'https://test.dhatri.store/privacy-policy-terms-and-conditions';
 
  static bool googleLogin = false;
  static bool facebookLogin = false;
