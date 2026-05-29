@@ -14,7 +14,7 @@ import 'package:amazcart/model/NewModel/Product/Skus.dart';
 import 'package:amazcart/model/NewModel/Product/WholeSalePrice.dart';
 import 'package:amazcart/utils/styles.dart';
 import 'package:amazcart/widgets/amazy_widget/custom_loading_widget.dart';
-import 'package:amazcart/widgets/amazcart_widget/snackbars.dart';
+import 'package:amazcart/widgets/amazy_widget/snackbars.dart';
 
 class WholesalePricingScreen extends StatefulWidget {
   final ProductDetailsController controller;

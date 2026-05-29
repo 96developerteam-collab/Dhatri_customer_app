@@ -115,19 +115,7 @@ class AddressBook extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    controller.address.value.addresses?[index]
-                                        .name?.capitalizeFirst ?? '',
-                                    textAlign: TextAlign.left,
-                                    style: AppStyles.appFont.copyWith(
-                                      color: AppStyles.blackColor,
-                                      fontSize: 15.fontSize,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 8.h,
-                                  ),
+
                                   RichText(
                                     text: TextSpan(
                                       children: [

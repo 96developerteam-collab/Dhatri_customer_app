@@ -14,7 +14,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:dio/dio.dart' as DIO;
 
 import '../../../config/config.dart';
-import '../../../widgets/amazcart_widget/dio_exception.dart';
+import '../../../widgets/amazy_widget/dio_exception.dart';
 import '../../../widgets/amazy_widget/AppBarWidget.dart';
 
 class CreateTicketPage extends StatefulWidget {

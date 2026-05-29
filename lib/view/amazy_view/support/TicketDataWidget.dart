@@ -2,7 +2,7 @@ import 'package:amazcart/controller/support_ticket_controller.dart';
 import 'package:amazcart/model/SupportTicketModel.dart';
 import 'package:amazcart/utils/styles.dart';
 import 'package:amazcart/view/amazy_view/support/TicketDetailsPage.dart';
-import 'package:amazcart/widgets/amazcart_widget/CustomDate.dart';
+import 'package:amazcart/widgets/amazy_widget/CustomDate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

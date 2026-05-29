@@ -5,7 +5,7 @@ import 'package:amazcart/AppConfig/app_config.dart';
 import 'package:amazcart/controller/login_controller.dart';
 import 'package:amazcart/controller/settings_controller.dart';
 import 'package:amazcart/utils/styles.dart';
-import 'package:amazcart/widgets/amazcart_widget/dio_exception.dart';
+import 'package:amazcart/widgets/amazy_widget/dio_exception.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';

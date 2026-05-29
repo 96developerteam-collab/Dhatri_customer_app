@@ -15,7 +15,7 @@ import 'package:amazcart/model/NewModel/Product/ProductModel.dart';
 import 'package:amazcart/model/NewModel/Product/ProductType.dart';
 import 'package:amazcart/utils/styles.dart';
 import 'package:amazcart/view/amazcart_view/authentication/LoginPage.dart';
-import 'package:amazcart/view/amazcart_view/products/product/ProductDetails.dart';
+import 'package:amazcart/view/amazy_view/products/product/product_details.dart';
 import 'package:amazcart/view/amazcart_view/seller/StoreHome.dart';
 import 'package:amazcart/widgets/amazcart_widget/appbar_back_button.dart';
 import 'package:amazcart/widgets/amazcart_widget/cart_icon_widget.dart';

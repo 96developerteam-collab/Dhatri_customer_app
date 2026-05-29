@@ -37,8 +37,6 @@ class _EditAddressState extends State<EditAddress> {
   bool defaultBilling = false;
   bool defaultShipping = false;
 
-  final TextEditingController fullNameCtrl = TextEditingController();
-  final TextEditingController emailCtrl = TextEditingController();
   final TextEditingController addressCtrl = TextEditingController();
   final TextEditingController phoneCtrl = TextEditingController();
   final TextEditingController postalCodeCtrl = TextEditingController();
@@ -61,8 +59,6 @@ class _EditAddressState extends State<EditAddress> {
 
   @override
   void initState() {
-    fullNameCtrl.text = widget.address.name ?? '';
-    emailCtrl.text = widget.address.email ?? '';
     addressCtrl.text = widget.address.address ?? '';
     phoneCtrl.text = widget.address.phone ?? '';
     postalCodeCtrl.text = widget.address.postalCode ?? '';
@@ -211,64 +207,7 @@ class _EditAddressState extends State<EditAddress> {
             key: _formKey,
             child: ListView(
               children: [
-                TextFormField(
-                  controller: fullNameCtrl,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    hintText: 'Full Name'.tr,
-                    hintStyle: AppStyles.appFont.copyWith(
-                      color: AppStyles.blackColor,
-                      fontSize: 12.fontSize,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    labelText: 'Full Name'.tr,
-                    labelStyle: AppStyles.appFont.copyWith(
-                      color: AppStyles.greyColorDark,
-                      fontSize: 12.fontSize,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  style: AppStyles.appFont.copyWith(
-                    color: AppStyles.blackColor,
-                    fontSize: 14.fontSize,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return 'Please Type Full Name'.tr;
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: emailCtrl,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    hintText: 'Email'.tr,
-                    hintStyle: AppStyles.appFont.copyWith(
-                      color: AppStyles.blackColor,
-                      fontSize: 12.fontSize,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    labelText: 'Email'.tr,
-                    labelStyle: AppStyles.appFont.copyWith(
-                      color: AppStyles.blackColor,
-                      fontSize: 12.fontSize,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  style: AppStyles.appFont.copyWith(
-                    color: AppStyles.blackColor,
-                    fontSize: 14.fontSize,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  validator: (value) {
-                    return null;
-                  },
-                ),
-                SizedBox(
-                  height: 15.h,
-                ),
+
 
                 if (!loadingAllCountries)
                   Column(
@@ -639,8 +578,6 @@ class _EditAddressState extends State<EditAddress> {
     Uri addressUrl = Uri.parse(URLs.editAddress(widget.address.id));
     print(addressUrl);
     Map data = {
-      "name": fullNameCtrl.text,
-      "email": emailCtrl.text,
       "address": addressCtrl.text,
       "phone": phoneCtrl.text,
       "city": selectedCityId,

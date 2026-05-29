@@ -11,6 +11,7 @@ import 'package:amazcart/view/amazy_view/products/RecommendedProductLoadMore.dar
 import 'package:amazcart/view/amazy_view/products/product/product_details.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
+import 'package:amazcart/config/config.dart';
 import 'package:amazcart/widgets/amazy_widget/AppBarWidget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -36,6 +37,20 @@ class OrderDetails extends StatefulWidget {
 class _OrderDetailsState extends State<OrderDetails> {
   final GeneralSettingsController currencyController =
   Get.put(GeneralSettingsController());
+
+  String getSalesmanDisplay(OrderData? order) {
+    if (order?.salesman != null) {
+      final name = order?.salesman?.name ?? '';
+      final id = order?.salesman?.salesmanId;
+      if (id != null && id.isNotEmpty) {
+        return '$name ($id)';
+      }
+      return name;
+    } else if (order?.customer?.salesmanId != null && order!.customer!.salesmanId!.isNotEmpty) {
+      return '${order.customer!.salesmanId}';
+    }
+    return '';
+  }
 
   String deliverStateName(Package package) {
     var deliveryStatus = 'Pending';
@@ -69,6 +84,9 @@ class _OrderDetailsState extends State<OrderDetails> {
 
   @override
   void initState() {
+    debugPrint("OrderDetails screen opened with Order details: " + (widget.order?.toJson()?.toString() ?? "null"));
+    String orderDetailUrl = "${URLs.ALL_ORDER_LIST}/${widget.order?.id}";
+    debugPrint("API Request URL for Order : $orderDetailUrl");
     nowOrderIsCanceled.value = widget.order?.isCancelled == 1;
     source = RecommendedProductsLoadMore();
     super.initState();
@@ -83,6 +101,7 @@ class _OrderDetailsState extends State<OrderDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final salesmanText = getSalesmanDisplay(widget.order);
     return Scaffold(
       backgroundColor: AppStyles.appBackgroundColor,
       appBar: AppBarWidget(title: 'Order Details'.tr),
@@ -666,6 +685,14 @@ class _OrderDetailsState extends State<OrderDetails> {
                             ': ${CustomDate().formattedDateTime(widget.order?.createdAt)}',
                         style: AppStyles.kFontGrey12w5,
                       ),
+                      if (salesmanText.isNotEmpty) ...[ // Salesman info block
+        SizedBox(height: 5.h),
+        Text(
+          'Salesman'.tr + ': $salesmanText',
+          style: AppStyles.kFontGrey12w5.copyWith(color: Color(0xFF4CAF50), fontWeight: FontWeight.bold),
+        ),
+
+      ],
                         ],
                       ),
                     ),

@@ -5,7 +5,7 @@ import 'package:amazcart/main.dart';
 import 'package:amazcart/model/NewModel/Product/ProductType.dart';
 import 'package:amazcart/utils/styles.dart';
 import 'package:amazcart/view/amazcart_view/account/reviews/WriteReview2.dart';
-import 'package:amazcart/view/amazcart_view/products/product/ProductDetails.dart';
+import 'package:amazcart/view/amazy_view/products/product/product_details.dart';
 import 'package:amazcart/widgets/amazcart_widget/AppBarWidget.dart';
 import 'package:amazcart/widgets/amazcart_widget/CustomDate.dart';
 import 'package:amazcart/widgets/amazcart_widget/StarCounterWidget.dart';

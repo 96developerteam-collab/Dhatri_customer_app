@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:amazcart/config/config.dart';
 import 'package:amazcart/model/MyCouponsModel.dart';
-import 'package:amazcart/widgets/amazcart_widget/snackbars.dart';
+import 'package:amazcart/widgets/amazy_widget/snackbars.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';

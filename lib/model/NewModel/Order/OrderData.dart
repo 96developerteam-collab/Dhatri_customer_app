@@ -33,6 +33,7 @@ class OrderData {
     this.createdAt,
     this.updatedAt,
     this.deliveryType,
+    this.salesman,
   });
 
   int? id;
@@ -63,6 +64,7 @@ class OrderData {
   OrderAddress? orderAddress;
   DateTime? createdAt;
   DateTime? updatedAt;
+  Salesman? salesman;
 
   factory OrderData.fromJson(Map<String, dynamic> json) => OrderData(
         id: json["id"],
@@ -105,6 +107,11 @@ class OrderData {
         orderAddress: json["address"] == null
             ? null
             : OrderAddress.fromJson(json["address"]),
+        salesman: json["salesman"] != null
+            ? Salesman.fromJson(json["salesman"])
+            : (json["customer"] != null && json["customer"]["salesman"] != null
+                ? Salesman.fromJson(json["customer"]["salesman"])
+                : null),
       );
 
   Map<String, dynamic> toJson() => {
@@ -135,6 +142,7 @@ class OrderData {
         "billing_address": billingAddress?.toJson(),
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
+        "salesman": salesman?.toJson(),
       };
 }
 
@@ -346,3 +354,36 @@ class GetIngCountry {
         "updated_at": updatedAt,
       };
 }
+
+class Salesman {
+  Salesman({
+    this.id,
+    this.sellerId,
+    this.salesmanId,
+    this.name,
+    this.phoneNumber,
+  });
+
+  int? id;
+  int? sellerId;
+  String? salesmanId;
+  String? name;
+  String? phoneNumber;
+
+  factory Salesman.fromJson(Map<String, dynamic> json) => Salesman(
+        id: json["id"],
+        sellerId: json["seller_id"],
+        salesmanId: json["salesman_id"]?.toString(),
+        name: json["name"],
+        phoneNumber: json["phone_number"]?.toString(),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "seller_id": sellerId,
+        "salesman_id": salesmanId,
+        "name": name,
+        "phone_number": phoneNumber,
+      };
+}
+

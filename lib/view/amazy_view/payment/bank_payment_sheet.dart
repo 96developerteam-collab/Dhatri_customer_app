@@ -16,7 +16,7 @@ import 'package:get_storage/get_storage.dart';
 
 import '../../../config/config.dart';
 import '../../../model/NewModel/BankPaymentResponse.dart';
-import '../../../widgets/amazcart_widget/dio_exception.dart';
+import '../../../widgets/amazy_widget/dio_exception.dart';
 
 class BankPaymentSheet extends StatefulWidget {
   final Map? orderData;

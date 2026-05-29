@@ -19,7 +19,7 @@ import 'package:amazcart/view/amazcart_view/products/RecommendedProductLoadMore.
 import 'package:amazcart/view/amazcart_view/products/brand/AllBrandsPage.dart';
 import 'package:amazcart/view/amazcart_view/products/brand/ProductsByBrands.dart';
 import 'package:amazcart/view/amazcart_view/products/category/ProductsByCategory.dart';
-import 'package:amazcart/view/amazcart_view/products/product/ProductDetails.dart';
+import 'package:amazcart/view/amazy_view/products/product/product_details.dart';
 import 'package:amazcart/view/amazcart_view/products/tags/ProductsByTags.dart';
 import 'package:amazcart/widgets/amazcart_widget/BuildIndicatorBuilder.dart';
 import 'package:amazcart/widgets/amazcart_widget/GridViewProductWidget.dart';

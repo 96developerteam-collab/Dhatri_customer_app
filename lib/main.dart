@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
+import 'package:app_links/app_links.dart';
+import 'package:amazcart/view/amazy_view/products/product/product_details.dart' as amazyProductDetails;
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:amazcart/AppConfig/api_keys.dart';
 import 'package:amazcart/bindings/home_bindings.dart';
 import 'package:amazcart/AppConfig/app_config.dart';
 import 'package:amazcart/controller/in-app-purchase_controller.dart';
-import 'package:amazcart/view/amazcart_view/MainNavigation.dart' as amazcart;
 import 'package:amazcart/view/amazy_view/MainNavigation.dart' as amazy;
-import 'package:amazcart/view/amazcart_view/authentication/LoginPage.dart' as amazcartLogin;
 import 'package:amazcart/view/amazy_view/authentication/LoginPage.dart' as amazyLogin;
 import 'package:amazcart/controller/login_controller.dart';
 import 'package:flutter/material.dart';
@@ -91,9 +92,64 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late AppLinks _appLinks;
+  StreamSubscription<Uri>? _linkSubscription;
+
   @override
   void initState() {
     super.initState();
+    initDeepLinks();
+  }
+
+  @override
+  void dispose() {
+    _linkSubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> initDeepLinks() async {
+    _appLinks = AppLinks();
+
+    // Check initial link if app was in cold state (terminated)
+    try {
+      final initialUri = await _appLinks.getInitialLink();
+      if (initialUri != null) {
+        _handleDeepLink(initialUri);
+      }
+    } catch (e) {
+      log('Failed to get initial link: $e');
+    }
+
+    // Handle link when app is in warm state (front or background)
+    _linkSubscription = _appLinks.uriLinkStream.listen((uri) {
+      _handleDeepLink(uri);
+    }, onError: (err) {
+      log('Failed to handle uriLinkStream: $err');
+    });
+  }
+
+  void _handleDeepLink(Uri uri) {
+    if (uri.pathSegments.isNotEmpty && uri.pathSegments.first == 'product') {
+      if (uri.pathSegments.length >= 3) {
+        String sellerSlug = uri.pathSegments[1];
+        String productSlug = uri.pathSegments[2];
+        Future.delayed(const Duration(milliseconds: 1500), () {
+          Get.to(() => amazyProductDetails.ProductDetails(productSlug: productSlug, sellerSlug: sellerSlug));
+        });
+      } else {
+        // Fallback for old style paths with just /product/{slug}
+        String productSlug = uri.pathSegments.last;
+        var parts = productSlug.split('-');
+        if (parts.isNotEmpty) {
+          int? productId = int.tryParse(parts.last);
+          if (productId != null) {
+            Future.delayed(const Duration(milliseconds: 1500), () {
+              Get.to(() => amazyProductDetails.ProductDetails(productID: productId));
+            });
+          }
+        }
+      }
+    }
   }
 
   @override
@@ -136,9 +192,9 @@ class _MyAppState extends State<MyApp> {
               home: Obx(() {
                 final LoginController loginController = Get.find<LoginController>();
                 if (loginController.loggedIn.value) {
-                  return AppConfig.isAmazCartTheme ? amazcart.MainNavigation(navIndex: 0) : amazy.MainNavigation();
+                  return amazy.MainNavigation();
                 } else {
-                  return AppConfig.isAmazCartTheme ? amazcartLogin.LoginPage() : amazyLogin.LoginPage();
+                  return amazyLogin.LoginPage();
                 }
               }),
             )),

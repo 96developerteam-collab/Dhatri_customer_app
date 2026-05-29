@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:amazcart/AppConfig/app_config.dart';
 import 'package:amazcart/model/SupportTicketModel.dart';
 import 'package:amazcart/utils/styles.dart';
-import 'package:amazcart/widgets/amazcart_widget/CustomDate.dart';
+import 'package:amazcart/widgets/amazy_widget/CustomDate.dart';
 import 'package:amazcart/widgets/amazy_widget/custom_loading_widget.dart';
 import 'package:amazcart/widgets/amazy_widget/snackbars.dart';
 import 'package:file_picker/file_picker.dart';
@@ -18,7 +18,7 @@ import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart' as DIO;
 
 import '../../../config/config.dart';
-import '../../../widgets/amazcart_widget/dio_exception.dart';
+import '../../../widgets/amazy_widget/dio_exception.dart';
 import '../../../widgets/amazy_widget/AppBarWidget.dart';
 
 class TicketDetailsPage extends StatefulWidget {

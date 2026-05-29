@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 class AppConfig {
 
-  static bool showDebugLogs = false;
+  static bool showDebugLogs = true;
 
-  static const String hostUrl = "https://dhatri.store";
+  static const String hostUrl = "https://test.dhatri.store"; 
+  //  static const String hostUrl = "http://10.0.2.2:8000";
   static String appName = 'Dhatri';
 
   static bool isAmazCartTheme = false;
@@ -27,7 +28,7 @@ class AppConfig {
  static const String assetPath = hostUrl + '/public';
 
  static const String privacyPolicyUrl =
-     'https://test.dhatri.store/privacy-policy-terms-and-conditions';
+     'https://dhatri.store/privacy-policy-terms-and-conditions';
 
  static bool googleLogin = false;
  static bool facebookLogin = false;

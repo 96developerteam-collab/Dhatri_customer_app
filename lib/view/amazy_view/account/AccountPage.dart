@@ -25,8 +25,9 @@ import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../config/config.dart';
+import 'package:upgrader/upgrader.dart';
 import '../../../controller/home_controller.dart';
-import '../../../widgets/amazcart_widget/dio_exception.dart';
+import '../../../widgets/amazy_widget/dio_exception.dart';
 import '../../../widgets/amazy_widget/CustomSliverAppBarWidget.dart';
 import '../../../widgets/amazy_widget/snackbars.dart' show SnackBars;
 import '../settings/SettingsPage.dart';
@@ -108,10 +109,15 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () {
+    return UpgradeAlert(
+      dialogStyle: UpgradeDialogStyle.cupertino,
+      upgrader: Upgrader(),
+      child: Obx(
+        () {
         try {
           print("ProfileData Full: ${loginController.profileData.value.toJson()}");
         } catch (e) {
@@ -676,7 +682,7 @@ class _AccountPageState extends State<AccountPage> {
           );
         }
       },
-    );
+    ));
   }
 }
 

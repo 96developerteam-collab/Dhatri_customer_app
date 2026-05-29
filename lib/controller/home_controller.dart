@@ -31,7 +31,7 @@ import 'package:http/http.dart' as http;
 import 'package:amazcart/model/NewModel/Category/CategoryMain.dart';
 import 'package:amazcart/model/NewModel/Brand/BrandsMain.dart';
 
-import '../view/amazcart_view/products/RecommendedProductLoadMore.dart';
+import '../view/amazy_view/products/RecommendedProductLoadMore.dart';
 
 final Rx<GlobalKey<ScaffoldState>> scaffoldkey =
     GlobalKey<ScaffoldState>().obs;

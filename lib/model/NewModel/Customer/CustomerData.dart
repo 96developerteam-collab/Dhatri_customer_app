@@ -20,6 +20,7 @@ class CustomerData {
     this.dateOfBirth,
     this.description,
     this.customerShippingAddress,
+    this.salesmanId,
   });
 
   dynamic id;
@@ -40,6 +41,7 @@ class CustomerData {
   String? dateOfBirth;
   String? description;
   CustomerShippingAddress? customerShippingAddress;
+  String? salesmanId;
 
   factory CustomerData.fromJson(Map<String, dynamic> json) => CustomerData(
         id: json["id"],
@@ -63,6 +65,7 @@ class CustomerData {
             ? null
             : CustomerShippingAddress.fromJson(
                 json["customer_shipping_address"]),
+        salesmanId: json["salesman_id"]?.toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -86,5 +89,6 @@ class CustomerData {
         "customer_shipping_address": customerShippingAddress == null
             ? null
             : customerShippingAddress?.toJson(),
+        "salesman_id": salesmanId,
       };
 }

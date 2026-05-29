@@ -44,12 +44,21 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.VIEW" />-->
-<!--                <category android:name="android.intent.category.DEFAULT" />-->
-<!--                <category android:name="android.intent.category.BROWSABLE" />-->
-<!--                <data-->
-<!--                android:scheme="stripesdk"-->
+            <!-- Deep linking intent filter for Main Domain -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="dhatri.store" />
+            </intent-filter>
+
+            <!-- Deep linking intent filter for Test Domain -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="test.dhatri.store" />
+            </intent-filter>
 <!--                android:host="3ds.stripesdk.io" />-->
 <!--            </intent-filter>-->
         </activity>

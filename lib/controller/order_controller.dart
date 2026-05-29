@@ -352,7 +352,7 @@ import '../model/NewModel/Order/OrderData.dart';
 import '../model/NewModel/Order/OrderListModel.dart';
 import '../model/NewModel/Order/OrderToShipModel.dart';
 import '../utils/styles.dart';
-import '../view/amazcart_view/account/orders/new_order_module/model/tab_response_model.dart';
+import '../view/amazy_view/account/orders/new_order_module/model/tab_response_model.dart';
 
 class OrderController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -464,6 +464,7 @@ class OrderController extends GetxController
     String token = await userToken.read(tokenKey);
 
     Uri userData = Uri.parse(URLs.ALL_ORDER_LIST_BY_STATUS(id: id));
+    debugPrint("API Request URL (List by Status): $userData");
 
     var response = await http.get(
       userData,
@@ -473,9 +474,10 @@ class OrderController extends GetxController
         'Authorization': 'Bearer $token',
       },
     );
+    debugPrint("API Response (List by Status): ${response.body}");
     var jsonString = jsonDecode(response.body);
 
-    log("jsonString :::: ${response.body}");
+    debugPrint("jsonString :::: ${response.body}");
     if (jsonString['message'] == 'success') {
       return OrderListModel.fromJson(jsonString);
     } else {
@@ -507,10 +509,11 @@ class OrderController extends GetxController
 
   Future<OrderListModel?> getAll() async {
     try {
-      log("Url-> ${URLs.ALL_ORDER_LIST}");
+      debugPrint("Url-> ${URLs.ALL_ORDER_LIST}");
       String token = await userToken.read(tokenKey);
 
       Uri userData = Uri.parse(URLs.ALL_ORDER_LIST + "?lang=${AppLocalizations.getLanguageCode()}");
+      debugPrint("API Request URL (All Orders): $userData");
 
       var response = await http.get(
         userData,
@@ -520,6 +523,7 @@ class OrderController extends GetxController
           'Authorization': 'Bearer $token',
         },
       );
+      debugPrint("API Response (All Orders): ${response.body}");
       var jsonString = jsonDecode(response.body);
       if (jsonString['message'] == 'success') {
         return OrderListModel.fromJson(jsonString);
@@ -556,6 +560,7 @@ class OrderController extends GetxController
     try {
       log("Url-> ${URLs.ALL_ORDER_LIST}");
       Uri userData = Uri.parse(URLs.ALL_ORDER_PENDING_LIST);
+      debugPrint("API Request URL (Pending Orders): $userData");
 
       var response = await http.get(
         userData,
@@ -565,6 +570,7 @@ class OrderController extends GetxController
           'Authorization': 'Bearer $token',
         },
       );
+      debugPrint("API Response (Pending Orders): ${response.body}");
       var jsonString = jsonDecode(response.body);
       if (jsonString['message'] == 'success') {
         return OrderListModel.fromJson(jsonString);
@@ -595,6 +601,7 @@ class OrderController extends GetxController
     String token = await userToken.read(tokenKey);
 
     Uri userData = Uri.parse(URLs.ORDER_TO_SHIP);
+    debugPrint("API Request URL (To Ship Orders): $userData");
 
     var response = await http.get(
       userData,
@@ -604,6 +611,7 @@ class OrderController extends GetxController
         'Authorization': 'Bearer $token',
       },
     );
+    debugPrint("API Response (To Ship Orders): ${response.body}");
     var jsonString = jsonDecode(response.body);
     if (jsonString['message'] == 'success') {
       return OrderToShipModel.fromJson(jsonString);
@@ -631,6 +639,7 @@ class OrderController extends GetxController
     String token = await userToken.read(tokenKey);
 
     Uri userData = Uri.parse(URLs.ORDER_TO_RECEIVE);
+    debugPrint("API Request URL (To Receive Orders): $userData");
 
     var response = await http.get(
       userData,
@@ -640,6 +649,7 @@ class OrderController extends GetxController
         'Authorization': 'Bearer $token',
       },
     );
+    debugPrint("API Response (To Receive Orders): ${response.body}");
     var jsonString = jsonDecode(response.body);
     if (jsonString['message'] == 'success') {
       try {

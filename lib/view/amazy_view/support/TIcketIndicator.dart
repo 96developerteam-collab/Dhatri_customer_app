@@ -1,8 +1,8 @@
 import 'package:amazcart/AppConfig/app_config.dart';
 import 'package:amazcart/utils/styles.dart';
 import 'package:amazcart/view/amazy_view/support/CreateTicketPage.dart';
-import 'package:amazcart/widgets/amazcart_widget/PinkButtonWidget.dart';
-import 'package:amazcart/widgets/amazcart_widget/custom_loading_widget.dart';
+import 'package:amazcart/widgets/amazy_widget/PinkButtonWidget.dart';
+import 'package:amazcart/widgets/amazy_widget/custom_loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

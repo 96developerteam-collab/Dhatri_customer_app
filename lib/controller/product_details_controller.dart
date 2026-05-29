@@ -12,7 +12,7 @@ import 'package:amazcart/model/NewModel/Product/ProductType.dart';
 import 'package:amazcart/model/NewModel/Product/Review.dart';
 import 'package:amazcart/model/NewModel/ShippingMethod/ShippingMethodElement.dart';
 import 'package:amazcart/model/NewModel/Product/SellerSkuModel.dart';
-import 'package:amazcart/widgets/amazcart_widget/snackbars.dart';
+import 'package:amazcart/widgets/amazy_widget/snackbars.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart' as DIO;
@@ -115,6 +115,40 @@ class ProductDetailsController extends GetxController {
     return ProductDetailsModel();
   }
 
+  Future fetchProductDetailsBySlug(String sellerSlug, String productSlug) async {
+    try {
+      print('=================== PRODUCT DETAILS BY SLUG REQUEST ===================');
+      print('Making request for Seller Slug: $sellerSlug, Product Slug: $productSlug');
+      Uri userData = Uri.parse(URLs.API_URL + '/product/$sellerSlug/$productSlug?lang=${AppLocalizations.getLanguageCode()}');
+      print('Request URL: $userData');
+      print('==============================================================');
+      logToFile('REQUEST_URL', userData.toString());
+
+      var response = await http.get(
+        userData,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      );
+      logToFile('RAW_RESPONSE', response.body);
+
+      var jsonString = jsonDecode(response.body);
+
+      if (jsonString['message'] != 'not found') {
+        return ProductDetailsModel.fromJson(jsonString);
+      } else {
+        Get.back();
+        SnackBars().snackBarWarning('not found');
+      }
+    } catch (e, t) {
+      print(e);
+      print(t);
+    }
+    return ProductDetailsModel();
+  }
+
+
   Future<ProductDetailsModel> getProductDetails2(id) async {
 
     try {
@@ -184,6 +218,72 @@ class ProductDetailsController extends GetxController {
     }
     // return ProductDetailsModel();
   }
+
+  Future<ProductDetailsModel> getProductDetailsBySlug(String sellerSlug, String productSlug) async {
+    try {
+      print('>>> getProductDetailsBySlug triggered for Seller: $sellerSlug, Product: $productSlug');
+      isCartLoading(true);
+      var data = await fetchProductDetailsBySlug(sellerSlug, productSlug);
+
+      if (data != null && data.data != null) {
+        products.value = data;
+        logToFile('UI_DATA_SENT_SLUG', jsonEncode(data.toJson()));
+        
+        // Specific Wholesale Data Log
+        int wholeSaleCount = data.data!.skus?.first.wholeSalePrices?.length ?? 0;
+        logToFile('WHOLESALE_CHECK', 'Found $wholeSaleCount wholesale prices in first SKU');
+        if (wholeSaleCount > 0) {
+          logToFile('WHOLESALE_DETAILS_LOG', 'Wholesale prices details: ${data.data!.skus?.first.wholeSalePrices?.map((e) => e.toJson()).toList()}');
+        }
+
+        productReviews.value = data.data!.reviews?.where((element) => element.type == ProductType.PRODUCT)
+            .toList()??[];
+        visibleSKU.value = products.value.data?.product?.skus?.first??ProductSku();
+
+        if (products.value.data?.discountStartDate != null &&
+            products.value.data?.discountStartDate != '') {
+          var endDate =
+              DateTime.parse('${products.value.data?.discountEndDate}');
+          if (endDate.millisecondsSinceEpoch <
+              DateTime.now().millisecondsSinceEpoch) {
+            discount = 0;
+          } else {
+            discount = products.value.data?.discount;
+          }
+        } else {
+          discount = products.value.data?.discount;
+        }
+        discountType = products.value.data?.discountType;
+        minOrder.value = (products.value.data?.product?.minimumOrderQty ?? 1) < 1 
+            ? 1 
+            : products.value.data?.product?.minimumOrderQty!;
+        maxOrder.value = products.value.data?.product?.maxOrderQty ?? 1;
+
+        itemQuantity.value = minOrder.value;
+
+        if ((products.value.data?.variantDetails?.length??0) > 0) {
+          await skuGet();
+        } else {
+          stockManage.value = products.value.data?.stockManage??0;
+          stockCount.value = products.value.data?.skus?.first.productStock??0;
+          visibleSKU.value = products.value.data?.product?.skus?.first??ProductSku();
+        }
+        calculatePrice();
+        return products.value;
+      } else {
+        products.value = ProductDetailsModel();
+        return products.value;
+      }
+    } catch (e, t) {
+      print(e.toString());
+      print(t.toString());
+      isCartLoading(false);
+      return ProductDetailsModel();
+    } finally {
+      isCartLoading(false);
+    }
+  }
+
 
   Future skuGet() async {
     for (var i = 0; i < products.value.data!.variantDetails!.length; i++) {

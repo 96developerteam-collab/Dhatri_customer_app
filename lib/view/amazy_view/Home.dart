@@ -2,7 +2,7 @@ import 'package:amazcart/AppConfig/app_config.dart';
 import 'package:amazcart/controller/home_controller.dart';
 import 'package:amazcart/controller/settings_controller.dart';
 import 'package:amazcart/utils/styles.dart';
-import 'package:amazcart/view/amazcart_view/products/RecommendedProductLoadMore.dart';
+import 'package:amazcart/view/amazy_view/products/RecommendedProductLoadMore.dart';
 import 'package:amazcart/view/amazy_view/products/brand/AllBrandsPage.dart';
 import 'package:amazcart/view/amazy_view/products/brand/ProductsByBrands.dart';
 import 'package:amazcart/view/amazy_view/products/marketing/AllTopPickProducts.dart';

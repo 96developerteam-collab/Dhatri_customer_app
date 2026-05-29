@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import '../../../model/NewModel/Product/ProductModel.dart';
 import '../../../model/NewModel/Product/ProductType.dart';
 import '../../../view/amazy_view/products/product/product_details.dart';
-import 'package:amazcart/widgets/amazcart_widget/StarCounterWidget.dart';
+import 'package:amazcart/widgets/amazy_widget/StarCounterWidget.dart';
 
 class ListViewProductWidget extends StatefulWidget {
   final ProductModel? productModel;

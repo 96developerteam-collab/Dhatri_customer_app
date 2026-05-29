@@ -19,7 +19,7 @@ Host a file at: `https://dhatri.store/.well-known/assetlinks.json`
     "namespace": "android_app",
     "package_name": "com.dhatri.store",
     "sha256_cert_fingerprints": [
-      "YOUR_APP_SHA256_FINGERPRINT" 
+      "06:71:81:24:25:33:E3:81:A6:6C:BC:33:DE:2C:18:FC:DA:6A:5B:0D:A1:00:31:DF:35:37:F9:D3:8B:7A:D1:BA"
     ]
   }
 }]

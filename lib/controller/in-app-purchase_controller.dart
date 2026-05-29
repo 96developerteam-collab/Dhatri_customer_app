@@ -3,15 +3,15 @@ import 'dart:developer';
 
 import 'package:amazcart/AppConfig/api_keys.dart';
 import 'package:amazcart/controller/login_controller.dart';
-import 'package:amazcart/view/amazcart_view/authentication/LoginPage.dart';
-import 'package:amazcart/widgets/amazcart_widget/snackbars.dart';
+import 'package:amazcart/view/amazy_view/authentication/LoginPage.dart';
+import 'package:amazcart/widgets/amazy_widget/snackbars.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import '../config/config.dart';
-import '../view/amazcart_view/account/orders/new_order_module/views/all_order_page.dart';
-import '../widgets/amazcart_widget/custom_loading_widget.dart';
+import '../view/amazy_view/account/orders/new_order_module/views/all_order_page.dart';
+import '../widgets/amazy_widget/custom_loading_widget.dart';
 import 'package:http/http.dart' as http;
 
 

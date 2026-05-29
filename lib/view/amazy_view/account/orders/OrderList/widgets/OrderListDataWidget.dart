@@ -33,6 +33,20 @@ class OrderAllToPayListDataWidget extends StatelessWidget {
     return deliveryStatus;
   }
 
+  String getSalesmanDisplay(OrderData? order) {
+    if (order?.salesman != null) {
+      final name = order?.salesman?.name ?? '';
+      final id = order?.salesman?.salesmanId;
+      if (id != null && id.isNotEmpty) {
+        return '$name ($id)';
+      }
+      return name;
+    } else if (order?.customer?.salesmanId != null && order!.customer!.salesmanId!.isNotEmpty) {
+      return '${order.customer!.salesmanId}';
+    }
+    return '';
+  }
+
   String orderStatusGet(OrderData order) {
     var orderStatus = 'Pending'.tr;
 
@@ -61,6 +75,10 @@ class OrderAllToPayListDataWidget extends StatelessWidget {
     if (order == null) return const SizedBox.shrink();
     final status = orderStatusGet(order!);
     final statusColor = getStatusColor(status);
+    final salesmanText = getSalesmanDisplay(order);
+    if (AppConfig.showDebugLogs) {
+      print("Order: ${order?.orderNumber} | Salesman Text: '$salesmanText' | Raw Salesman: ${order?.salesman?.toJson()} | Customer Salesman ID: ${order?.customer?.salesmanId}");
+    }
 
     return InkWell(
       onTap: () {
@@ -118,6 +136,13 @@ class OrderAllToPayListDataWidget extends StatelessWidget {
                         'Placed on'.tr + ': ' + CustomDate().formattedDateTime(order?.createdAt),
                         style: AppStyles.appFontBook.copyWith(fontSize: 12.sp, color: Colors.grey),
                       ),
+                      if (salesmanText.isNotEmpty) ...[
+                        SizedBox(height: 4.h),
+                        Text(
+                          'Salesman'.tr + ': $salesmanText',
+                          style: AppStyles.appFontMedium.copyWith(fontSize: 12.sp, color: Color(0xFF4CAF50)),
+                        ),
+                      ],
                     ],
                   ),
                   Container(
@@ -181,16 +206,7 @@ class OrderAllToPayListDataWidget extends StatelessWidget {
                           // ),
                         ],
                       ),
-                      if (currencyController.vendorType.value != "single")
-                        Padding(
-                          padding: EdgeInsets.only(left: 24.w, top: 4.h),
-                          child: Text(
-                            'Sold by'.tr + ': ' + '${package.seller?.firstName}',
-                            style: AppStyles.appFontMedium.copyWith(fontSize: 12.sp, color: Colors.grey[700]),
-                          ),
-                        ),
-                      
-                      SizedBox(height: 12.h),
+                   
 
                       // Products
                       ListView.separated(

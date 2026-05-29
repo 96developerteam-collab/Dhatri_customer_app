@@ -47,8 +47,6 @@ class _AddAddressState extends State<AddAddress> {
   String? selectedCityName;
   int? selectedCityId;
 
-  final TextEditingController fullNameCtrl = TextEditingController();
-  final TextEditingController emailCtrl = TextEditingController();
   final TextEditingController addressCtrl = TextEditingController();
   final TextEditingController phoneCtrl = TextEditingController();
   final TextEditingController postalCodeCtrl = TextEditingController();
@@ -188,7 +186,7 @@ class _AddAddressState extends State<AddAddress> {
     return Scaffold(
       backgroundColor: AppStyles.appBackgroundColor,
       appBar: AppBarWidget(
-        title: 'Add Address ddded'.tr,
+        title: 'Add Address '.tr,
         showCart: false,
       ),
       body: Padding(
@@ -203,61 +201,7 @@ class _AddAddressState extends State<AddAddress> {
                 SizedBox(
                   height: 10.h,
                 ),
-                TextFormField(
-                  controller: fullNameCtrl,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    hintText: 'Full Name'.tr,
-                    hintStyle: AppStyles.appFont.copyWith(
-                      color: AppStyles.blackColor,
-                      fontSize: 12.fontSize,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    labelText: 'Full Name'.tr + " *",
-                    labelStyle: AppStyles.appFont.copyWith(
-                      color: AppStyles.blackColor,
-                      fontSize: 13.fontSize,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  style: AppStyles.appFont.copyWith(
-                    color: AppStyles.blackColor,
-                    fontSize: 14.fontSize,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  validator: (value) {
-                    if (value?.isEmpty??true) {
-                      return 'Please Type Full Name'.tr;
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: emailCtrl,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    hintText: 'Email'.tr,
-                    hintStyle: AppStyles.appFont.copyWith(
-                      color: AppStyles.blackColor,
-                      fontSize: 12.fontSize,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    labelText: 'Email'.tr,
-                    labelStyle: AppStyles.appFont.copyWith(
-                      color: AppStyles.blackColor,
-                      fontSize: 12.fontSize,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  style: AppStyles.appFont.copyWith(
-                    color: AppStyles.blackColor,
-                    fontSize: 14.fontSize,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  validator: (value) {
-                    return null;
-                  },
-                ),
+
                 SizedBox(
                   height: 20.h,
                 ),
@@ -596,8 +540,6 @@ class _AddAddressState extends State<AddAddress> {
     String token = await userToken.read(tokenKey);
     Uri addressUrl = Uri.parse(URLs.ADD_ADDRESS);
     Map data = {
-      "name": fullNameCtrl.text,
-      "email": emailCtrl.text,
       "address": addressCtrl.text,
       "phone": phoneCtrl.text,
       "city": selectedCityId,

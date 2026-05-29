@@ -52,9 +52,11 @@ import '../../../../model/NewModel/Product/Review.dart';
 
 class ProductDetails extends StatefulWidget {
   final int? productID;
+  final String? sellerSlug;
+  final String? productSlug;
   // final double averageRating;
 
-  ProductDetails({this.productID}); //required this.averageRating,
+  ProductDetails({this.productID, this.sellerSlug, this.productSlug}); //required this.averageRating,
 
   @override
   State<ProductDetails> createState() => _ProductDetailsState();
@@ -93,7 +95,14 @@ class _ProductDetailsState extends State<ProductDetails> {
   Future<ProductDetailsModel> getProductDetails() async {
 
     try{
-      await controller.getProductDetails2(widget.productID).then((value) async {
+      Future<ProductDetailsModel> fetchFuture;
+      if (widget.productSlug != null && widget.sellerSlug != null) {
+        fetchFuture = controller.getProductDetailsBySlug(widget.sellerSlug!, widget.productSlug!);
+      } else {
+        fetchFuture = controller.getProductDetails2(widget.productID);
+      }
+
+      await fetchFuture.then((value) async {
 
     // Convert to JSON
     final jsonData = const JsonEncoder.withIndent('  ').convert(value);
@@ -103,7 +112,7 @@ class _ProductDetailsState extends State<ProductDetails> {
         _productDetailsModel = value;
         controller.itemQuantity.value =
             controller.products.value.data?.product?.minimumOrderQty??1;
-        controller.productId.value = widget.productID!;
+        controller.productId.value = widget.productID ?? _productDetailsModel.data?.id ?? 0;
 
         // controller.shippingValue.value =
         //     controller.products.value.data.product.shippingMethods.first;
@@ -213,8 +222,9 @@ class _ProductDetailsState extends State<ProductDetails> {
       final MyWishListController _myWishListController =
           Get.put(MyWishListController());
 
+      final resolvedId = widget.productID ?? _productDetailsModel.data?.id;
       _myWishListController.wishListProducts.forEach((element) {
-        if (element.id == widget.productID) {
+        if (resolvedId != null && element.id == resolvedId) {
           setState(() {
             _inWishList = true;
             _wishListId = element.id;
@@ -979,12 +989,15 @@ Widget wholesalePriceWidget() {
                                    ),
                                    child: InkWell(
                                      onTap: () {
+                                       String sellerSlug = _productDetailsModel.data?.seller?.slug ?? '';
+                                       String productSlug = _productDetailsModel.data?.slug ?? '';
+                                       String shareUrl = sellerSlug.isNotEmpty 
+                                           ? '${URLs.HOST}/product/$sellerSlug/$productSlug'
+                                           : '${URLs.HOST}/product/$productSlug';
+
                                        Share.share(
-                                           '${URLs
-                                               .HOST}/product/${_productDetailsModel
-                                               .data?.slug??''}',
-                                           subject: _productDetailsModel
-                                               .data?.productName??'');
+                                           shareUrl,
+                                           subject: _productDetailsModel.data?.productName ?? '');
                                      },
                                      child: Icon(
                                        FontAwesomeIcons.shareNodes,
@@ -1389,8 +1402,8 @@ Widget wholesalePriceWidget() {
                                       buildSpecRow("Brand".tr, "${_productDetailsModel.data?.product?.brand?.name ?? ''}"),
                                     if (_productDetailsModel.data?.product?.modelNumber != null)
                                       buildSpecRow("Model Number".tr, "${_productDetailsModel.data?.product?.modelNumber ?? ''}"),
-                                    buildSpecRow("Availability".tr, (_productDetailsModel.data!.skus?.isNotEmpty ?? false) && _productDetailsModel.data!.skus!.first.productStock! > 0 ? "In Stock".tr : "Not in stock".tr),
-                                    if (_productDetailsModel.data?.product?.skus?.first.sku != null)
+                                    buildSpecRow("Availability".tr, (_productDetailsModel.data?.skus?.isNotEmpty ?? false) && (_productDetailsModel.data?.skus?.first.productStock ?? 0) > 0 ? "In Stock".tr : "Not in stock".tr),
+                                    if ((_productDetailsModel.data?.product?.skus?.isNotEmpty ?? false) && _productDetailsModel.data?.product?.skus?.first.sku != null)
                                       Obx(() => buildSpecRow("Product SKU".tr, "${controller.productSKU.value.sku?.sku ?? ''}")),
                                     if (_productDetailsModel.data?.product?.specification != null) ...[
                                       Padding(

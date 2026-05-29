@@ -13,7 +13,7 @@ import 'package:get/get.dart';
 
 import '../../../controller/in-app-purchase_controller.dart';
 import '../../../view/amazy_view/products/product/product_details.dart';
-import '../../amazcart_widget/snackbars.dart';
+import '../../amazy_widget/snackbars.dart';
 
 
 class CartIcon extends StatefulWidget {

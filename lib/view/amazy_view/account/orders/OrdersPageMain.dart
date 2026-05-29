@@ -11,7 +11,7 @@ import 'package:amazcart/view/amazy_view/account/reviews/MyReviews.dart';
 import 'package:amazcart/view/amazy_view/authentication/LoginPage.dart';
 import 'package:amazcart/view/amazy_view/settings/SettingsPage.dart';
 import 'package:amazcart/view/amazy_view/support/SupportTicketsPage.dart';
-import 'package:amazcart/widgets/amazcart_widget/dio_exception.dart';
+import 'package:amazcart/widgets/amazy_widget/dio_exception.dart';
 import 'package:amazcart/widgets/amazy_widget/CustomSliverAppBarWidget.dart';
 import 'package:amazcart/widgets/amazy_widget/snackbars.dart';
 import 'package:cached_network_image/cached_network_image.dart';

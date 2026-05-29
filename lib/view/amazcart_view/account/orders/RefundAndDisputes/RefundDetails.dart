@@ -5,7 +5,7 @@ import 'package:amazcart/model/NewModel/Product/ProductModel.dart';
 import 'package:amazcart/model/NewModel/Order/OrderRefundModel.dart';
 import 'package:amazcart/utils/styles.dart';
 import 'package:amazcart/view/amazcart_view/products/RecommendedProductLoadMore.dart';
-import 'package:amazcart/view/amazcart_view/products/product/ProductDetails.dart';
+import 'package:amazcart/view/amazy_view/products/product/product_details.dart';
 import 'package:amazcart/widgets/amazcart_widget/BuildIndicatorBuilder.dart';
 import 'package:amazcart/widgets/amazcart_widget/CustomDate.dart';
 import 'package:amazcart/widgets/amazcart_widget/GridViewProductWidget.dart';

@@ -20,7 +20,7 @@ import 'package:amazcart/widgets/amazy_widget/custom_loading_widget.dart';
 import 'package:amazcart/widgets/amazy_widget/snackbars.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide RadioGroup;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
