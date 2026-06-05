@@ -612,6 +612,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             );
                                             if (result == true) {
                                               nowOrderIsCanceled.value = true;
+                                              // Pop OrderDetails off the stack so user returns to the
+                                              // refreshed My Orders list and can't re-trigger cancellation
+                                              Navigator.of(context).pop();
                                             }
                                           });
                                         }),

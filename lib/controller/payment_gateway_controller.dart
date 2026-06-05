@@ -242,9 +242,30 @@ Future submitOrder(data) async {
     print('ERROR DATA -----> ${e.response?.data}');
     print('ERROR MESSAGE -----> ${e.message}');
 
-    SnackBars().snackBarError(
-      e.response?.statusMessage ?? 'Something went wrong',
-    );
+    String errorMessage = 'Something went wrong';
+    if (e.response != null && e.response!.data != null) {
+      final data = e.response!.data;
+      if (data is Map && data.containsKey('message')) {
+        errorMessage = data['message'].toString();
+      } else if (data is String) {
+        try {
+          final decoded = jsonDecode(data);
+          if (decoded is Map && decoded.containsKey('message')) {
+            errorMessage = decoded['message'].toString();
+          } else {
+            errorMessage = data;
+          }
+        } catch (_) {
+          errorMessage = data;
+        }
+      } else if (e.response?.statusMessage != null && e.response!.statusMessage!.isNotEmpty) {
+        errorMessage = e.response!.statusMessage!;
+      }
+    } else {
+      errorMessage = e.message ?? 'Something went wrong';
+    }
+
+    SnackBars().snackBarError(errorMessage, persistent: true);
   }
 
   EasyLoading.dismiss();

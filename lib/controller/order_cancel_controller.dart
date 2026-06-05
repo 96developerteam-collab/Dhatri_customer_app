@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:amazcart/config/config.dart';
 import 'package:amazcart/model/NewModel/Order/OrderCancelReasonModel.dart';
 import 'package:amazcart/model/NewModel/Order/OrderListModel.dart';
-import 'package:amazcart/view/amazy_view/account/orders/MyCancellations.dart';
 import 'package:amazcart/widgets/amazy_widget/custom_loading_widget.dart';
 import 'package:amazcart/widgets/amazy_widget/snackbars.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -80,15 +79,12 @@ class OrderCancelController extends GetxController {
       print(response.body);
       print(response.statusCode);
       var jsonString = jsonDecode(response.body.toString());
-      SnackBars().snackBarSuccess(jsonString['message'].toString());
       orderController.allOrderListModel = OrderListModel().obs;
       await orderController.getAllOrders();
       orderController.controller?.animateTo(0);
       EasyLoading.dismiss();
-      var result = await Get.to(() => MyCancellations());
-      if(result == true) {
-        Get.back(result: true);
-      }
+      Get.back(result: true);
+      SnackBars().snackBarSuccess(jsonString['message'].toString());
     } catch (e) {
       EasyLoading.dismiss();
       print(e);

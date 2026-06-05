@@ -4,7 +4,7 @@ class AppConfig {
 
   static bool showDebugLogs = true;
 
-  static const String hostUrl = "https://test.dhatri.store"; 
+  static const String hostUrl = "https://dhatri.store";
   //  static const String hostUrl = "http://10.0.2.2:8000";
   static String appName = 'Dhatri';
 

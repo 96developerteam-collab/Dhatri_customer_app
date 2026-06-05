@@ -44,7 +44,7 @@ class SnackBars {
     );
   }
 
-  SnackbarController snackBarError(message) {
+  SnackbarController snackBarError(message, {bool persistent = false, Duration? duration}) {
     return Get.snackbar(
       'Error'.tr,
       "$message".tr.capitalizeFirst ?? '',
@@ -60,7 +60,18 @@ class SnackBars {
         style: AppStyles.kFontWhite14w5,
       ),
       borderRadius: 5.r,
-      duration: Duration(seconds: 2),
+      duration: persistent ? const Duration(days: 365) : (duration ?? const Duration(seconds: 2)),
+      mainButton: persistent
+          ? TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: Text(
+                'Dismiss'.tr,
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            )
+          : null,
     );
   }
 
