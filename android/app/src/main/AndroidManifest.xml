@@ -9,7 +9,7 @@
     <application
         android:name="${applicationName}"
         android:label="Dhatri"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/launcher_icon"
         android:allowBackup="false"
         android:extractNativeLibs="true"
         android:enableOnBackInvokedCallback="true">

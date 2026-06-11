@@ -133,10 +133,11 @@ dev_dependencies:
   fluttertoast: ^8.2.12
 
 # flutter pub run flutter_launcher_icons:main
-flutter_icons:
+flutter_launcher_icons:
   android: "launcher_icon"
-  ios: true
+  ios: "AppIcon"
   image_path: "assets/config/app_logo.jpg"
+  remove_alpha_ios: true
 
 # flutter pub run flutter_native_splash:create
 flutter_native_splash:
