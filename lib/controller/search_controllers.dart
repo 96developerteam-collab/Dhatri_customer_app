@@ -7,6 +7,7 @@ import 'package:amazcart/model/NewModel/LiveSearchModel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../AppConfig/language/app_localizations.dart';
 
@@ -21,10 +22,16 @@ class SearchControllers extends GetxController {
     LiveSearchModel? result;
     try {
       isLoading(true);
+      
+      var warehouseId = GetStorage().read('warehouse_id');
+      
       Map body = {
         "keyword": keyword,
         "cat_id": catId,
       };
+      if (warehouseId != null) {
+        body["seller_id"] = warehouseId;
+      }
 
       log("Url -> ${URLs.LIVE_SEARCH}");
       var response = await Dio().post(

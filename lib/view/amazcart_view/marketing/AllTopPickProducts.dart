@@ -78,13 +78,17 @@ class _AllTopPickProductsState extends State<AllTopPickProducts> {
           onNotification: (ScrollNotification scrollInfo) {
             FocusScope.of(context).unfocus();
             if (scrollController.offset > 0) {
-              setState(() {
-                isScrolling = true;
-              });
+              if (mounted) {
+                setState(() {
+                  isScrolling = true;
+                });
+              }
             } else {
-              setState(() {
-                isScrolling = false;
-              });
+              if (mounted) {
+                setState(() {
+                  isScrolling = false;
+                });
+              }
             }
             return false;
           },

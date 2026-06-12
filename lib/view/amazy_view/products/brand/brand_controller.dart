@@ -61,6 +61,8 @@ class BrandController extends GetxController {
   ///
   ///
 
+
+
   Future<List<ProductModel>> getBrandProducts() async {
     BrandData allBrandModelDatum = BrandData();
     try {
@@ -77,6 +79,7 @@ class BrandController extends GetxController {
       }
 
       await _dio.get(URLs.ALL_BRAND + '/${brandId.value}', queryParameters: queryParams).then((value) {
+        if (isClosed) return;
         print('Brand Query: ${value.realUri}');
         final data = new Map<String, dynamic>.from(value.data);
 
@@ -140,9 +143,11 @@ class BrandController extends GetxController {
         }
       });
     } catch (e) {
+      if (isClosed) return allBrandProducts;
       isBrandsProductsLoading(false);
       print(e.toString());
     } finally {
+      if (isClosed) return allBrandProducts;
       isBrandsProductsLoading(false);
       isMoreBrandLoading(false);
     }
@@ -162,6 +167,7 @@ class BrandController extends GetxController {
       }
 
       await _dio.get(URLs.ALL_BRAND + '/${brandId.value}', queryParameters: queryParams).then((value) {
+        if (isClosed) return;
         print('URL: ${value.realUri.queryParameters}');
         brandAllData.value = SingleBrandModel.fromJson(value.data);
 
@@ -212,6 +218,7 @@ class BrandController extends GetxController {
                 'requestItemType': 'brand',
               })
           .then((value) {
+        if (isClosed) return;
         print('Filter URI: ${value.realUri}');
         parentCategoryElement = AllProducts.fromJson(value.data);
         print(parentCategoryElement.data!.length);
@@ -225,9 +232,11 @@ class BrandController extends GetxController {
         }
       });
     } catch (e) {
+      if (isClosed) return allBrandProducts;
       isBrandsProductsLoading(false);
       print(e.toString());
     } finally {
+      if (isClosed) return allBrandProducts;
       isBrandsProductsLoading(false);
       isMoreBrandLoading(false);
     }

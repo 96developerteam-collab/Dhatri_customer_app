@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:amazcart/model/NewModel/Category/CategoryData.dart';
 import 'package:amazcart/model/NewModel/Tags/TagData.dart';
+import 'package:amazcart/model/NewModel/Product/ProductModel.dart';
 
 LiveSearchModel liveSearchModelFromJson(String str) =>
     LiveSearchModel.fromJson(json.decode(str));
@@ -16,25 +17,25 @@ String liveSearchModelToJson(LiveSearchModel data) =>
 class LiveSearchModel {
   LiveSearchModel({
     this.tags,
-    // this.products,
+    this.products,
     this.categories,
   });
 
   List<TagData>? tags;
-  // List<ProductModel> products;
+  List<ProductModel>? products;
   List<CategoryData>? categories;
 
   factory LiveSearchModel.fromJson(Map<String, dynamic> json) =>
       LiveSearchModel(
-        tags: List<TagData>.from(json["tags"].map((x) => TagData.fromJson(x))),
-        // products: List<ProductModel>.from(
-        //     json["products"].map((x) => ProductModel.fromJson(x))),
+        tags: json["tags"] != null && json["tags"].isNotEmpty ? List<TagData>.from(json["tags"].map((x) => TagData.fromJson(x))) : null,
+        products: json["products"] != null && json["products"].isNotEmpty ? List<ProductModel>.from(
+            json["products"].map((x) => ProductModel.fromJson(x))) : null,
         categories:json["categories"] != null && json["categories"].isNotEmpty ? List<CategoryData>.from(json["categories"].map((x) => CategoryData.fromJson(x))) : null,
       );
 
   Map<String, dynamic> toJson() => {
-        "tags": List<dynamic>.from(tags!.map((x) => x)),
-        // "products": List<dynamic>.from(products.map((x) => x.toJson())),
-        "categories": List<dynamic>.from(categories!.map((x) => x.toJson())),
+        "tags": tags != null ? List<dynamic>.from(tags!.map((x) => x)) : null,
+        "products": products != null ? List<dynamic>.from(products!.map((x) => x.toJson())) : null,
+        "categories": categories != null ? List<dynamic>.from(categories!.map((x) => x.toJson())) : null,
       };
 }

@@ -61,7 +61,7 @@ class _SearchPageMainState extends State<SearchPageMain> {
         onTap: () {
           keywordFocus.unfocus();
         },
-        child: LoadingMoreCustomScrollView(
+        child: Obx(() => LoadingMoreCustomScrollView(
           slivers: [
             SliverAppBar(
               backgroundColor: Colors.white,
@@ -112,141 +112,136 @@ class _SearchPageMainState extends State<SearchPageMain> {
             ),
 
 
-            Obx(() {
-              if (_searchController.isLoading.value) {
-                return SliverToBoxAdapter(
-                  child: Container(),
-                );
-              } else {
-                if (_searchController.liveSearchModel.value.tags == null) {
-                  return LoadingMoreSliverList<ProductModel>(
-                    SliverListConfig<ProductModel>(
-                      padding: EdgeInsets.symmetric(horizontal: 8.w),
-                      indicatorBuilder: BuildIndicatorBuilder(
-                        source: source,
-                        isSliver: true,
-                        name: 'Products'.tr,
-                      ).buildIndicator,
-                      extendedListDelegate:
-                          SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 5,
-                        mainAxisSpacing: 5,
-                      ),
-                      itemBuilder:
-                          (BuildContext c, ProductModel prod, int index) {
-                        return GridViewProductWidget(
-                          productModel: prod,
-                        );
-                      },
-                      sourceList: source!,
+            if (_searchController.isLoading.value)
+              SliverToBoxAdapter(
+                child: Container(),
+              )
+            else if (_searchController.liveSearchModel.value.tags == null)
+              LoadingMoreSliverList<ProductModel>(
+                SliverListConfig<ProductModel>(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  indicatorBuilder: BuildIndicatorBuilder(
+                    source: source,
+                    isSliver: true,
+                    name: 'Products'.tr,
+                  ).buildIndicator,
+                  extendedListDelegate:
+                      SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                  ),
+                  itemBuilder:
+                      (BuildContext c, ProductModel prod, int index) {
+                    return GridViewProductWidget(
+                      productModel: prod,
+                    );
+                  },
+                  sourceList: source!,
+                ),
+                key: const Key('homePageLoadMoreKey'),
+              )
+            else
+              SliverToBoxAdapter(
+                child: ListView(
+                  physics: NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  children: [
+                    SizedBox(
+                      height: 10.w,
                     ),
-                    key: const Key('homePageLoadMoreKey'),
-                  );
-                } else {
-                  return SliverToBoxAdapter(
-                    child: ListView(
-                      physics: NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      children: [
-                        SizedBox(
-                          height: 10.w,
-                        ),
-                        _searchController.liveSearchModel.value.tags!.length > 0
-                            ? ListView.separated(
-                                shrinkWrap: true,
-                                padding: EdgeInsets.zero,
-                                separatorBuilder: (context, index) {
-                                  return Divider(
-                                    color: AppStyles.lightGreyColor,
-                                  );
-                                },
-                                itemCount: _searchController
-                                    .liveSearchModel.value.tags!.length,
-                                itemBuilder: (context, tagIndex) {
-                                  return Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 4.0.h, horizontal: 15.w),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () async {
-                                            Get.to(() => ProductsByTags(
-                                                  tagName: _searchController
+                    _searchController.liveSearchModel.value.tags!.length > 0
+                        ? ListView.separated(
+                            shrinkWrap: true,
+                            padding: EdgeInsets.zero,
+                            separatorBuilder: (context, index) {
+                              return Divider(
+                                color: AppStyles.lightGreyColor,
+                              );
+                            },
+                            itemCount: _searchController
+                                .liveSearchModel.value.tags!.length,
+                            itemBuilder: (context, tagIndex) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 4.0.h, horizontal: 15.w),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () async {
+                                        Get.to(() => ProductsByTags(
+                                              tagName: _searchController
+                                                  .liveSearchModel
+                                                  .value
+                                                  .tags![tagIndex]
+                                                  .name!,
+                                              tagId: _searchController
+                                                  .liveSearchModel
+                                                  .value
+                                                  .tags![tagIndex]
+                                                  .id!,
+                                            ));
+                                      },
+                                      child: RichText(
+                                        text: TextSpan(
+                                          children: _searchController
+                                              .highlightOccurrences(
+                                                  _searchController
                                                       .liveSearchModel
                                                       .value
                                                       .tags![tagIndex]
                                                       .name!,
-                                                  tagId: _searchController
-                                                      .liveSearchModel
+                                                  _searchController
+                                                      .keywordCtrl
                                                       .value
-                                                      .tags![tagIndex]
-                                                      .id!,
-                                                ));
-                                          },
-                                          child: RichText(
-                                            text: TextSpan(
-                                              children: _searchController
-                                                  .highlightOccurrences(
-                                                      _searchController
-                                                          .liveSearchModel
-                                                          .value
-                                                          .tags![tagIndex]
-                                                          .name!,
-                                                      _searchController
-                                                          .keywordCtrl
-                                                          .value
-                                                          .text),
-                                              style: AppStyles.appFont.copyWith(
-                                                fontSize: 14.fontSize,
-                                                color: AppStyles.greyColorLight,
-                                              ),
-                                            ),
+                                                      .text),
+                                          style: AppStyles.appFont.copyWith(
+                                            fontSize: 14.fontSize,
+                                            color: AppStyles.greyColorLight,
                                           ),
                                         ),
-                                        InkWell(
-                                          onTap: () async {
-                                            _searchController
-                                                    .keywordCtrl.value.text =
-                                                _searchController
-                                                    .liveSearchModel
-                                                    .value
-                                                    .tags![tagIndex]
-                                                    .name!;
-
-                                            await _searchController.getData(
-                                                keyword: _searchController
-                                                    .keywordCtrl.value.text,
-                                                catId: "0");
-                                          },
-                                          child: Transform.rotate(
-                                            angle: math.pi * 0.3,
-                                            child: Icon(
-                                              Icons.arrow_back,
-                                              color: AppStyles.greyColorLight,
-                                              size: 16.w,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  );
-                                })
-                            : Container(),
-                        Divider(
-                          color: AppStyles.lightGreyColor,
-                        ),
-                      ],
+                                    InkWell(
+                                      onTap: () async {
+                                        _searchController
+                                                .keywordCtrl.value.text =
+                                            _searchController
+                                                .liveSearchModel
+                                                .value
+                                                .tags![tagIndex]
+                                                .name!;
+
+                                        await _searchController.getData(
+                                            keyword: _searchController
+                                                .keywordCtrl.value.text,
+                                            catId: "0");
+                                      },
+                                      child: Transform.rotate(
+                                        angle: math.pi * 0.3,
+                                        child: Icon(
+                                          Icons.arrow_back,
+                                          color: AppStyles.greyColorLight,
+                                          size: 16.w,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            })
+                        : Container(),
+                    Divider(
+                      color: AppStyles.lightGreyColor,
                     ),
-                  );
-                }
-              }
-            }),
+                  ],
+                ),
+              ),
           ],
-        ),
+        )),
       ),
     );
   }

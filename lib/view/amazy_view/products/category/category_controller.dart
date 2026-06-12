@@ -130,6 +130,8 @@ class CategoryController extends GetxController {
     print('REMOVE ${dataFilterCat.value.toJson()}');
   }
 
+
+
   Future<List<ProductModel>> getCategoryProducts() async {
     CategoryData parentCategoryElement = CategoryData();
     try {
@@ -139,6 +141,7 @@ class CategoryController extends GetxController {
         'page': pageNumber.value,
         if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
       }).then((value) {
+        if (isClosed) return;
         print('URL: ${value.realUri}');
         final data = new Map<String, dynamic>.from(value.data);
         catAllData.value = SingleCategory.fromJson(value.data);
@@ -214,10 +217,12 @@ class CategoryController extends GetxController {
         }
       });
     } catch (e, t) {
+      if (isClosed) return allProds;
       isProductsLoading(false);
       print(e.toString());
       print(t.toString());
     } finally {
+      if (isClosed) return allProds;
       isProductsLoading(false);
       isMoreLoading(false);
     }
@@ -232,6 +237,7 @@ class CategoryController extends GetxController {
         'page': pageNumber.value,
         if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
       }).then((value) {
+        if (isClosed) return;
         print('URL: ${value.realUri.queryParameters}');
         print('URL: ${value.realUri}');
         catAllData.value = SingleCategory.fromJson(value.data);

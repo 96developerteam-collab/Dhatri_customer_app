@@ -4,12 +4,14 @@ import 'package:amazcart/model/NewModel/Product/GalleryImageData.dart';
 import 'package:amazcart/model/NewModel/Product/ProductType.dart';
 import 'package:amazcart/model/NewModel/Product/ProductVariantDetail.dart';
 import 'package:amazcart/model/NewModel/Seller/SellerData.dart';
+import 'package:amazcart/AppConfig/app_config.dart';
 
 import '../../../utils/app_utilities.dart';
 import 'HasDeal.dart';
 import 'ProductData.dart';
 import 'Review.dart';
 import 'Skus.dart';
+import 'ProductSkus.dart';
 
 class ProductModel {
   ProductModel(
@@ -94,6 +96,48 @@ class ProductModel {
   List<GalleryImageData>? giftCardGalleryImages;
 
   factory ProductModel.fromJson(Map<String, dynamic> json){
+    String? rawImg = json["thumb_img"] ?? json["thumbnail_image"] ?? json["thum_img"];
+    String? relativeImg;
+    if (rawImg != null) {
+      relativeImg = rawImg.replaceAll(AppConfig.assetPath + '/', '').replaceAll(AppConfig.assetPath, '');
+      if (relativeImg.startsWith('/')) {
+        relativeImg = relativeImg.substring(1);
+      }
+    }
+
+    Product? synthesizedProduct;
+    if (json["product"] == null && json["product_name"] != null) {
+      synthesizedProduct = Product(
+        id: AppUtilities.convertToInt(item: json["id"]),
+        productName: json["product_name"],
+        productType: 1,
+        thumbnailImageSource: relativeImg,
+        skus: [
+          ProductSku(
+            id: AppUtilities.convertToInt(item: json["id"]),
+            productId: AppUtilities.convertToInt(item: json["id"]),
+            sellingPrice: AppUtilities.convertToDouble(item: json["selling_price"]),
+            productStock: AppUtilities.convertToInt(item: json["stock"]),
+          )
+        ],
+      );
+    } else if (json["product"] != null) {
+      synthesizedProduct = Product.fromJson(json["product"]);
+    }
+
+    List<Skus>? synthesizedSkus;
+    if (json["skus"] == null && json["selling_price"] != null) {
+      synthesizedSkus = [
+        Skus(
+          id: AppUtilities.convertToInt(item: json["id"]),
+          productId: AppUtilities.convertToInt(item: json["id"]),
+          sellingPrice: AppUtilities.convertToDouble(item: json["selling_price"]),
+          productStock: AppUtilities.convertToInt(item: json["stock"]),
+        )
+      ];
+    } else if (json["skus"] != null) {
+      synthesizedSkus = List<Skus>.from(json["skus"].map((x) => Skus.fromJson(x)));
+    }
 
     return ProductModel(
       id: AppUtilities.convertToInt(item: json["id"]),
@@ -107,15 +151,15 @@ class ProductModel {
       discountEndDate: json["discount_end_date"],
       productName: json["product_name"],
       slug: json["slug"],
-      thumImg: json["thum_img"],
+      thumImg: relativeImg ?? json["thum_img"],
       status: json["status"],
       stockManage: AppUtilities.convertToInt(item: json["stock_manage"]),
       isApproved: AppUtilities.convertToInt(item: json["is_approved"]),
       minSellPrice: json["min_sell_price"] == null
-          ? null
+          ? (json["selling_price"] != null ? AppUtilities.convertToDouble(item: json["selling_price"]) : null)
           : AppUtilities.convertToDouble(item: json["min_sell_price"]),
       maxSellPrice: json["max_sell_price"] == null
-          ? null
+          ? (json["selling_price"] != null ? AppUtilities.convertToDouble(item: json["selling_price"]) : null)
           : AppUtilities.convertToDouble(item: json["max_sell_price"]),
       totalSale: AppUtilities.convertToInt(item: json["total_sale"]),
       avgRating: AppUtilities.convertToDouble(item: json["avg_rating"]),
@@ -124,7 +168,7 @@ class ProductModel {
           : List<ProductVariantDetail>.from(json["variantDetails"]
           .map((x) => ProductVariantDetail.fromJson(x))),
       maxSellingPrice: json["MaxSellingPrice"] == null
-          ? null
+          ? (json["selling_price"] != null ? AppUtilities.convertToDouble(item: json["selling_price"]) : null)
           : AppUtilities.convertToDouble(item: json["MaxSellingPrice"]),
       mrp: json["mrp"] != null
           ? AppUtilities.convertToDouble(item: json["mrp"])
@@ -135,16 +179,15 @@ class ProductModel {
           ? null
           : HasDeal.fromJson(json["hasDeal"]),
       rating : AppUtilities.convertToDouble(item: json["rating"]),
-      hasDiscount: json['hasDiscount'],
-      product:
-      json["product"] == null ? null : Product.fromJson(json["product"]),
+      hasDiscount: json['hasDiscount']?.toString(),
+      product: synthesizedProduct,
       seller:
       json["seller"] != null && json["seller"].isNotEmpty ? SellerData.fromJson(json["seller"]) : null,
       reviews: json["reviews"] == null
           ? null
           : List<Review>.from(json["reviews"].map((x) => Review.fromJson(x))),
-      skus: json["skus"] == null ? null : List<Skus>.from(json["skus"].map((x) => Skus.fromJson(x))),
-      productType: typeValues.map[json["ProductType"]],
+      skus: synthesizedSkus,
+      productType: json["ProductType"] == null ? ProductType.PRODUCT : typeValues.map[json["ProductType"]],
       giftCardSellingPrice: json["selling_price"] == null
           ? null
           : AppUtilities.convertToDouble(item:"${json["selling_price"]}"),

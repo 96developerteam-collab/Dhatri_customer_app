@@ -25,6 +25,43 @@ class _ListViewProductWidgetState extends State<ListViewProductWidget> {
   final GeneralSettingsController currencyController =
       Get.put(GeneralSettingsController());
 
+  bool _hasValidMainPrice() {
+    if (widget.productModel == null) return false;
+    final mainPriceText = currencyController.calculateMainPrice(widget.productModel!);
+    final cleanText = mainPriceText.replaceAll(currencyController.appCurrency.value, '').replaceAll(' ', '').trim();
+    final double? parsedVal = double.tryParse(cleanText);
+    return parsedVal != null && parsedVal > 0;
+  }
+
+  Widget buildStrikethroughPrice() {
+    if (widget.productModel!.mrp != null && widget.productModel!.mrp! > 0) {
+      final double convertedMrp = widget.productModel!.mrp! * currencyController.conversionRate.value;
+      return Text(
+        currencyController.setCurrentSymbolPosition(amount: convertedMrp.toStringAsFixed(2)),
+        overflow: TextOverflow.ellipsis,
+        style: AppStyles.appFontBook.copyWith(
+          fontSize: 12.fontSize,
+          color: AppStyles.greyColorDark,
+          decoration: TextDecoration.lineThrough,
+        ),
+      );
+    }
+    
+    if (_hasValidMainPrice()) {
+      return Text(
+        currencyController.calculateMainPrice(widget.productModel!),
+        overflow: TextOverflow.ellipsis,
+        style: AppStyles.appFontBook.copyWith(
+          fontSize: 12.fontSize,
+          color: AppStyles.greyColorDark,
+          decoration: TextDecoration.lineThrough,
+        ),
+      );
+    }
+    
+    return const SizedBox.shrink();
+  }
+
   double getPriceForCart() {
     return double.parse((widget.productModel!.hasDeal != null
             ? widget.productModel!.hasDeal!.discount! > 0
@@ -169,19 +206,13 @@ class _ListViewProductWidgetState extends State<ListViewProductWidget> {
                                           color: AppStyles.pinkColor,
                                         ),
                                       ),
-                                      SizedBox(
-                                        width: 3,
-                                      ),
-                                      Text(
-                                        currencyController.calculateMainPrice(widget.productModel!),
-                                        overflow: TextOverflow.ellipsis,
-                                        style: AppStyles.appFontBook.copyWith(
-                                          fontSize: 12.fontSize,
-                                          color: AppStyles.greyColorDark,
-                                          decoration:
-                                              TextDecoration.lineThrough,
+                                      if (widget.productModel!.mrp != null && widget.productModel!.mrp! > 0 ||
+                                          _hasValidMainPrice()) ...[
+                                        SizedBox(
+                                          width: 3,
                                         ),
-                                      ),
+                                        buildStrikethroughPrice(),
+                                      ],
                                     ],
                                   )
                                 : Wrap(
@@ -218,18 +249,13 @@ class _ListViewProductWidgetState extends State<ListViewProductWidget> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  SizedBox(
-                                    width: 3,
-                                  ),
-                                  Text(
-                                    currencyController.calculateMainPrice(widget.productModel!),
-                                    overflow: TextOverflow.ellipsis,
-                                    style: AppStyles.appFontBook.copyWith(
-                                      fontSize: 12.fontSize,
-                                      color: AppStyles.greyColorDark,
-                                      decoration: TextDecoration.lineThrough,
+                                  if (widget.productModel!.mrp != null && widget.productModel!.mrp! > 0 ||
+                                      _hasValidMainPrice()) ...[
+                                    SizedBox(
+                                      width: 3,
                                     ),
-                                  ),
+                                    buildStrikethroughPrice(),
+                                  ],
                                 ],
                               ),
                         Container(

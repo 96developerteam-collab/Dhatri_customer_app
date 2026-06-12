@@ -146,14 +146,18 @@ class _ProductDetailsState extends State<ProductDetails> {
         }
 
 
+
+
         await checkWishList().then((value) async {
           if ((_productDetailsModel.data?.variantDetails?.length??0) > 0) {
             await skuGet();
           } else {
-            setState(() {
-              stockManage =_productDetailsModel.data?.stockManage??0;
-              stockCount = _productDetailsModel.data?.skus?.first.productStock??0;
-            });
+            if (mounted) {
+              setState(() {
+                stockManage =_productDetailsModel.data?.stockManage??0;
+                stockCount = _productDetailsModel.data?.skus?.first.productStock??0;
+              });
+            }
 
             controller.productSKU.value.sku = _productDetailsModel.data?.product?.skus?.first??ProductSku();
           }
@@ -205,10 +209,12 @@ class _ProductDetailsState extends State<ProductDetails> {
 
         SkuData productSKU = SkuData.fromJson(returnData['data']);
 
-        setState(() {
-          stockManage = _productDetailsModel.data!.stockManage!;
-          stockCount = productSKU.productStock;
-        });
+        if (mounted) {
+          setState(() {
+            stockManage = _productDetailsModel.data!.stockManage!;
+            stockCount = productSKU.productStock;
+          });
+        }
       }
     } catch (e) {
       print(e.toString());
@@ -225,10 +231,12 @@ class _ProductDetailsState extends State<ProductDetails> {
       final resolvedId = widget.productID ?? _productDetailsModel.data?.id;
       _myWishListController.wishListProducts.forEach((element) {
         if (resolvedId != null && element.id == resolvedId) {
-          setState(() {
-            _inWishList = true;
-            _wishListId = element.id;
-          });
+          if (mounted) {
+            setState(() {
+              _inWishList = true;
+              _wishListId = element.id;
+            });
+          }
         }
       });
     }

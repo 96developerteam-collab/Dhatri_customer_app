@@ -50,7 +50,7 @@ class _ProductsByBrandsState extends State<ProductsByBrands> {
   @override
   void initState() {
     _brandController = Get.put(BrandController(bId: widget.brandId!));
-    source = BrandProductsLoadMore(widget.brandId!);
+    source = BrandProductsLoadMore(widget.brandId!, () => mounted);
     source?.isSorted = false;
     source?.isFilter = false;
 
@@ -108,13 +108,17 @@ class _ProductsByBrandsState extends State<ProductsByBrands> {
             onNotification: (ScrollNotification scrollInfo) {
               FocusScope.of(context).unfocus();
               if (scrollController.offset > 0) {
-                setState(() {
-                  isScrolling = true;
-                });
+                if (mounted) {
+                  setState(() {
+                    isScrolling = true;
+                  });
+                }
               } else {
-                setState(() {
-                  isScrolling = false;
-                });
+                if (mounted) {
+                  setState(() {
+                    isScrolling = false;
+                  });
+                }
               }
               return false;
             },
@@ -129,9 +133,8 @@ class _ProductsByBrandsState extends State<ProductsByBrands> {
                     if (_brandController!.isBrandsProductsLoading.value) {
                       return SliverToBoxAdapter(child: Container());
                     } else {
-                      if (_brandController!.brandAllData.value.data!.allProducts!
-                              .data!.length ==
-                          0) {
+                      final products = _brandController!.brandAllData.value.data?.allProducts?.data;
+                      if (products == null || products.isEmpty) {
                         return SliverToBoxAdapter(child: Container());
                       } else {
                         return SliverAppBar(
@@ -367,7 +370,7 @@ class _ProductsByBrandsState extends State<ProductsByBrands> {
                                       ),
                                       Container(
                                         child: Text(
-                                          "${_brandController!.brandAllData.value.data!.allProducts!.total} " +
+                                          "${_brandController!.brandAllData.value.data?.allProducts?.total ?? 0} " +
                                               "Products found".tr,
                                           style:
                                               AppStyles.appFontMedium.copyWith(
@@ -448,8 +451,9 @@ class _ProductsByBrandsState extends State<ProductsByBrands> {
 
 class BrandProductsLoadMore extends LoadingMoreBase<ProductModel> {
   final int brandId;
+  final bool Function() isMounted;
 
-  BrandProductsLoadMore(this.brandId);
+  BrandProductsLoadMore(this.brandId, this.isMounted);
 
   bool? isSorted;
   String sortKey = 'new';
@@ -477,17 +481,30 @@ class BrandProductsLoadMore extends LoadingMoreBase<ProductModel> {
 
   @override
   Future<bool> loadData([bool isloadMoreAction = false]) async {
-    controller = Get.put(BrandController(bId: brandId!));
+    if (!isMounted()) return false;
+    try {
+      controller = Get.find<BrandController>();
+    } catch (_) {
+      if (isMounted()) {
+        controller = Get.put(BrandController(bId: brandId));
+      } else {
+        return false;
+      }
+    }
 
     Dio _dio = Dio();
 
     bool isSuccess = false;
     try {
       await Future.delayed(Duration(milliseconds: 500));
+      if (!isMounted()) return false;
       var result;
       var source;
 
-      if (!isSorted! && !isFilter!) {
+      bool sorted = isSorted ?? false;
+      bool filter = isFilter ?? false;
+
+      if (!sorted && !filter) {
         int? warehouseId = GetStorage().read('warehouse_id');
 
         Map<String, dynamic> queryParams = {
@@ -496,6 +513,10 @@ class BrandProductsLoadMore extends LoadingMoreBase<ProductModel> {
         if (warehouseId != null) {
           queryParams['seller_id'] = warehouseId;
         }
+
+        print('*** BRAND LISTING CLICK REQUEST ***');
+        print('URL: ${URLs.ALL_BRAND}/$brandId');
+        print('Query Parameters: $queryParams');
 
         if (this.length == 0) {
           result = await _dio.get(
@@ -509,13 +530,18 @@ class BrandProductsLoadMore extends LoadingMoreBase<ProductModel> {
             queryParameters: queryParams,
           );
         }
-        print('URI IS ${result.realUri}');
+        if (!isMounted()) return false;
+        print('*** BRAND LISTING RESPONSE ***');
+        print('URI: ${result.realUri}');
+        print('Status Code: ${result.statusCode}');
+        print('Response Body: ${result.data}');
+
         final data = new Map<String, dynamic>.from(result.data);
         source = SingleBrandModel.fromJson(data);
-        productsLength = source.data.allProducts.total;
+        productsLength = source.data?.allProducts?.total ?? 0;
         print('INITIALIZED BRAND LENGTH $productsLength');
       }
-      if (isSorted! && !isFilter!) {
+      if (sorted && !filter) {
         int? warehouseId = GetStorage().read('warehouse_id');
 
         Map<String, dynamic> queryParams = {
@@ -528,22 +554,33 @@ class BrandProductsLoadMore extends LoadingMoreBase<ProductModel> {
           queryParams['seller_id'] = warehouseId;
         }
 
+        print('*** SORT PRODUCTS REQUEST ***');
+        print('URL: ${URLs.SORT_PRODUCTS}');
+        print('Query Parameters: $queryParams');
+
         if (this.length == 0) {
           result = await _dio.get(URLs.SORT_PRODUCTS, queryParameters: queryParams);
         } else {
           queryParams['page'] = pageIndex;
           result = await _dio.get(URLs.SORT_PRODUCTS, queryParameters: queryParams);
         }
-        print('URI IS ${result.realUri}');
+        if (!isMounted()) return false;
+        print('*** SORT PRODUCTS RESPONSE ***');
+        print('URI: ${result.realUri}');
+        print('Status Code: ${result.statusCode}');
+        print('Response Body: ${result.data}');
+
         final data = new Map<String, dynamic>.from(result.data);
         source = AllProducts.fromJson(data);
-        productsLength = data['meta']['total'];
+        productsLength = data['meta']['total'] ?? 0;
       }
-      if (isFilter! && isSorted!) {
-        controller!.dataFilterCat.value.filterDataFromCat!.filterType!.removeWhere(
-            (element) =>
-                element.filterTypeValue!.length == 0 &&
-                element.filterTypeId != 'cat');
+      if (filter && sorted) {
+        if (controller?.dataFilterCat.value.filterDataFromCat?.filterType != null) {
+          controller!.dataFilterCat.value.filterDataFromCat!.filterType!.removeWhere(
+              (element) =>
+                  element.filterTypeValue!.length == 0 &&
+                  element.filterTypeId != 'cat');
+        }
 
         controller!.dataFilterCat.value.sortBy =
             controller!.filterSortKey.value.toString();
@@ -562,6 +599,11 @@ class BrandProductsLoadMore extends LoadingMoreBase<ProductModel> {
           queryParams['seller_id'] = warehouseId;
         }
 
+        print('*** FILTER ALL PRODUCTS REQUEST ***');
+        print('URL: ${URLs.FILTER_ALL_PRODUCTS}');
+        print('Query Parameters: $queryParams');
+        print('Body Data: $body');
+
         if (this.length == 0) {
           result = await _dio.post(
             URLs.FILTER_ALL_PRODUCTS,
@@ -575,40 +617,53 @@ class BrandProductsLoadMore extends LoadingMoreBase<ProductModel> {
             queryParameters: queryParams,
           );
         }
-        print('URI IS ${result.realUri}');
+        if (!isMounted()) return false;
+        print('*** FILTER ALL PRODUCTS RESPONSE ***');
+        print('URI: ${result.realUri}');
+        print('Status Code: ${result.statusCode}');
+        print('Response Body: ${result.data}');
+
         final data = new Map<String, dynamic>.from(result.data);
         source = AllProducts.fromJson(data);
-        productsLength = data['meta']['total'];
+        productsLength = data['meta']['total'] ?? 0;
       }
+
+      if (!isMounted()) return false;
 
       if (pageIndex == 1) {
         this.clear();
       }
 
-      if (!isSorted! && !isFilter!) {
-        for (var item in source.data.allProducts.data) {
-          this.add(item);
+      if (!sorted && !filter) {
+        if (source.data?.allProducts?.data != null) {
+          for (var item in source.data.allProducts.data) {
+            this.add(item);
+          }
         }
       }
-      if (isSorted! && !isFilter!) {
-        for (var item in source.data) {
-          this.add(item);
+      if (sorted && !filter) {
+        if (source.data != null) {
+          for (var item in source.data) {
+            this.add(item);
+          }
         }
       }
-      if (isFilter! && isSorted!) {
-        for (var item in source.data) {
-          this.add(item);
+      if (filter && sorted) {
+        if (source.data != null) {
+          for (var item in source.data) {
+            this.add(item);
+          }
         }
       }
 
-      if (!isSorted! && !isFilter!) {
-        _hasMore = source.data.allProducts.total != 0;
+      if (!sorted && !filter) {
+        _hasMore = (source.data?.allProducts?.total ?? 0) != 0;
       }
-      if (isSorted! && !isFilter!) {
-        _hasMore = source.total != 0;
+      if (sorted && !filter) {
+        _hasMore = (source.total ?? 0) != 0;
       }
-      if (isFilter! && isSorted!) {
-        _hasMore = source.total != 0;
+      if (filter && sorted) {
+        _hasMore = (source.total ?? 0) != 0;
       }
 
       pageIndex++;

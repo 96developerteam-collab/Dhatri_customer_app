@@ -4,14 +4,14 @@ class AppConfig {
 
   static bool showDebugLogs = true;
 
-  static const String hostUrl = "https://dhatri.store";
+  static const String hostUrl = "https://test.dhatri.store";
   //  static const String hostUrl = "http://10.0.2.2:8000";
   static String appName = 'Dhatri';
 
   static bool isAmazCartTheme = false;
 
  // Updated Theme Colors
- static String appColorScheme = "#4f7942";
+ static String appColorScheme = "#3e9324ff";
 
  static String appColorSchemeGradient1 = '#4f7942';
  static String appColorSchemeGradient2 = '#4f7942';

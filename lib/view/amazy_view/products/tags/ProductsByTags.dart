@@ -46,8 +46,6 @@ class _ProductsByTagsState extends State<ProductsByTags> {
   @override
   void initState() {
     source = TagProductsLoadMore(widget.tagName!, widget.tagId!);
-    source!.isSorted = false;
-    source!.isFilter = false;
     super.initState();
   }
   @override
@@ -62,169 +60,10 @@ class _ProductsByTagsState extends State<ProductsByTags> {
     return Scaffold(
         key: _scaffoldKey,
         backgroundColor: AppStyles.appBackgroundColor,
-        endDrawer: TagFilterDrawer(
-          tagId: widget.tagId??0,
-          scaffoldKey: _scaffoldKey,
-          source: source!,
-        ),
         body: LoadingMoreCustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
             CustomSliverAppBarWidget(true, true),
-
-            SliverPadding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10),
-              sliver: Obx(() {
-                if (tagController.isTagLoading.value) {
-                  return SliverToBoxAdapter(child: Container());
-                } else {
-                  if (tagController.tagAllData.value.products?.total == 0) {
-                    return SliverToBoxAdapter(
-                      child: Container(),
-                    );
-                  } else {
-                    return SliverAppBar(
-                      backgroundColor: AppStyles.appBackgroundColor,
-                      automaticallyImplyLeading: false,
-                      centerTitle: false,
-                      titleSpacing: 0,
-                      toolbarHeight: 15.w,
-                      //expandedHeight: 0,
-                      forceElevated: false,
-                      elevation: 0,
-                      primary: true,
-                      pinned: true,
-                      leading: Container(),
-                      actions: [
-                        Container(
-                          width: 50.w,
-                          alignment: Alignment.center,
-                          child: Container(),
-                        ),
-                      ],
-                      flexibleSpace: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5.r),
-                          border: Border.all(
-                            color: AppStyles.textFieldFillColor,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10.w),
-                                child: !filterSelected
-                                    ? DropdownButton(
-                                  isExpanded: true,
-                                  hint: Text('Sort'.tr),
-                                  underline: SizedBox(),
-                                  dropdownColor: Colors.white,
-                                  value: _selectedSort,
-                                  style: AppStyles.kFontBlack14w5,
-                                  iconSize: 20.h,
-                                  onChanged: (newValue) async {
-                                    setState(() {
-                                      _selectedSort = newValue;
-                                      setState(() {
-                                        source?.sortKey =
-                                            newValue?.sortKey ?? '';
-                                        source?.isSorted = true;
-                                        source?.isFilter = false;
-                                        source?.refresh(true);
-
-                                        log("source?.sortKey::: ${source?.sortKey}");
-                                      });
-                                    });
-                                  },
-                                  items: Sorting.sortingData.map((sort) {
-                                    return DropdownMenuItem(
-                                      child: Text(sort.sortName?.tr ?? '',
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1),
-                                      value: sort,
-                                    );
-                                  }).toList(),
-                                )
-                                    : DropdownButton(
-                                  isExpanded: true,
-                                  hint: Text('Sort'.tr),
-                                  underline: Container(),
-                                  value: _selectedSort,
-                                  dropdownColor: Colors.white,
-                                  iconSize: 20.h,
-                                  style: AppStyles.kFontBlack14w5,
-                                  onChanged: (newValue) async {
-                                    print('SORT AFTER FILTER');
-                                    setState(() {
-                                      _selectedSort = newValue;
-                                      setState(() {
-                                        source?.isSorted = true;
-                                        source?.isFilter = true;
-                                        controller.filterSortKey.value =
-                                            _selectedSort?.sortKey ?? '';
-                                        source?.refresh(true);
-                                      });
-                                    });
-                                  },
-                                  items: Sorting.sortingData.map((sort) {
-                                    return DropdownMenuItem(
-                                      child: Text(
-                                        sort.sortName?.tr ?? '',
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      value: sort,
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: VerticalDivider(
-                                width: 1,
-                                thickness: 1,
-                              ),
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    filterSelected = true;
-                                    _selectedSort = Sorting.sortingData.first;
-                                  });
-                                  _scaffoldKey.currentState?.openEndDrawer();
-                                },
-                                child: Container(
-                                  alignment: Alignment.centerRight,
-                                  padding:
-                                  EdgeInsets.symmetric(horizontal: 10.w),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Icon(
-                                        Icons.filter_alt_outlined,
-                                        size: 16.w,
-                                      ),
-                                      Text(
-                                        'Filter'.tr,
-                                        style: AppStyles.kFontBlack14w5,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-                }
-              }),
-            ),
 
             LoadingMoreSliverList<ProductModel>(
               SliverListConfig<ProductModel>(
@@ -268,16 +107,14 @@ class TagProductsLoadMore extends LoadingMoreBase<ProductModel> {
 
   TagProductsLoadMore(this.tagName, this.tagId);
 
-  bool? isSorted;
-  String sortKey = 'new';
-  bool? isFilter;
-
   final TagController controller = Get.put(TagController());
 
   int pageIndex = 1;
   bool _hasMore = true;
   bool forceRefresh = false;
   int productsLength = 0;
+  bool? isSorted = false;
+  bool? isFilter = false;
 
   @override
   bool get hasMore => (_hasMore && (length < productsLength)) || forceRefresh;
@@ -298,115 +135,35 @@ class TagProductsLoadMore extends LoadingMoreBase<ProductModel> {
 
     bool isSuccess = false;
     try {
-      //to show loading more clearly, in your app,remove this
       await Future.delayed(Duration(milliseconds: 500));
       var result;
       dynamic source;
       print(
           'TAG NAME $tagName -> URL : ${URLs.SINGLE_TAG_PRODUCTS + '/$tagId'}');
-      if (!isSorted! && !isFilter!) {
-        if (this.length == 0) {
-          result = await _dio.get(URLs.SINGLE_TAG_PRODUCTS + '/$tagId',
-              queryParameters: {"lang": AppLocalizations.getLanguageCode()});
-        } else {
-          result = await _dio.get(URLs.SINGLE_TAG_PRODUCTS + '/$tagId',
-              queryParameters: {
-                'page': pageIndex,
-                "lang": AppLocalizations.getLanguageCode()
-              });
-        }
-        print(result.data);
-        final data = new Map<String, dynamic>.from(result.data);
-        source = TagProductsModel.fromJson(data);
-        productsLength = source.products?.data?.length ?? 0;
+
+      if (this.length == 0) {
+        result = await _dio.get(URLs.SINGLE_TAG_PRODUCTS + '/$tagId',
+            queryParameters: {"lang": AppLocalizations.getLanguageCode()});
+      } else {
+        result = await _dio.get(URLs.SINGLE_TAG_PRODUCTS + '/$tagId',
+            queryParameters: {
+              'page': pageIndex,
+              "lang": AppLocalizations.getLanguageCode()
+            });
       }
-
-      if (isSorted! && !isFilter!) {
-        if (this.length == 0) {
-          result = await _dio.get(
-              URLs.SORT_PRODUCTS +
-                  '?lang=${AppLocalizations.getLanguageCode()}',
-              queryParameters: {
-                'requestItem': tagName,
-                'requestItemType': 'tag',
-                'sort_by': sortKey,
-              });
-        } else {
-          result = await _dio.get(URLs.SORT_PRODUCTS, queryParameters: {
-            'requestItem': tagName,
-            'requestItemType': 'tag',
-            'sort_by': sortKey,
-            'page': pageIndex,
-          });
-        }
-        print(result.realUri);
-        final data = new Map<String, dynamic>.from(result.data);
-        source = AllProducts.fromJson(data);
-        productsLength = data['meta']['total'];
-      }
-
-      if (isSorted! && isFilter!) {
-        controller.dataFilterCat.value.filterDataFromCat?.filterType
-            ?.removeWhere((element) =>
-        element.filterTypeValue?.length == 0 &&
-            element.filterTypeId != 'cat');
-
-        controller.dataFilterCat.value.sortBy =
-            controller.filterSortKey.value.toString();
-
-        controller.dataFilterCat.value.page = pageIndex.toString();
-
-        if (this.length == 0) {
-          log(filterFromCatModelToJson(controller.dataFilterCat.value));
-          result = await _dio.post(
-            URLs.FILTER_ALL_PRODUCTS +
-                '?lang=${AppLocalizations.getLanguageCode()}',
-            data: filterFromCatModelToJson(controller.dataFilterCat.value),
-          );
-        } else {
-          log(filterFromCatModelToJson(controller.dataFilterCat.value));
-          result = await _dio.post(
-            URLs.FILTER_ALL_PRODUCTS +
-                '?lang=${AppLocalizations.getLanguageCode()}',
-            data: filterFromCatModelToJson(controller.dataFilterCat.value),
-          );
-        }
-        print(result.realUri);
-        final data = new Map<String, dynamic>.from(result.data);
-        source = AllProducts.fromJson(data);
-        //productsLength = data['meta']['total'];
-        productsLength = source.data?.length ?? 0;
-        print('FILTERED $productsLength');
-      }
+      print(result.data);
+      final data = new Map<String, dynamic>.from(result.data);
+      source = TagProductsModel.fromJson(data);
+      productsLength = source.products?.data?.length ?? 0;
 
       if (pageIndex == 1) {
         this.clear();
       }
-      if (!isSorted! && !isFilter!) {
-        for (var item in source.products.data ?? []) {
-          this.add(item);
-        }
-      }
-      if (isSorted! && !isFilter!) {
-        for (var item in source.data ?? []) {
-          this.add(item);
-        }
-      }
-      if (isFilter! && isSorted!) {
-        for (var item in source.data ?? []) {
-          this.add(item);
-        }
+      for (var item in source.products.data ?? []) {
+        this.add(item);
       }
 
-      if (!isSorted! && !isFilter!) {
-        _hasMore = source.products.data?.length != 0;
-      }
-      if (isSorted! && !isFilter!) {
-        _hasMore = source.total != 0;
-      }
-      if (isSorted! && isFilter!) {
-        _hasMore = source.total != 0;
-      }
+      _hasMore = source.products.data?.length != 0;
       pageIndex++;
       isSuccess = true;
     } catch (exception, stack) {

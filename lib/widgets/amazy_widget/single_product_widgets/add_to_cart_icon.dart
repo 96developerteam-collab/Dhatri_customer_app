@@ -10,6 +10,7 @@ import 'package:amazcart/utils/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../../../controller/in-app-purchase_controller.dart';
 import '../../../view/amazy_view/products/product/product_details.dart';
@@ -86,6 +87,8 @@ class _CartIconState extends State<CartIcon> {
           _isAddingToCart = true;
         });
 
+        var warehouseId = GetStorage().read('warehouse_id');
+
 
         if (widget.productModel.productType == ProductType.PRODUCT) {
 
@@ -104,7 +107,7 @@ class _CartIconState extends State<CartIcon> {
                       'product_id': widget.productModel.skus?.first.id,
                       'qty': 1,
                       'price': getPriceForCart(),
-                      'seller_id': widget.productModel.userId,
+                      'seller_id': warehouseId ?? widget.productModel.userId,
                       'product_type': 'product',
                       'checked': true,
                       "in_app_purchase_id" : widget.productModel.skus?.first.inAppPurchaseId
@@ -135,7 +138,7 @@ class _CartIconState extends State<CartIcon> {
                   'product_id': widget.productModel.skus!.first.id,
                   'qty': 1,
                   'price': getPriceForCart(),
-                  'seller_id': widget.productModel.userId,
+                  'seller_id': warehouseId ?? widget.productModel.userId,
                   'product_type': 'product',
                   'checked': true,
                   "in_app_purchase_id" : widget.productModel.skus?.first.inAppPurchaseId
@@ -179,7 +182,7 @@ class _CartIconState extends State<CartIcon> {
               'product_id': widget.productModel.id,
               'qty': 1,
               'price': getGiftCardPriceForCart(),
-              'seller_id': 1,
+              'seller_id': warehouseId ?? 1,
               'shipping_method_id': 1,
               'product_type': 'gift_card',
               "in_app_purchase_id" : widget.productModel.skus?.first.inAppPurchaseId
