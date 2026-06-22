@@ -42,5 +42,34 @@ post_install do |installer|
           config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'NO'
           config.build_settings['ENABLE_BITCODE'] = 'NO'
       end
+  end
+
+  # Patch Pods-Runner-frameworks.sh to copy Razorpay and RazorpayCore dSYMs
+  frameworks_script = File.join(installer.sandbox.root, 'Target Support Files', 'Pods-Runner', 'Pods-Runner-frameworks.sh')
+  if File.exist?(frameworks_script)
+    puts "Patching #{frameworks_script} to include Razorpay dSYMs..."
+    script_content = File.read(frameworks_script)
+    
+    dsyms_to_install = [
+      'install_dsym "${PODS_ROOT}/razorpay-core-pod/Pod/core/Razorpay.xcframework/ios-arm64/dSYMs/Razorpay.framework.dSYM"',
+      'install_dsym "${PODS_ROOT}/razorpay-core-pod/Pod/core/Razorpay.xcframework/ios-arm64_x86_64-simulator/dSYMs/Razorpay.framework.dSYM"',
+      'install_dsym "${PODS_ROOT}/razorpay-core-pod/Pod/core/RazorpayCore.xcframework/ios-arm64/dSYMs/RazorpayCore.framework.dSYM"',
+      'install_dsym "${PODS_ROOT}/razorpay-core-pod/Pod/core/RazorpayCore.xcframework/ios-arm64_x86_64-simulator/dSYMs/RazorpayCore.framework.dSYM"'
+    ].join("\n  ")
+
+    target_str = 'install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-core-pod/Razorpay.framework"'
+    replacement_str = [
+      'install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-core-pod/Razorpay.framework"',
+      dsyms_to_install
+    ].join("\n  ")
+
+    if script_content.include?(target_str)
+      script_content = script_content.gsub(target_str, replacement_str)
+      File.write(frameworks_script, script_content)
+      puts "Successfully patched #{frameworks_script}"
+    else
+      puts "Warning: Target framework installation pattern not found in #{frameworks_script}"
     end
+  end
 end
+
