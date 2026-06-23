@@ -51,10 +51,13 @@ post_install do |installer|
     script_content = File.read(frameworks_script)
     
     dsyms_to_install = [
-      'install_dsym "${PODS_ROOT}/razorpay-core-pod/Pod/core/Razorpay.xcframework/ios-arm64/dSYMs/Razorpay.framework.dSYM"',
-      'install_dsym "${PODS_ROOT}/razorpay-core-pod/Pod/core/Razorpay.xcframework/ios-arm64_x86_64-simulator/dSYMs/Razorpay.framework.dSYM"',
-      'install_dsym "${PODS_ROOT}/razorpay-core-pod/Pod/core/RazorpayCore.xcframework/ios-arm64/dSYMs/RazorpayCore.framework.dSYM"',
-      'install_dsym "${PODS_ROOT}/razorpay-core-pod/Pod/core/RazorpayCore.xcframework/ios-arm64_x86_64-simulator/dSYMs/RazorpayCore.framework.dSYM"'
+      'if [ "${PLATFORM_NAME}" = "iphonesimulator" ]; then',
+      '  install_dsym "${PODS_ROOT}/razorpay-core-pod/Pod/core/Razorpay.xcframework/ios-arm64_x86_64-simulator/dSYMs/Razorpay.framework.dSYM"',
+      '  install_dsym "${PODS_ROOT}/razorpay-core-pod/Pod/core/RazorpayCore.xcframework/ios-arm64_x86_64-simulator/dSYMs/RazorpayCore.framework.dSYM"',
+      'else',
+      '  install_dsym "${PODS_ROOT}/razorpay-core-pod/Pod/core/Razorpay.xcframework/ios-arm64/dSYMs/Razorpay.framework.dSYM"',
+      '  install_dsym "${PODS_ROOT}/razorpay-core-pod/Pod/core/RazorpayCore.xcframework/ios-arm64/dSYMs/RazorpayCore.framework.dSYM"',
+      'fi'
     ].join("\n  ")
 
     target_str = 'install_framework "${PODS_XCFRAMEWORKS_BUILD_DIR}/razorpay-core-pod/Razorpay.framework"'

@@ -50,7 +50,7 @@ class TagProductsModel {
             json["brandList"].map((x) => BrandData.fromJson(x))),
         attributeLists: List<FilterAttributeElement>.from(json["attributeLists"]
             .map((x) => FilterAttributeElement.fromJson(x))),
-        color: json["color"] == null ? null : FilterColor.fromJson(json["color"]),
+        color: (json["color"] == null || json["color"] is List) ? null : FilterColor.fromJson(json["color"]),
         minPrice:
             json["min_price"] == null ? 0.0 : json["min_price"].toDouble(),
         maxPrice:

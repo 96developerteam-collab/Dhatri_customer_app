@@ -35,7 +35,7 @@ class SingleCategory {
       return SingleCategory(
         data: CategoryData.fromJson(json["data"]),
         attributes: json["attributes"] == null ? null : List<FilterAttributeElement>.from(json["attributes"].map((x) => FilterAttributeElement.fromJson(x))),
-        color: json["color"] == null ? null : FilterColor.fromJson(json["color"]),
+        color: (json["color"] == null || json["color"] is List) ? null : FilterColor.fromJson(json["color"]),
         brands: json["brands"] == null ? null : List<BrandData>.from(json["brands"].map((x) => BrandData.fromJson(x))),
         lowestPrice: num.tryParse("${json["lowest_price"]}")??0,
         heightPrice: num.tryParse("${json["height_price"]}")??0,

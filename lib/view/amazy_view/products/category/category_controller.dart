@@ -149,7 +149,7 @@ class CategoryController extends GetxController {
         print('catAllData.value ${catAllData.value}');
 
         print(
-            'catAllData.value len  ${catAllData.value.data!.allProducts!.data!.length}');
+            'catAllData.value len  ${catAllData.value.data?.allProducts?.data?.length ?? 0}');
 
         print('Cat ID ${categoryId.value.toString()}');
 
@@ -199,15 +199,17 @@ class CategoryController extends GetxController {
 
         parentCategoryElement = CategoryData.fromJson(data['data']);
         category.value = parentCategoryElement;
-        categoryTitle.value = parentCategoryElement.name!;
-        categoryId.value = parentCategoryElement.id!;
-        categoryImage.value = parentCategoryElement.categoryImage!.image ?? '';
-        if (parentCategoryElement.allProducts!.data!.length == 0) {
+        categoryTitle.value = parentCategoryElement.name ?? '';
+        categoryId.value = parentCategoryElement.id ?? 0;
+        categoryImage.value = parentCategoryElement.categoryImage?.image ?? '';
+        if ((parentCategoryElement.allProducts?.data?.length ?? 0) == 0) {
           isMoreLoading(false);
           lastPage(true);
         } else {
           isMoreLoading(true);
-          allProds.addAll(parentCategoryElement.allProducts!.data!);
+          if (parentCategoryElement.allProducts?.data != null) {
+            allProds.addAll(parentCategoryElement.allProducts!.data!);
+          }
         }
         if ((parentCategoryElement.subCategories?.length??0) == 0) {
           isMoreLoading(false);

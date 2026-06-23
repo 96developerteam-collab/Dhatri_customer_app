@@ -31,19 +31,19 @@ class SingleBrandModel {
 
   factory SingleBrandModel.fromJson(Map<String, dynamic> json) =>
       SingleBrandModel(
-        data: BrandData.fromJson(json["data"]),
-        attributes: List<FilterAttributeElement>.from(json["attributes"].map((x) => FilterAttributeElement.fromJson(x))),
-        color: json["color"] == null ? null : FilterColor.fromJson(json["color"]),
-        categories: List<CategoryData>.from(json["categories"].map((x) => CategoryData.fromJson(x))),
-        lowestPrice: num.tryParse("${json["lowest_price"]}")??0,
-        heightPrice: num.tryParse("${json["height_price"]}")??0,
+        data: json["data"] == null ? null : BrandData.fromJson(json["data"]),
+        attributes: json["attributes"] == null ? null : List<FilterAttributeElement>.from(json["attributes"].map((x) => FilterAttributeElement.fromJson(x))),
+        color: (json["color"] == null || json["color"] is List) ? null : FilterColor.fromJson(json["color"]),
+        categories: json["categories"] == null ? null : List<CategoryData>.from(json["categories"].map((x) => CategoryData.fromJson(x))),
+        lowestPrice: num.tryParse("${json["lowest_price"]}") ?? 0,
+        heightPrice: num.tryParse("${json["height_price"]}") ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
-        "data": data!.toJson(),
-        "attributes": List<dynamic>.from(attributes!.map((x) => x.toJson())),
-        "color": color!.toJson(),
-        "categories": List<dynamic>.from(categories!.map((x) => x.toJson())),
+        "data": data?.toJson(),
+        "attributes": attributes == null ? null : List<dynamic>.from(attributes!.map((x) => x.toJson())),
+        "color": color?.toJson(),
+        "categories": categories == null ? null : List<dynamic>.from(categories!.map((x) => x.toJson())),
         "lowest_price": lowestPrice,
         "height_price": heightPrice,
       };

@@ -30,6 +30,7 @@ class OrderCancelController extends GetxController {
     var jsonString;
     try {
       Uri userData = Uri.parse(URLs.CANCEL_REASONS+"?lang=${AppLocalizations.getLanguageCode()}");
+      print("GET Url -> $userData");
       var response = await http.get(
         userData,
         headers: {
@@ -65,6 +66,7 @@ class OrderCancelController extends GetxController {
     String token = await userToken.read(tokenKey);
     try {
       Uri userData = Uri.parse(URLs.ORDER_CANCEL_STORE+'?lang=${AppLocalizations.getLanguageCode()}');
+      print("POST Url -> $userData");
 
       //check
       var response = await http.post(

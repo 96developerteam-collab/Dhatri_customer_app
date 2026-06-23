@@ -168,11 +168,23 @@ class HomeController extends GetxController {
   Future<void> getSubCategories({required int categoryId}) async {
     try {
       isSubCategoryLoading(true);
-      await _dio.get(URLs.ALL_CATEGORY + '/${categoryId}', queryParameters: {
+      Map<String, dynamic> queryParams = {
         "lang": AppLocalizations.getLanguageCode(),
-        if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
-      }).then((value) {
-        print(value.realUri);
+      };
+      if (GetStorage().read('warehouse_id') != null) {
+        queryParams['seller_id'] = GetStorage().read('warehouse_id');
+      }
+
+      print('*** BROWSE CATEGORY REQUEST ***');
+      print('URL: ${URLs.ALL_CATEGORY}/$categoryId');
+      print('Query Parameters: $queryParams');
+
+      await _dio.get(URLs.ALL_CATEGORY + '/${categoryId}', queryParameters: queryParams).then((value) {
+        print('*** BROWSE CATEGORY RESPONSE ***');
+        print('URI: ${value.realUri}');
+        print('Status Code: ${value.statusCode}');
+        print('Response Body: ${value.data}');
+
         var data = Map<String, dynamic>.from(value.data);
         return SingleCategory.fromJson(data);
       }).then((value) async {
@@ -419,11 +431,16 @@ class HomeController extends GetxController {
     try {
       isProductsLoading(true);
       isMoreLoading(true);
-      await _dio.get(URLs.ALL_CATEGORY + '/$categoryId', queryParameters: {
-        'page': pageNumber,
+      int? warehouseId = GetStorage().read('warehouse_id');
+      Map<String, dynamic> queryParams = {
+        'page': pageNumber.value,
         "lang": AppLocalizations.getLanguageCode(),
-        if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
-      }).then((value) {
+      };
+      if (warehouseId != null) {
+        queryParams['seller_id'] = warehouseId;
+      }
+
+      await _dio.get(URLs.ALL_CATEGORY + '/${categoryId.value}', queryParameters: queryParams).then((value) {
         print('URL: ${value.realUri}');
         final data = Map<String, dynamic>.from(value.data);
         catAllData.value = SingleCategory.fromJson(value.data);
@@ -512,11 +529,16 @@ class HomeController extends GetxController {
     try {
       // isProductsLoading(true);
       // isMoreLoading(true);
-      await _dio.get(URLs.ALL_CATEGORY + '/$categoryId', queryParameters: {
-        'page': pageNumber,
+      int? warehouseId = GetStorage().read('warehouse_id');
+      Map<String, dynamic> queryParams = {
+        'page': pageNumber.value,
         "lang": AppLocalizations.getLanguageCode(),
-        if (GetStorage().read('warehouse_id') != null) 'seller_id': GetStorage().read('warehouse_id'),
-      }).then((value) {
+      };
+      if (warehouseId != null) {
+        queryParams['seller_id'] = warehouseId;
+      }
+
+      await _dio.get(URLs.ALL_CATEGORY + '/${categoryId.value}', queryParameters: queryParams).then((value) {
         print('URL: ${value.realUri.queryParameters}');
         print('URL: ${value.realUri}');
         catAllData.value = SingleCategory.fromJson(value.data);
@@ -549,10 +571,17 @@ class HomeController extends GetxController {
     try {
       isBrandsProductsLoading(true);
       isMoreBrandLoading(true);
-      await _dio.get(URLs.ALL_BRAND + '/$brandId', queryParameters: {
+      int? warehouseId = GetStorage().read('warehouse_id');
+
+      Map<String, dynamic> queryParams = {
         'page': brandPageNumber,
         "lang": AppLocalizations.getLanguageCode()
-      }).then((value) {
+      };
+      if (warehouseId != null) {
+        queryParams['seller_id'] = warehouseId;
+      }
+
+      await _dio.get(URLs.SINGLE_BRAND + '/$brandId', queryParameters: queryParams).then((value) {
         print('Brand Query: ${value.realUri}');
         final data = Map<String, dynamic>.from(value.data);
 
@@ -627,10 +656,17 @@ class HomeController extends GetxController {
 
   Future<SingleBrandModel> getBrandFilterData() async {
     try {
-      await _dio.get(URLs.ALL_BRAND + '/$brandId', queryParameters: {
+      int? warehouseId = GetStorage().read('warehouse_id');
+
+      Map<String, dynamic> queryParams = {
         'page': brandPageNumber,
         "lang": AppLocalizations.getLanguageCode()
-      }).then((value) {
+      };
+      if (warehouseId != null) {
+        queryParams['seller_id'] = warehouseId;
+      }
+
+      await _dio.get(URLs.SINGLE_BRAND + '/$brandId', queryParameters: queryParams).then((value) {
         print('URL: ${value.realUri.queryParameters}');
         brandAllData.value = SingleBrandModel.fromJson(value.data);
 

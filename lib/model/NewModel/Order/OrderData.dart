@@ -207,36 +207,60 @@ class OrderAddress {
   GetIngCountry2? getBillingState;
   GetIngCountry2? getBillingCity;
 
-  factory OrderAddress.fromJson(Map<String, dynamic> json) => OrderAddress(
-        id: json["id"],
-        orderId: AppUtilities.convertToInt(item: json["order_id"]),
-        customerId: json["customer_id"],
-        shippingName: json["shipping_name"],
-        shippingEmail: json["shipping_email"],
-        shippingPhone: json["shipping_phone"],
-        shippingAddress: json["shipping_address"],
-        shippingCountryId: json["shipping_country_id"],
-        shippingStateId: json["shipping_state_id"],
-        shippingCityId: json["shipping_city_id"],
-        shippingPostcode: json["shipping_postcode"],
-        billToSameAddress: AppUtilities.convertToInt(item: json["bill_to_same_address"]),
-        billingName: json["billing_name"],
-        billingEmail: json["billing_email"],
-        billingPhone: json["billing_phone"],
-        billingAddress: json["billing_address"],
-        billingCountryId: json["billing_country_id"],
-        billingStateId: json["billing_state_id"],
-        billingCityId: json["billing_city_id"],
-        billingPostcode: json["billing_postcode"],
-    createdAt: AppUtilities.convertToDateTime(dateTime:json["created_at"]),
-    updatedAt:AppUtilities.convertToDateTime(dateTime:json["updated_at"]),
-        getShippingCountry:  json["get_shipping_country"] == null ? null : GetIngCountry.fromJson(json["get_shipping_country"]),
-        getShippingState: json["get_shipping_state"] == null ? null : GetIngCountry2.fromJson(json["get_shipping_state"]),
-        getShippingCity: json["get_shipping_city"] == null ? null : GetIngCountry2.fromJson(json["get_shipping_city"]),
-        getBillingCountry: json["get_billing_country"] == null ? null : GetIngCountry.fromJson(json["get_billing_country"]),
-        getBillingState: json["get_billing_state"] == null ? null : GetIngCountry2.fromJson(json["get_billing_state"]),
-        getBillingCity: json["get_billing_city"] == null ? null : GetIngCountry2.fromJson(json["get_billing_city"]),
-      );
+  factory OrderAddress.fromJson(Map<String, dynamic> json) {
+    final shippingCountry = json["get_shipping_country"] == null
+        ? null
+        : GetIngCountry.fromJson(json["get_shipping_country"]);
+    final shippingState = json["get_shipping_state"] == null
+        ? null
+        : GetIngCountry2.fromJson(json["get_shipping_state"]);
+    final shippingCity = json["get_shipping_city"] == null
+        ? null
+        : GetIngCountry2.fromJson(json["get_shipping_city"]);
+
+    final billToSame = AppUtilities.convertToInt(item: json["bill_to_same_address"]) == 1;
+
+    final billingCountry = json["get_billing_country"] == null
+        ? (billToSame ? shippingCountry : null)
+        : GetIngCountry.fromJson(json["get_billing_country"]);
+    final billingState = json["get_billing_state"] == null
+        ? (billToSame ? shippingState : null)
+        : GetIngCountry2.fromJson(json["get_billing_state"]);
+    final billingCity = json["get_billing_city"] == null
+        ? (billToSame ? shippingCity : null)
+        : GetIngCountry2.fromJson(json["get_billing_city"]);
+
+    return OrderAddress(
+      id: json["id"],
+      orderId: AppUtilities.convertToInt(item: json["order_id"]),
+      customerId: json["customer_id"],
+      shippingName: json["shipping_name"],
+      shippingEmail: json["shipping_email"],
+      shippingPhone: json["shipping_phone"],
+      shippingAddress: json["shipping_address"],
+      shippingCountryId: json["shipping_country_id"],
+      shippingStateId: json["shipping_state_id"],
+      shippingCityId: json["shipping_city_id"],
+      shippingPostcode: json["shipping_postcode"],
+      billToSameAddress: AppUtilities.convertToInt(item: json["bill_to_same_address"]),
+      billingName: json["billing_name"],
+      billingEmail: json["billing_email"],
+      billingPhone: json["billing_phone"],
+      billingAddress: json["billing_address"],
+      billingCountryId: json["billing_country_id"],
+      billingStateId: json["billing_state_id"],
+      billingCityId: json["billing_city_id"],
+      billingPostcode: json["billing_postcode"],
+      createdAt: AppUtilities.convertToDateTime(dateTime: json["created_at"]),
+      updatedAt: AppUtilities.convertToDateTime(dateTime: json["updated_at"]),
+      getShippingCountry: shippingCountry,
+      getShippingState: shippingState,
+      getShippingCity: shippingCity,
+      getBillingCountry: billingCountry,
+      getBillingState: billingState,
+      getBillingCity: billingCity,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -291,8 +315,7 @@ class GetIngCountry2 {
 
   factory GetIngCountry2.fromJson(Map<String, dynamic> json) => GetIngCountry2(
         id: json["id"],
-       // name: json["name"],
-        name: "Bangladesh",
+        name: json["name"],
         stateId: json["state_id"] == null ? null : json["state_id"],
         status: json["status"],
         createdAt: json["created_at"],

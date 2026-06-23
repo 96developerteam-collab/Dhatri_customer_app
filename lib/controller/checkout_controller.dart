@@ -160,7 +160,17 @@ class CheckoutController extends GetxController {
   getShipping() {
     selectedShipping.clear();
     checkoutModel.value.packages?.forEach((key, value) {
-      selectedShipping.add(value.shipping!.first);
+      if (value.shipping != null && value.shipping!.isNotEmpty) {
+        selectedShipping.add(value.shipping!.first);
+      } else {
+        selectedShipping.add(Shipping(
+          id: 0,
+          methodName: "No Shipping Method Available",
+          costBasedOn: "Flat",
+          cost: 0.0,
+          minimumShopping: 0.0,
+        ));
+      }
     });
   }
 
@@ -223,7 +233,7 @@ class CheckoutController extends GetxController {
                 totalShipping = ((itemEl.price??0) / 100) * (selectedShipping[i].cost??0);
                 additionalCost += itemEl.product!.sku?.additionalShipping??0;
               }
-            } else if (value.shipping!.first.costBasedOn == 'Weight') {
+            } else if (selectedShipping[i].costBasedOn == 'Weight') {
               totalShipping =
                   (double.tryParse(itemEl.product?.sku?.weight ?? '0') ??
                           1 / 100) *

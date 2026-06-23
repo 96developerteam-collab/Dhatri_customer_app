@@ -22,7 +22,7 @@ class CancelledOrderController extends GetxController {
 
     Uri userData = Uri.parse(URLs.ALL_ORDER_CANCEL_LIST + '?lang=${AppLocalizations.getLanguageCode()}');
 
-    log("Url -> ${URLs.ALL_ORDER_CANCEL_LIST}");
+    print("Url -> $userData");
 
 
     var response = await http.get(
@@ -34,7 +34,7 @@ class CancelledOrderController extends GetxController {
       },
     );
 
-    log("Order cancel response ::: ${response.body}");
+    print("Order cancel response ::: ${response.body}");
     var jsonString = jsonDecode(response.body);
 
     if (jsonString['message'] == 'success') {

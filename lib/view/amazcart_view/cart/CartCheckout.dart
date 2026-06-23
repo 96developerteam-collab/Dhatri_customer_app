@@ -1571,15 +1571,26 @@ class _CartCheckoutState extends State<CartCheckout> {
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 10.w),
                                       child: ShippingDropDown(
-                                        shippingValue: checkoutController
-                                            .checkoutModel.value.packages!.values
-                                            .elementAt(packageIndex)
-                                            .shipping
-                                            !.first,
-                                        shippings: checkoutController
-                                            .checkoutModel.value.packages!.values
-                                            .elementAt(packageIndex)
-                                            .shipping!,
+                                  shippingValue: (checkoutController
+                                              .checkoutModel.value.packages!.values
+                                              .elementAt(packageIndex)
+                                              .shipping !=
+                                          null &&
+                                      checkoutController
+                                          .checkoutModel.value.packages!.values
+                                          .elementAt(packageIndex)
+                                          .shipping!
+                                          .isNotEmpty)
+                                      ? checkoutController
+                                          .checkoutModel.value.packages!.values
+                                          .elementAt(packageIndex)
+                                          .shipping!
+                                          .first
+                                      : null,
+                                  shippings: checkoutController
+                                      .checkoutModel.value.packages!.values
+                                      .elementAt(packageIndex)
+                                      .shipping ?? [],
                                         packageIndex: packageIndex,
                                         price: price,
                                         totalWeight: totalWeight,
@@ -2042,6 +2053,7 @@ class _ShippingDropDownState extends State<ShippingDropDown> {
   double additionalShipping =0;
 
   String calculateArrival(shipmentTime) {
+    if (shipmentTime == null) return 'N/A';
     var arr = shipmentTime;
     if (arr.contains('days')) {
       arr = arr.replaceAll(' days', '');
@@ -2068,19 +2080,23 @@ class _ShippingDropDownState extends State<ShippingDropDown> {
       });
     });
 
-    if (widget.shippingValue?.costBasedOn == 'Price') {
-      if (widget.price! > 0) {
-        shippingCost2 = (widget.price! / 100) * (widget.shippingValue?.cost??0) + additionalShipping;
-      }
-    } else if (widget.shippingValue?.costBasedOn == 'Weight') {
-      if ((widget.totalWeight ?? 0) > 0) {
-        shippingCost2 = ((widget.totalWeight ?? 0) / 100) * (widget.shippingValue?.cost ?? 0) +
-            additionalShipping;
+    if (widget.shippingValue != null) {
+      if (widget.shippingValue?.costBasedOn == 'Price') {
+        if (widget.price! > 0) {
+          shippingCost2 = (widget.price! / 100) * (widget.shippingValue?.cost??0) + additionalShipping;
+        }
+      } else if (widget.shippingValue?.costBasedOn == 'Weight') {
+        if ((widget.totalWeight ?? 0) > 0) {
+          shippingCost2 = ((widget.totalWeight ?? 0) / 100) * (widget.shippingValue?.cost ?? 0) +
+              additionalShipping;
+        }
+      } else {
+        if ((widget.shippingValue?.cost ?? 0) > 0) {
+          shippingCost2 = (widget.shippingValue?.cost ?? 0) + additionalShipping;
+        }
       }
     } else {
-      if ((widget.shippingValue?.cost ?? 0) > 0) {
-        shippingCost2 = (widget.shippingValue?.cost ?? 0) + additionalShipping;
-      }
+      shippingCost2 = 0.0;
     }
 
     final Map<dynamic, dynamic> shippingCostMap =
@@ -2093,15 +2109,18 @@ class _ShippingDropDownState extends State<ShippingDropDown> {
         checkoutController.orderData['shipping_method'];
     addValueToMap(shippingCostMap, '${widget.packageIndex}', shippingCost2);
     addValueToMap(deliveryDateMap, '${widget.packageIndex}',
-        calculateArrival(widget.shippingValue?.shipmentTime));
+        widget.shippingValue != null ? calculateArrival(widget.shippingValue?.shipmentTime) : 'N/A');
     addValueToMap(
-        shippingMethodMap, '${widget.packageIndex}', widget.shippingValue?.id);
+        shippingMethodMap, '${widget.packageIndex}', widget.shippingValue?.id ?? 0);
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.shippings == null || widget.shippings!.isEmpty) {
+      return Text("No Shipping Method Available".tr, style: AppStyles.kFontGrey12w5);
+    }
     return Container(
       child: DropdownButton<Shipping>(
         elevation: 1,

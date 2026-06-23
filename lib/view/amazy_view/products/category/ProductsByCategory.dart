@@ -82,11 +82,6 @@ class _ProductsByCategoryState extends State<ProductsByCategory> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer: CategoryFilterDrawer(
-        categoryID: controller!.categoryId.value,
-        scaffoldKey: _scaffoldKey,
-        source: source,
-      ),
       backgroundColor: AppStyles.appBackgroundColor,
       floatingActionButton: isScrolling
           ? FloatingActionButton(
@@ -138,6 +133,8 @@ class _ProductsByCategoryState extends State<ProductsByCategory> {
                     if (controller!.allProds.length == 0) {
                       return SliverToBoxAdapter(child: Container());
                     } else {
+                      return SliverToBoxAdapter(child: Container());
+                      /*
                       return SliverAppBar(
                         backgroundColor: Colors.white,
                         automaticallyImplyLeading: false,
@@ -288,6 +285,7 @@ class _ProductsByCategoryState extends State<ProductsByCategory> {
                           ),
                         ),
                       );
+                      */
                     }
                   }
                 }),
@@ -306,52 +304,52 @@ class _ProductsByCategoryState extends State<ProductsByCategory> {
                   physics: NeverScrollableScrollPhysics(),
                   padding: EdgeInsets.zero,
                   shrinkWrap: true,
-                  children: [
-                    Obx(() {
-                      if (controller!.isProductsLoading.value) {
-                        return SizedBox.shrink();
-                      } else {
-                        return Container(
-                          color: Colors.white,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 15),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                child: Text(
-                                  "${controller!.categoryTitle.value}",
-                                  style: AppStyles.appFontMedium.copyWith(
-                                    fontSize: 18.fontSize,
-                                    color: Color(0xff5C7185),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Container(),
-                              ),
-                              Container(
-                                child: InkWell(
-                                  onTap: (){
-                                    print('object :::::: ${controller!.category.value.allProducts?.perPage}');
-                                  },
-                                  child: Text(
-                                    "${controller!.category.value.allProducts?.total} " +
-                                        "Products found".tr,
-                                    style: AppStyles.appFontMedium.copyWith(
-                                      fontSize: 13.fontSize,
-                                      color: Color(0xffC5C5C5),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                    }),
-                  ],
+                  // children: [
+                  //   Obx(() {
+                  //     if (controller!.isProductsLoading.value) {
+                  //       return SizedBox.shrink();
+                  //     } else {
+                  //       return Container(
+                  //         color: Colors.white,
+                  //         padding: EdgeInsets.symmetric(
+                  //             horizontal: 20, vertical: 15),
+                  //         child: Row(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.center,
+                  //           children: [
+                  //             Container(
+                  //               child: Text(
+                  //                 "${controller!.categoryTitle.value}",
+                  //                 style: AppStyles.appFontMedium.copyWith(
+                  //                   fontSize: 18.fontSize,
+                  //                   color: Color(0xff5C7185),
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //             Expanded(
+                  //               child: Container(),
+                  //             ),
+                  //             // Container(
+                  //             //   child: InkWell(
+                  //             //     onTap: (){
+                  //             //       print('object :::::: ${controller!.category.value.allProducts?.perPage}');
+                  //             //     },
+                  //             //     child: Text(
+                  //             //       "${source?.productsLength ?? controller!.category.value.allProducts?.total ?? 0} " +
+                  //             //           "Products found".tr,
+                  //             //       style: AppStyles.appFontMedium.copyWith(
+                  //             //         fontSize: 13.fontSize,
+                  //             //         color: Color(0xffC5C5C5),
+                  //             //       ),
+                  //             //     ),
+                  //             //   ),
+                  //             // ),
+                  //           ],
+                  //         ),
+                  //       );
+                  //     }
+                  //   }),
+                  // ],
                 ),
               ),
               !_isList

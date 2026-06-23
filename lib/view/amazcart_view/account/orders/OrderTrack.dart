@@ -358,7 +358,7 @@ class _OrderTrackState extends State<OrderTrack> {
                   child: Row(
                     children: [
                       Text(
-                        'Order Details'.tr,
+                        'Order '.tr,
                         style: AppStyles.kFontPink15w5,
                       ),
                       Icon(

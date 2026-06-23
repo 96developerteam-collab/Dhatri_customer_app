@@ -81,11 +81,6 @@ class _ProductsByBrandsState extends State<ProductsByBrands> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
-        endDrawer: BrandFilterDrawer(
-          brandId: _brandController!.brandId.value,
-          scaffoldKey: _scaffoldKey,
-          source: source,
-        ),
         backgroundColor: AppStyles.appBackgroundColor,
         floatingActionButton: isScrolling
             ? FloatingActionButton(
@@ -137,12 +132,14 @@ class _ProductsByBrandsState extends State<ProductsByBrands> {
                       if (products == null || products.isEmpty) {
                         return SliverToBoxAdapter(child: Container());
                       } else {
+                        // Commented out the layout toggle bar
+                        /*
                         return SliverAppBar(
                           backgroundColor: Colors.white,
                           automaticallyImplyLeading: false,
                           centerTitle: false,
                           titleSpacing: 0,
-                          toolbarHeight: 15,
+                          toolbarHeight: 25,
                           expandedHeight: 0,
                           forceElevated: false,
                           elevation: 0,
@@ -159,139 +156,31 @@ class _ProductsByBrandsState extends State<ProductsByBrands> {
                           ],
                           flexibleSpace: Container(
                             padding: EdgeInsets.symmetric(horizontal: 20),
+                            alignment: Alignment.center,
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Expanded(
-                                  child: !filterSelected!
-                                      ? DropdownButton(
-                                          isExpanded: false,
-                                          isDense: false,
-                                          hint: Text(
-                                            'Sort'.tr,
-                                            style: AppStyles.appFontMedium
-                                                .copyWith(fontSize: 13),
-                                          ),
-                                          underline: SizedBox(),
-                                          value: _selectedSort,
-                                          style: AppStyles.appFontMedium
-                                              .copyWith(fontSize: 13),
-                                          onChanged: (newValue) async {
-                                            setState(() {
-                                              _selectedSort = newValue;
-                                              setState(() {
-                                                source!.sortKey =
-                                                    newValue!.sortKey!;
-                                                source!.isSorted = true;
-                                                source!.isFilter = false;
-                                                source!.refresh(true);
-                                              });
-                                            });
-                                          },
-                                          items:
-                                              Sorting.sortingData.map((sort) {
-                                            return DropdownMenuItem(
-                                              child: Text(
-                                                sort.sortName!,
-                                                style: AppStyles.appFontMedium
-                                                    .copyWith(fontSize: 13),
-                                              ),
-                                              value: sort,
-                                            );
-                                          }).toList(),
-                                        )
-                                      : DropdownButton(
-                                          hint: Text(
-                                            'Sort'.tr,
-                                            style: AppStyles.appFontMedium
-                                                .copyWith(fontSize: 13),
-                                          ),
-                                          underline: Container(),
-                                          value: _selectedSort,
-                                          style: AppStyles.appFontMedium
-                                              .copyWith(fontSize: 13),
-                                          onChanged: (newValue) async {
-                                            print('SORT AFTER FILTER');
-                                            print('SORT AFTER FILTER');
-                                            setState(() {
-                                              _selectedSort = newValue;
-                                              setState(() {
-                                                source!.isSorted = true;
-                                                source!.isFilter = true;
-                                                _brandController!
-                                                        .filterSortKey.value =
-                                                    _selectedSort!.sortKey!;
-                                                source!.refresh(true);
-                                              });
-                                            });
-                                          },
-                                          items:
-                                              Sorting.sortingData.map((sort) {
-                                            return DropdownMenuItem(
-                                              child: Text(sort.sortName!),
-                                              value: sort,
-                                            );
-                                          }).toList(),
-                                        ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    alignment: Alignment.centerRight,
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 10),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              _isList = !_isList;
-                                            });
-                                          },
-                                          child: Icon(
-                                            !_isList
-                                                ? FontAwesomeIcons.bars
-                                                : FontAwesomeIcons.tableCellsLarge,
-                                            size: 20,
-                                            color: AppStyles.greyColorBook,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              filterSelected = true;
-                                              _selectedSort =
-                                                  Sorting.sortingData.first;
-                                            });
-                                            _scaffoldKey.currentState!
-                                                .openEndDrawer();
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.filter_alt_outlined,
-                                                size: 20,
-                                                color: AppStyles.pinkColor,
-                                              ),
-                                              Text(
-                                                'Filter'.tr,
-                                                style: AppStyles.appFontMedium
-                                                    .copyWith(fontSize: 13),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _isList = !_isList;
+                                    });
+                                  },
+                                  child: Icon(
+                                    !_isList
+                                        ? FontAwesomeIcons.bars
+                                        : FontAwesomeIcons.tableCellsLarge,
+                                    size: 20,
+                                    color: AppStyles.greyColorBook,
                                   ),
                                 ),
                               ],
                             ),
                           ),
                         );
+                        */
+                        return SliverToBoxAdapter(child: Container());
                       }
                     }
                   }),
@@ -515,18 +404,18 @@ class BrandProductsLoadMore extends LoadingMoreBase<ProductModel> {
         }
 
         print('*** BRAND LISTING CLICK REQUEST ***');
-        print('URL: ${URLs.ALL_BRAND}/$brandId');
+        print('URL: ${URLs.SINGLE_BRAND}/$brandId');
         print('Query Parameters: $queryParams');
 
         if (this.length == 0) {
           result = await _dio.get(
-            URLs.ALL_BRAND + '/$brandId',
+            URLs.SINGLE_BRAND + '/$brandId',
             queryParameters: queryParams,
           );
         } else {
           queryParams['page'] = pageIndex;
           result = await _dio.get(
-            URLs.ALL_BRAND + '/$brandId',
+            URLs.SINGLE_BRAND + '/$brandId',
             queryParameters: queryParams,
           );
         }

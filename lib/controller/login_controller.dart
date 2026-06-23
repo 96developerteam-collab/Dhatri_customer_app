@@ -566,6 +566,93 @@ class LoginController extends GetxController {
     return false;
   }
 
+  Future<bool> deleteUserAccount(int userId) async {
+    EasyLoading.show(
+        maskType: EasyLoadingMaskType.none, indicator: CustomLoadingWidget());
+
+    try {
+      isLoading(true);
+
+      String token = userToken.read(tokenKey) ?? '';
+
+      Uri deleteUrl = Uri.parse('${URLs.API_URL}/user/$userId');
+
+      var response = await http.delete(
+        deleteUrl,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+
+      debugPrint('Delete User API URL: $deleteUrl');
+      debugPrint('Delete User Status Code: ${response.statusCode}');
+      debugPrint('Delete User Response Body: ${response.body}');
+
+      var jsonString = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && jsonString['message'] == 'User deleted successfully') {
+        EasyLoading.dismiss();
+
+        SnackBars().snackBarSuccess("${jsonString['message']}");
+
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        await preferences.remove(tokenKey);
+        await preferences.remove('warehouse_id');
+        await userToken.remove(tokenKey);
+        await userToken.remove('warehouse_id');
+        AuthDatabase.instance.saveUserId(userId: null);
+
+        await _googleSignIn.signOut();
+
+        await FacebookAuth.instance.logOut();
+
+        print("User logged Out");
+        checkToken();
+        loginMsg.value = 'Logged out';
+        update();
+        isLoading(false);
+
+        // Refresh Cart and Wishlist
+        cartController.getCartList();
+        _myWishListController.getAllWishList();
+        try {
+          final HomeController homeController = Get.put(HomeController());
+          homeController.getHomePage();
+          homeController.source?.refresh(true);
+        } catch (e) {
+          print(e);
+        }
+        return true;
+      } else {
+        EasyLoading.dismiss();
+        if (jsonString != null && jsonString['message'] != null) {
+          if (jsonString['message'] == "The given data was invalid.") {
+            final errorResponse =
+                ErrorResponse.fromJson(jsonString);
+            SnackBars().snackBarError("${errorResponse.message}");
+          } else {
+            SnackBars().snackBarError("${jsonString['message']}");
+          }
+        } else {
+          SnackBars().snackBarError("Failed to delete user account");
+        }
+        isLoading(false);
+        return false;
+      }
+    } catch (e) {
+      EasyLoading.dismiss();
+      isLoading(false);
+      print(e.toString());
+      SnackBars().snackBarError("An error occurred while deleting your account");
+      return false;
+    } finally {
+      EasyLoading.dismiss();
+      isLoading(false);
+    }
+  }
+
   Future<void> removeToken() async {
     EasyLoading.show(
         maskType: EasyLoadingMaskType.none, indicator: CustomLoadingWidget());

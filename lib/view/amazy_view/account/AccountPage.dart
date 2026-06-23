@@ -14,6 +14,7 @@ import 'package:amazcart/view/amazy_view/account/orders/MyCancellations.dart';
 import 'package:amazcart/view/amazy_view/account/orders/OrderList/MyOrders.dart';
 import 'package:amazcart/view/amazy_view/account/orders/RefundAndDisputes/MyRefundsAndDisputes.dart';
 import 'package:amazcart/view/amazy_view/authentication/LoginPage.dart';
+import 'package:amazcart/view/amazcart_view/settings/widget/account_delete_dialogue.dart';
 import 'package:amazcart/view/amazy_view/products/giftCard/AllGiftCardsPage.dart';
 import 'package:amazcart/view/amazy_view/support/SupportTicketsPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -496,6 +497,52 @@ class _AccountPageState extends State<AccountPage> {
                                               },
                                               title: Text(
                                                 "Logout".tr,
+                                                style: AppStyles.appFontBold
+                                                    .copyWith(fontSize: 14.fontSize),
+                                              ),
+                                              trailing: Icon(
+                                                Icons.arrow_forward_ios,
+                                                color: AppStyles.pinkColor,
+                                                size: 18.w,
+                                              ),
+                                            ),
+                                      !loginController.loggedIn.value
+                                          ? SizedBox.shrink()
+                                          : ListTile(
+                                              leading: Container(
+                                                height: 40.w,
+                                                width: 40.w,
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: AppStyles.pinkColor,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: Icon(
+                                                  Icons.delete_outline,
+                                                  color: Colors.white,
+                                                  size: 18.w,
+                                                ),
+                                              ),
+                                              onTap: () {
+                                                Get.dialog(
+                                                  AccountDeleteDialogue(
+                                                    onYesTap: () async {
+                                                      Get.back();
+                                                      final userId = loginController.profileData.value.id;
+                                                      if (userId != null) {
+                                                        final success = await loginController.deleteUserAccount(userId);
+                                                        if (success) {
+                                                          Get.dialog(LoginPage(), useSafeArea: false);
+                                                        }
+                                                      } else {
+                                                        SnackBars().snackBarError("User ID not found".tr);
+                                                      }
+                                                    },
+                                                  ),
+                                                );
+                                              },
+                                              title: Text(
+                                                "Delete Account".tr,
                                                 style: AppStyles.appFontBold
                                                     .copyWith(fontSize: 14.fontSize),
                                               ),

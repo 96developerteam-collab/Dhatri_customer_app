@@ -35,6 +35,7 @@ mixin URLs {
   static const String ALL_SLIDERS = '$API_URL/appearance/sliders';
 
   static const String ALL_BRAND = '$API_URL/product/brand';
+  static const String SINGLE_BRAND = '$API_URL/products/brand';
 
   static const String SINGLE_TAG_PRODUCTS = '$API_URL/product/tag';
 

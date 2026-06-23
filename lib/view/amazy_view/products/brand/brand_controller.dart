@@ -78,7 +78,7 @@ class BrandController extends GetxController {
         queryParams['seller_id'] = warehouseId;
       }
 
-      await _dio.get(URLs.ALL_BRAND + '/${brandId.value}', queryParameters: queryParams).then((value) {
+      await _dio.get(URLs.SINGLE_BRAND + '/${brandId.value}', queryParameters: queryParams).then((value) {
         if (isClosed) return;
         print('Brand Query: ${value.realUri}');
         final data = new Map<String, dynamic>.from(value.data);
@@ -166,7 +166,7 @@ class BrandController extends GetxController {
         queryParams['seller_id'] = warehouseId;
       }
 
-      await _dio.get(URLs.ALL_BRAND + '/${brandId.value}', queryParameters: queryParams).then((value) {
+      await _dio.get(URLs.SINGLE_BRAND + '/${brandId.value}', queryParameters: queryParams).then((value) {
         if (isClosed) return;
         print('URL: ${value.realUri.queryParameters}');
         brandAllData.value = SingleBrandModel.fromJson(value.data);
